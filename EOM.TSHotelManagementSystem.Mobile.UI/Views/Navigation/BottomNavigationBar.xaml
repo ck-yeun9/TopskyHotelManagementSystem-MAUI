@@ -1,0 +1,50 @@
+<Grid xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+      xmlns:controls="clr-namespace:EOM.TSHotelManagementSystem.Mobile.UI"
+      x:Class="EOM.TSHotelManagementSystem.Mobile.UI.BottomNavigationBar"
+      BackgroundColor="#f8f8f8"
+      HeightRequest="60"
+      ColumnDefinitions="*,*,*">
+
+    <StackLayout Grid.Column="0" 
+             HorizontalOptions="Center"
+             VerticalOptions="Center"
+             Spacing="4"
+             x:Name="NewsLayout" >
+        <Image Source="newspaper.png" 
+           HeightRequest="24"
+           WidthRequest="24"
+           x:Name="NewsIcon"/>
+        <Label Text="新闻" 
+           FontSize="12"
+           x:Name="NewsLabel"/>
+    </StackLayout>
+
+    <StackLayout Grid.Column="1" 
+             HorizontalOptions="Center"
+             VerticalOptions="Center"
+             Spacing="4"
+             x:Name="CheckInLayout">
+        <Image Source="bed.png" 
+           HeightRequest="24"
+           WidthRequest="24"
+           x:Name="CheckInIcon"/>
+        <Label Text="入住" 
+           FontSize="12"
+           x:Name="CheckInLabel"/>
+    </StackLayout>
+
+    <StackLayout Grid.Column="2" 
+             HorizontalOptions="Center"
+             VerticalOptions="Center"
+             Spacing="4"
+             x:Name="ProfileLayout">
+        <Image Source="person.png" 
+           HeightRequest="24"
+           WidthRequest="24"
+           x:Name="ProfileIcon"/>
+        <Label Text="我的" 
+           FontSize="12"
+           x:Name="ProfileLabel"/>
+    </StackLayout>
+</Grid>

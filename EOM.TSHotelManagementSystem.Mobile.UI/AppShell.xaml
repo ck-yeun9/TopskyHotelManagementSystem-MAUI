@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="EOM.TSHotelManagementSystem.Mobile.UI.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:EOM.TSHotelManagementSystem.Mobile.UI"
+    Shell.FlyoutBehavior="Disabled"
+    Title="EOM.TSHotelManagementSystem.Mobile.UI">
+
+    <Shell.TitleView>
+        <Grid>
+            <Label Text="{Binding CurrentPageTitle}" 
+                   HorizontalOptions="Center" 
+                   VerticalOptions="Center"
+                   FontSize="18"
+                   FontAttributes="Bold"/>
+        </Grid>
+    </Shell.TitleView>
+    
+    <ShellContent Route="MainPage" 
+                  ContentTemplate="{DataTemplate local:MainPage}" Title="主页"/>
+
+    <ShellContent Route="DetailsPage" 
+                  ContentTemplate="{DataTemplate local:DetailsPage}" Title="详情页面"/>
+
+</Shell>

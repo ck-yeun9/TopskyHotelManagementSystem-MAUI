@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EOM.TSHotelManagementSystem.Mobile.UI.ProfileView">
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="20">
+            <Frame Padding="15" CornerRadius="10" BorderColor="LightGray">
+                <StackLayout Spacing="10">
+                    <Image Source="profile_placeholder.png" HeightRequest="80" WidthRequest="80" HorizontalOptions="Center" />
+                    <Label Text="{Binding UserName}" FontSize="20" HorizontalOptions="Center" />
+                    <Label Text="{Binding Position}" FontSize="14" HorizontalOptions="Center" />
+                </StackLayout>
+            </Frame>
+
+            <Button Text="个人信息设置" BackgroundColor="#3F51B5" TextColor="White" />
+            <Button Text="系统设置" BackgroundColor="#607D8B" TextColor="White" />
+            <Button Text="退出登录" BackgroundColor="#F44336" TextColor="White" />
+        </StackLayout>
+    </ScrollView>
+</ContentView>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"  
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"  
+             xmlns:controls="clr-namespace:EOM.TSHotelManagementSystem.Mobile.UI"  
+             x:Class="EOM.TSHotelManagementSystem.Mobile.UI.MainPage">  
+    <Grid RowDefinitions="*,Auto">
+        <Frame Grid.Row="0" 
+               CornerRadius="0" 
+               BorderColor="Transparent" 
+               Padding="0">
+            <ContentView x:Name="ContentHost" />
+        </Frame>
+
+        <controls:BottomNavigationBar 
+            Grid.Row="1" 
+            ActiveTab="{Binding ActiveTab, Mode=TwoWay}"
+            BindingContext="{Binding}"
+            x:Name="BottomNavBar"/>
+    </Grid>  
+</ContentPage>
