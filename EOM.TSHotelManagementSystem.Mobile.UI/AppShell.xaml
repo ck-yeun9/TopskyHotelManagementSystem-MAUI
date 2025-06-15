@@ -16,11 +16,8 @@
                    FontAttributes="Bold"/>
         </Grid>
     </Shell.TitleView>
-    
+
     <ShellContent Route="MainPage" 
                   ContentTemplate="{DataTemplate local:MainPage}" Title="主页"/>
-
-    <ShellContent Route="DetailsPage" 
-                  ContentTemplate="{DataTemplate local:DetailsPage}" Title="详情页面"/>
 
 </Shell>

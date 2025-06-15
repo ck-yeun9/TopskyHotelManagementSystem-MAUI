@@ -17,7 +17,9 @@
 
 # :pray: Open Source Projects Referenced:
 
-1. ##### MAUI——.NET MAUI is the .NET Multi-platform App UI, a framework for building native device applications spanning mobile, tablet, and desktop.[MAUI,MIT License](https://github.com/dotnet/maui)  
+1. ##### MAUI——.NET MAUI is the .NET Multi-platform App UI, a framework for building native device applications spanning mobile, tablet, and desktop.[MAUI,MIT License](https://github.com/dotnet/maui)
+
+1. ##### Plugin.Toolkit.Fonts.MaterialIcons.[Plugin.Toolkit.Fonts.MaterialIcons,Unknown License](https://github.com/andyapin/Plugin.Toolkit.Fonts.MaterialIcons)
 
 
 # :exclamation: Project Description:

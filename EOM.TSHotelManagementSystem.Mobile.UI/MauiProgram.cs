@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Plugin.Toolkit.Fonts.MaterialIcons;
 
 namespace EOM.TSHotelManagementSystem.Mobile.UI
 {
@@ -13,7 +14,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                    fonts.AddFont("MaterialIcons-Regular.ttf", "MaterialIcons");
+                    fonts.AddMaterialIconsFonts();
                 });
 
 #if DEBUG
@@ -22,14 +23,13 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             builder.Services.AddSingleton<INavigationService, NavigationService>();
 
             builder.Services.AddSingleton<MainPageViewModel>();
-            builder.Services.AddTransient<DetailsPageViewModel>();
+            builder.Services.AddTransient<NewsViewModel>();
 
-            builder.Services.AddSingleton<MainPage>();
-            builder.Services.AddTransient<DetailsPage>();
             builder.Services.AddTransient<CheckInView>();
             builder.Services.AddTransient<NewsView>();
             builder.Services.AddTransient<ProfileView>();
 
+            builder.Services.AddSingleton<MainPage>();
             builder.Services.AddSingleton<AppShell>();
 
             return builder.Build();

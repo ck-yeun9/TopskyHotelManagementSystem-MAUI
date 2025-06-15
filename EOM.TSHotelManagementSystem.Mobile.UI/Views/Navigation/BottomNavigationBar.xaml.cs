@@ -61,9 +61,12 @@ public partial class BottomNavigationBar : Grid, INotifyPropertyChanged
         {
             viewModel.ActiveTab = tabName;
         }
-        else
+        else if (App.Current?.MainPage is MainPage mainPage)
         {
-            ActiveTab = tabName;
+            if (mainPage.BindingContext is MainPageViewModel vm)
+            {
+                vm.ActiveTab = tabName;
+            }
         }
     }
 
@@ -74,7 +77,7 @@ public partial class BottomNavigationBar : Grid, INotifyPropertyChanged
         SetTabActiveState(ProfileIcon, ProfileLabel, tabName == "profile");
     }
 
-    private void SetTabActiveState(Image icon, Label label, bool isActive)
+    private void SetTabActiveState(Label icon, Label label, bool isActive)
     {
         var activeColor = Color.FromArgb("#FF5722");
         var inactiveColor = Colors.Gray;
@@ -86,7 +89,7 @@ public partial class BottomNavigationBar : Grid, INotifyPropertyChanged
 
             if (icon != null)
             {
-                icon.BackgroundColor = isActive ? activeColor : inactiveColor;
+                icon.TextColor = isActive ? activeColor : inactiveColor;
             }
         });
     }

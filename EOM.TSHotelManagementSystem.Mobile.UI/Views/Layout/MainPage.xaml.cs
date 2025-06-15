@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EOM.TSHotelManagementSystem.Mobile.UI;
 
@@ -16,11 +17,21 @@ public partial class MainPage : ContentPage
         Appearing += OnMainPageAppearing;
         Title = "TopSky¾Æµê";
 
-        _checkInView = new CheckInView();
-        _newsView = new NewsView();
-        _profileView = new ProfileView();
+        InitializeViews();
 
         SetActiveView(_viewModel.ActiveTab);
+    }
+
+    private void InitializeViews()
+    {
+        _checkInView = App.Services.GetService<CheckInView>();
+        _newsView = App.Services.GetService<NewsView>();
+        _profileView = App.Services.GetService<ProfileView>();
+
+        _checkInView.BindingContext = _viewModel;
+        _profileView.BindingContext = _viewModel;
+
+        _newsView.BindingContext = App.Services.GetService<NewsViewModel>();
     }
 
     protected override void OnAppearing()
@@ -51,17 +62,14 @@ public partial class MainPage : ContentPage
             switch (tabName)
             {
                 case "news":
-                    _newsView.BindingContext = _viewModel;
                     ContentHost.Content = _newsView;
                     break;
 
                 case "checkin":
-                    _checkInView.BindingContext = _viewModel;
                     ContentHost.Content = _checkInView;
                     break;
 
                 case "profile":
-                    _profileView.BindingContext = _viewModel;
                     ContentHost.Content = _profileView;
                     break;
             }

@@ -11,13 +11,15 @@
              VerticalOptions="Center"
              Spacing="4"
              x:Name="NewsLayout" >
-        <Image Source="newspaper.png" 
-           HeightRequest="24"
-           WidthRequest="24"
-           x:Name="NewsIcon"/>
+        <Label FontFamily="IconFilled"
+               Text="newspaper"
+               FontSize="24"
+               VerticalOptions="Center"
+               HorizontalOptions="Center"
+               x:Name="NewsIcon"/>
         <Label Text="新闻" 
-           FontSize="12"
-           x:Name="NewsLabel"/>
+               FontSize="12"
+               x:Name="NewsLabel"/>
     </StackLayout>
 
     <StackLayout Grid.Column="1" 
@@ -25,13 +27,15 @@
              VerticalOptions="Center"
              Spacing="4"
              x:Name="CheckInLayout">
-        <Image Source="bed.png" 
-           HeightRequest="24"
-           WidthRequest="24"
-           x:Name="CheckInIcon"/>
+        <Label FontFamily="IconFilled"
+               Text="luggage"
+               FontSize="24"
+               VerticalOptions="Center"
+               HorizontalOptions="Center"
+               x:Name="CheckInIcon"/>
         <Label Text="入住" 
-           FontSize="12"
-           x:Name="CheckInLabel"/>
+               FontSize="12"
+               x:Name="CheckInLabel"/>
     </StackLayout>
 
     <StackLayout Grid.Column="2" 
@@ -39,12 +43,14 @@
              VerticalOptions="Center"
              Spacing="4"
              x:Name="ProfileLayout">
-        <Image Source="person.png" 
-           HeightRequest="24"
-           WidthRequest="24"
-           x:Name="ProfileIcon"/>
+        <Label FontFamily="IconFilled"
+               Text="person"
+               FontSize="24"
+               VerticalOptions="Center"
+               HorizontalOptions="Center"
+               x:Name="ProfileIcon"/>
         <Label Text="我的" 
-           FontSize="12"
-           x:Name="ProfileLabel"/>
+               FontSize="12"
+               x:Name="ProfileLabel"/>
     </StackLayout>
 </Grid>

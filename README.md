@@ -17,7 +17,9 @@
 
 #  :pray: 引用的开源项目：
 
-1. ##### MAUI——.NET MAUI is the .NET Multi-platform App UI, a framework for building native device applications spanning mobile, tablet, and desktop.[MAUI,MIT开源协议](https://github.com/dotnet/maui)      
+1. ##### MAUI——.NET MAUI is the .NET Multi-platform App UI, a framework for building native device applications spanning mobile, tablet, and desktop.[MAUI,MIT开源协议](https://github.com/dotnet/maui)
+
+1. ##### Plugin.Toolkit.Fonts.MaterialIcons.[Plugin.Toolkit.Fonts.MaterialIcons,未标明开源协议](https://github.com/andyapin/Plugin.Toolkit.Fonts.MaterialIcons)
 
 
 #  :exclamation: 本项目说明：
