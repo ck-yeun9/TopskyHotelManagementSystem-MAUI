@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace EOM.TSHotelManagementSystem.Mobile.UI
 {
-    public class NewsViewModel : ViewModelBase
+    public class NewsViewModel : ViewModelBase, ILoadableViewModel
     {
         private readonly INavigationService _navigationService;
         private readonly Random _random = new();
@@ -24,15 +24,33 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             RefreshCommand = new Command(async () => await RefreshNewsAsync());
             LoadMoreCommand = new Command(async () => await LoadMoreNewsAsync());
         }
+
+        public string _pageTitle;
+        public string PageTitle 
+        {
+            get => _pageTitle;
+            set => SetField(ref _pageTitle, value);
+        }
+
+        public async void OnViewAppearing()
+        {
+            try
+            {
+                IsInitializing = true;
+                if (NewsItems.Count == 0)
+                {
+                    await LoadNewsAsync(8);
+                }
+            }
+            finally
+            {
+                IsInitializing = false;
+            }
+        }
+
         public Command<string> NavigateCommand { get; }
         public ICommand RefreshCommand { get; }
         public ICommand LoadMoreCommand { get; }
-
-        public NewsViewModel()
-        {
-            RefreshCommand = new Command(async () => await RefreshNewsAsync());
-            LoadMoreCommand = new Command(async () => await LoadMoreNewsAsync());
-        }
 
         public bool IsRefreshing
         {
@@ -52,14 +70,14 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             set => SetField(ref _isInitializing, value);
         }
 
-        public ObservableCollection<NewsItem> NewsItems { get; } = new();
+        public ObservableCollection<NewsItem> NewsItems { get; set; } = new();
 
         /// <summary>
         /// 从数据源获取新闻（替换为您的实际数据获取逻辑）
         /// </summary>
         private async Task<List<NewsItem>> FetchNewsAsync(int count = 5)
         {
-            await Task.Delay(1000); // 模拟网络延迟
+            await Task.Delay(1000);
 
             var newsList = new List<NewsItem>();
 
@@ -105,7 +123,6 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         private async Task RefreshNewsAsync()
         {
             IsRefreshing = true;
-
             try
             {
                 await LoadNewsAsync(8);
@@ -143,6 +160,10 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         private async void NavigateTo(string route)
         {
             _navigationService?.NavigateToAsync(route);
+        }
+
+        public void OnViewDisappearing()
+        {
         }
     }
 

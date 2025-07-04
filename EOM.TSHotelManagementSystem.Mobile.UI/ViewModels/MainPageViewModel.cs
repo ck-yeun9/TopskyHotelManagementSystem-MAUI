@@ -1,27 +1,82 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using EOM.TSHotelManagementSystem.Mobile.Service;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace EOM.TSHotelManagementSystem.Mobile.UI
 {
     public class MainPageViewModel : ViewModelBase
     {
+        private readonly IAuthService _authService;
         private readonly INavigationService _navigationService;
-        private string _activeTab = "checkin";
 
-        public MainPageViewModel(INavigationService navigationService)
+        private string _activeTab = "checkin";
+        private string _appName = "TopSky酒店";
+        private string _currentTitle = "TopSky酒店";
+
+        public MainPageViewModel(
+            INavigationService navigationService,
+            IAuthService authService)
         {
             _navigationService = navigationService;
+            _authService = authService;
+
+            CheckAuthStatus();
+        }
+
+        private async Task CheckAuthStatus()
+        {
+            try
+            {
+                if (!_authService.HasValidToken() || !await _authService.ValidateTokenAsync())
+                {
+                    await _navigationService.NavigateToAsync($"//{nameof(LoginPage)}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"验证令牌错误: {ex.Message}");
+                await _navigationService.NavigateToAsync($"//{nameof(LoginPage)}");
+            }
+        }
+
+        public string AppName
+        {
+            get => _appName;
+            set => SetField(ref _appName, value);
         }
 
         public string ActiveTab
         {
             get => _activeTab;
-            set => SetField(ref _activeTab, value);
+            set
+            {
+                if (SetField(ref _activeTab, value))
+                {
+                    UpdateTitle();
+                }
+            }
+        }
+
+        public string CurrentTitle
+        {
+            get => _currentTitle;
+            set => SetField(ref _currentTitle, value);
+        }
+
+        private void UpdateTitle()
+        {
+            CurrentTitle = ActiveTab switch
+            {
+                "news" => "最新资讯",
+                "checkin" => "入住管理",
+                "profile" => "个人中心",
+                _ => AppName
+            };
+
+            // 更新AppShell标题
+            var appShell = Application.Current?.MainPage as AppShell;
+            appShell?.UpdateTitle(CurrentTitle);
         }
     }
 }

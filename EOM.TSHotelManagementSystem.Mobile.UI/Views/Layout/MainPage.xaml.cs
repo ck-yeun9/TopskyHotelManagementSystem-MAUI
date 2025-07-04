@@ -1,44 +1,32 @@
 using System.ComponentModel;
-using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 
 namespace EOM.TSHotelManagementSystem.Mobile.UI;
 
 public partial class MainPage : ContentPage
 {
     private readonly MainPageViewModel _viewModel;
-    private CheckInView _checkInView;
-    private NewsView _newsView;
-    private ProfileView _profileView;
+    private readonly IServiceProvider _serviceProvider;
 
-    public MainPage(MainPageViewModel viewModel)
-	{
-		InitializeComponent();
-        BindingContext = _viewModel = viewModel;
-        Appearing += OnMainPageAppearing;
-        Title = "TopSky酒店";
-
-        InitializeViews();
-
-        SetActiveView(_viewModel.ActiveTab);
-    }
-
-    private void InitializeViews()
+    public MainPage(
+        MainPageViewModel viewModel,
+        IServiceProvider serviceProvider)
     {
-        _checkInView = App.Services.GetService<CheckInView>();
-        _newsView = App.Services.GetService<NewsView>();
-        _profileView = App.Services.GetService<ProfileView>();
+        InitializeComponent();
+        BindingContext = _viewModel = viewModel;
+        _serviceProvider = serviceProvider;
 
-        _checkInView.BindingContext = _viewModel;
-        _profileView.BindingContext = _viewModel;
-
-        _newsView.BindingContext = App.Services.GetService<NewsViewModel>();
+        _viewModel.PropertyChanged += OnViewModelPropertyChanged;
+        LoadTabContent(_viewModel.ActiveTab);
     }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
-
-        _viewModel.PropertyChanged += OnViewModelPropertyChanged;
+        if (BottomNavBar != null)
+        {
+            BottomNavBar.UpdateActiveTab(_viewModel.ActiveTab);
+        }
     }
 
     protected override void OnDisappearing()
@@ -51,40 +39,73 @@ public partial class MainPage : ContentPage
     {
         if (e.PropertyName == nameof(MainPageViewModel.ActiveTab))
         {
-            SetActiveView(_viewModel.ActiveTab);
+            LoadTabContent(_viewModel.ActiveTab);
+            if (BottomNavBar != null)
+            {
+                BottomNavBar.UpdateActiveTab(_viewModel.ActiveTab);
+            }
         }
     }
 
-    private void SetActiveView(string tabName)
+    private void OnTabSelected(object sender, string tabName)
     {
-        MainThread.BeginInvokeOnMainThread(() =>
+        if (_viewModel.ActiveTab != tabName)
         {
+            _viewModel.ActiveTab = tabName;
+        }
+        else
+        {
+            // 刷新当前标签页
+            LoadTabContent(tabName);
+        }
+    }
+
+    private void LoadTabContent(string tabName)
+    {
+        try
+        {
+            ContentView contentView = null;
+            object bindingContext = null;
+
             switch (tabName)
             {
                 case "news":
-                    ContentHost.Content = _newsView;
+                    contentView = _serviceProvider.GetRequiredService<NewsView>();
+                    bindingContext = _serviceProvider.GetRequiredService<NewsViewModel>();
+
+                    // 设置页面标题
+                    if (bindingContext is NewsViewModel newsViewModel)
+                    {
+                        newsViewModel.PageTitle = "新闻资讯";
+                    }
                     break;
 
                 case "checkin":
-                    ContentHost.Content = _checkInView;
+                    contentView = _serviceProvider.GetRequiredService<CheckInView>();
+                    bindingContext = _viewModel; // 使用MainPageViewModel自身
                     break;
 
                 case "profile":
-                    ContentHost.Content = _profileView;
+                    contentView = _serviceProvider.GetRequiredService<ProfileView>();
+                    bindingContext = _serviceProvider.GetRequiredService<ProfileViewModel>();
                     break;
             }
 
-            BottomNavBar?.UpdateActiveTab(tabName);
-        });
-    }
+            if (contentView != null)
+            {
+                contentView.BindingContext = bindingContext;
+                ContentHost.Content = contentView;
 
-    private void OnMainPageAppearing(object sender, EventArgs e)
-    {
-        BottomNavBar.UpdateActiveTab(_viewModel.ActiveTab);
-
-        if (BindingContext is MainPageViewModel viewModel && BottomNavBar != null)
+                if (bindingContext is ILoadableViewModel loadable)
+                {
+                    loadable.OnViewAppearing();
+                }
+            }
+        }
+        catch (Exception ex)
         {
-            BottomNavBar.UpdateActiveTab(viewModel.ActiveTab);
+            Debug.WriteLine($"加载标签页错误: {ex.Message}");
+            // 添加UI错误处理逻辑
         }
     }
 }

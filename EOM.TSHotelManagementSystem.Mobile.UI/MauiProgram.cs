@@ -1,10 +1,14 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using EOM.TSHotelManagementSystem.Mobile.Service;
+using Microsoft.Extensions.Logging;
 using Plugin.Toolkit.Fonts.MaterialIcons;
 
 namespace EOM.TSHotelManagementSystem.Mobile.UI
 {
     public static class MauiProgram
     {
+        private static IServiceProvider _serviceProvider;
+        public static IServiceProvider Services => _serviceProvider;
+
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
@@ -20,19 +24,48 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 #if DEBUG
     		builder.Logging.AddDebug();
 #endif
-            builder.Services.AddSingleton<INavigationService, NavigationService>();
+            RegisterServices(builder.Services);
+            RegisterRoutes();
 
-            builder.Services.AddSingleton<MainPageViewModel>();
-            builder.Services.AddTransient<NewsViewModel>();
+            var app = builder.Build();
+            _serviceProvider = app.Services;
 
-            builder.Services.AddTransient<CheckInView>();
-            builder.Services.AddTransient<NewsView>();
-            builder.Services.AddTransient<ProfileView>();
+            return app;
+        }
 
-            builder.Services.AddSingleton<MainPage>();
-            builder.Services.AddSingleton<AppShell>();
+        private static void RegisterRoutes()
+        {
+            Routing.RegisterRoute(nameof(RegisterPage), typeof(RegisterPage));
+            Routing.RegisterRoute(nameof(NewsView), typeof(NewsView));
+            Routing.RegisterRoute(nameof(ProfileView), typeof(ProfileView));
+            Routing.RegisterRoute(nameof(CheckInView), typeof(CheckInView));
+            Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
+        }
 
-            return builder.Build();
+        private static void RegisterServices(IServiceCollection services)
+        {
+            services.AddSingleton<IAuthService, AuthService>();
+            services.AddSingleton<IHttpService, HttpService>();
+            services.AddSingleton<INavigationService, NavigationService>();
+
+            services.AddTransient<MainPageViewModel>();
+            services.AddTransient<NewsViewModel>();
+            services.AddTransient<ProfileViewModel>();
+            services.AddTransient<LoginViewModel>();
+            services.AddTransient<RegisterViewModel>();
+
+            services.AddTransient<CheckInView>();
+            services.AddTransient<NewsView>();
+            services.AddTransient<ProfileView>();
+            services.AddTransient<LoginPage>();
+            services.AddTransient<RegisterPage>();
+            services.AddTransient<BottomNavigationBar>();
+
+            services.AddSingleton<AppShell>(sp => new AppShell(
+                sp.GetRequiredService<IAuthService>(),
+                sp.GetRequiredService<INavigationService>()
+            ));
+            services.AddSingleton<MainPage>();
         }
     }
 }

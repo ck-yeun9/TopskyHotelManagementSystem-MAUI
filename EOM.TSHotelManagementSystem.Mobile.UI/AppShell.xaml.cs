@@ -1,36 +1,55 @@
-﻿namespace EOM.TSHotelManagementSystem.Mobile.UI
+﻿using EOM.TSHotelManagementSystem.Mobile.Service;
+using System.Windows.Input;
+
+namespace EOM.TSHotelManagementSystem.Mobile.UI
 {
     public partial class AppShell : Shell
     {
-        public static readonly BindableProperty CurrentPageTitleProperty =
-        BindableProperty.Create(nameof(CurrentPageTitle), typeof(string), typeof(AppShell), "酒店管理系统");
+        private readonly IAuthService _authService;
+        private readonly INavigationService _navService;
 
-        public string CurrentPageTitle
-        {
-            get => (string)GetValue(CurrentPageTitleProperty);
-            set => SetValue(CurrentPageTitleProperty, value);
-        }
-
-        public AppShell()
+        public AppShell(IAuthService authService, INavigationService navService)
         {
             InitializeComponent();
-            BindingContext = this;
-            RegisterRoutes();
+
+            _authService = authService;
+            _navService = navService;
+
+            InitLogoutCommand();
 
             this.Navigated += OnNavigated;
         }
 
-        private void OnNavigated(object sender, ShellNavigatedEventArgs e)
+        private void InitLogoutCommand()
         {
-            if (CurrentPage != null)
+            LogoutCommand = new Command(async () => {
+                _authService?.ClearToken();
+                await Current.GoToAsync($"//{nameof(LoginPage)}");
+            });
+        }
+
+        private async void OnNavigated(object sender, ShellNavigatedEventArgs e)
+        {
+            if (e.Current.Location.OriginalString.Contains(nameof(LoginPage)))
+                return;
+
+            await Task.Delay(300);
+
+            if (!_authService.HasValidToken())
             {
-                CurrentPageTitle = CurrentPage.Title;
+                await Current.GoToAsync($"//{nameof(LoginPage)}");
             }
         }
 
-        private void RegisterRoutes()
+        public ICommand LogoutCommand { get; private set; }
+
+        public void UpdateTitle(string title)
         {
-            Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
+            if (BindingContext is MainPageViewModel vm)
+            {
+                vm.CurrentTitle = title;
+            }
         }
+
     }
 }

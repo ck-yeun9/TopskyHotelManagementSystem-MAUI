@@ -6,9 +6,14 @@
         <StackLayout Padding="20" Spacing="20">
             <Frame Padding="15" CornerRadius="10" BorderColor="LightGray">
                 <StackLayout Spacing="10">
-                    <Image Source="profile_placeholder.png" HeightRequest="80" WidthRequest="80" HorizontalOptions="Center" />
-                    <Label Text="{Binding UserName}" FontSize="20" HorizontalOptions="Center" />
-                    <Label Text="{Binding Position}" FontSize="14" HorizontalOptions="Center" />
+                    <Image Source="dotnet_bot.png" HeightRequest="80" WidthRequest="80" HorizontalOptions="Center" />
+                    <Label Text="{Binding UserName}" FontSize="20" HorizontalOptions="Center" TextColor="Black"/>
+                    <Label Text="{Binding UserLevel}" FontSize="14" HorizontalOptions="Center" TextColor="Black" />
+                    <Label Text="个人中心" FontSize="14" TextColor="Blue" HorizontalOptions="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding NavigateToPersonalCenterCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
                 </StackLayout>
             </Frame>
 

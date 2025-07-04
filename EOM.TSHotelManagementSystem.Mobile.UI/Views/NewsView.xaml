@@ -5,9 +5,9 @@
 
     <Grid>
         <RefreshView x:Name="RefreshContainer"
-             IsRefreshing="{Binding IsRefreshing}"
-             Command="{Binding RefreshCommand}"
-             RefreshColor="{AppThemeBinding Light=#FF5722, Dark=#FF9B6A}">
+                     IsRefreshing="{Binding IsRefreshing}"
+                     Command="{Binding RefreshCommand}"
+                     RefreshColor="{AppThemeBinding Light=#FF5722, Dark=#FF9B6A}">
             <CollectionView x:Name="NewsCollection"
                             ItemsSource="{Binding NewsItems}" 
                             SelectionMode="None"
@@ -15,12 +15,8 @@
                             EmptyView="暂无新闻数据">
 
                 <CollectionView.Header>
-                    <StackLayout Padding="0,15">
-                        <Label Text="最新资讯" 
-                               FontSize="20" 
-                               FontAttributes="Bold" 
-                               TextColor="{AppThemeBinding Light=#212121, Dark=White}"
-                               HorizontalOptions="Center"/>
+                    <StackLayout Padding="10" HorizontalOptions="Fill">
+                        <Label Text="{Binding PageTitle, FallbackValue='新闻资讯'}" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center" />
                     </StackLayout>
                 </CollectionView.Header>
 

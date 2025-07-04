@@ -1,26 +1,27 @@
-using static System.Collections.Specialized.NameObjectCollectionBase;
 
 namespace EOM.TSHotelManagementSystem.Mobile.UI;
 
 public partial class NewsView : ContentView
 {
-    public NewsView()
+    private readonly NewsViewModel _viewModel;
+    public NewsView(NewsViewModel viewModel)
     {
-        InitializeComponent(); 
-        
-        var viewModel = App.Services.GetRequiredService<NewsViewModel>();
+        InitializeComponent();
 
-        BindingContext = viewModel;
-
-        if (viewModel.NewsItems.Count == 0 && !viewModel.IsRefreshing && !viewModel.IsInitializing)
-        {
-            _ = viewModel.LoadNewsAsync();
-            viewModel.IsInitializing = true;
-        }
+        BindingContext = _viewModel = viewModel;
 
         if (NewsCollection != null)
         {
             NewsCollection.Scrolled += OnNewsCollectionScrolled;
+        }
+    }
+
+    protected override void OnHandlerChanged()
+    {
+        base.OnHandlerChanged();
+        if (Handler != null && BindingContext is NewsViewModel vm)
+        {
+            _ = vm.LoadNewsAsync();
         }
     }
 

@@ -1,16 +1,26 @@
-﻿namespace EOM.TSHotelManagementSystem.Mobile.UI
+﻿using EOM.TSHotelManagementSystem.Mobile.Service;
+
+namespace EOM.TSHotelManagementSystem.Mobile.UI
 {
     public partial class App : Application
     {
-        public static IServiceProvider Services { get; private set; }
 
         public App()
         {
             InitializeComponent();
 
-            var mauiApp = MauiProgram.CreateMauiApp();
-            Services = mauiApp.Services;
-            MainPage = Services.GetService<AppShell>();
+            var serviceProvider = MauiProgram.Services;
+
+            var authService = serviceProvider.GetRequiredService<IAuthService>();
+
+            if (authService.HasValidToken())
+            {
+                MainPage = serviceProvider.GetRequiredService<AppShell>();
+            }
+            else
+            {
+                MainPage = new NavigationPage(serviceProvider.GetRequiredService<LoginPage>());
+            }
         }
     }
 }

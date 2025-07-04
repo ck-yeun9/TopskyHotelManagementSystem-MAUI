@@ -30,15 +30,19 @@ public partial class BottomNavigationBar : Grid, INotifyPropertyChanged
         }
     }
 
+    public event EventHandler<string> TabSelected;
+
+    private void OnTabTapped(string tabName)
+    {
+        TabSelected?.Invoke(this, tabName);
+    }
+
     public BottomNavigationBar()
     {
         InitializeComponent();
         UpdateActiveTab(ActiveTab);
 
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            SetupGestures();
-        });
+        SetupGestures();
     }
 
     private void SetupGestures()
@@ -53,21 +57,6 @@ public partial class BottomNavigationBar : Grid, INotifyPropertyChanged
         var tapGesture = new TapGestureRecognizer();
         tapGesture.Tapped += (s, e) => OnTabTapped(tabName);
         view.GestureRecognizers.Add(tapGesture);
-    }
-
-    private void OnTabTapped(string tabName)
-    {
-        if (BindingContext is MainPageViewModel viewModel)
-        {
-            viewModel.ActiveTab = tabName;
-        }
-        else if (App.Current?.MainPage is MainPage mainPage)
-        {
-            if (mainPage.BindingContext is MainPageViewModel vm)
-            {
-                vm.ActiveTab = tabName;
-            }
-        }
     }
 
     public void UpdateActiveTab(string tabName)
