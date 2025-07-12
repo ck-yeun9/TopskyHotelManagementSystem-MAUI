@@ -99,7 +99,7 @@ EOM.TSHotelManagementSystem.Mobile
 **下载并安装.NET 8及以上SDK版本。**
 **下载并安装Microsoft Visual Studio Professional 2022及以上版本，并通过下载Zip包解压，打开.sln后缀格式文件运行。**
 
-## License Information
+# License Information
 This project is licensed under the MIT License - see [LICENSE](LICENSE) file.
 
 Contains third-party components licensed under Apache 2.0:
