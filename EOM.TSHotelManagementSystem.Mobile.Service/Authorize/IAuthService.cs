@@ -2,13 +2,14 @@
 {
     public interface IAuthService
     {
-        bool HasValidToken();
+        Task<bool> HasValidTokenAsync();
         Task<bool> LoginAsync(string username, string password);
         Task<bool> RegisterAsync(string username, string email, string password);
-        void SaveToken(string token, DateTime expiration);
-        void ClearToken();
-        Task<bool> ValidateTokenAsync();
-        void RefreshToken();
-        string GetAccessToken();
+        Task SaveAccessTokenAsync(string token, DateTime expiration);
+        Task SaveRefreshTokenAsync(string token);
+        Task ClearTokenAsync();
+        Task RefreshTokenAsync();
+        Task<bool> ValidateAccessTokenAsync();
+        Task<string> GetAccessToken();
     }
 }

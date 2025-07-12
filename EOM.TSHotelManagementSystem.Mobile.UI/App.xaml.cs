@@ -13,7 +13,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 
             var authService = serviceProvider.GetRequiredService<IAuthService>();
 
-            if (authService.HasValidToken())
+            if (Task.Run(() => authService.HasValidTokenAsync()).Result)
             {
                 MainPage = serviceProvider.GetRequiredService<AppShell>();
             }

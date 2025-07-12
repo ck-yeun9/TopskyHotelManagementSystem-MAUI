@@ -1,6 +1,7 @@
 <Grid xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
       xmlns:controls="clr-namespace:EOM.TSHotelManagementSystem.Mobile.UI"
+      xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
       x:Class="EOM.TSHotelManagementSystem.Mobile.UI.BottomNavigationBar"
       BackgroundColor="#f8f8f8"
       HeightRequest="60"
@@ -11,12 +12,12 @@
              VerticalOptions="Center"
              Spacing="4"
              x:Name="NewsLayout" >
-        <Label FontFamily="IconFilled"
+        <Label FontFamily="MaterialOutlinedFilled"
                Text="newspaper"
                FontSize="24"
                VerticalOptions="Center"
                HorizontalOptions="Center"
-               x:Name="NewsIcon"/>
+               x:Name="NewsIcon" />
         <Label Text="新闻" 
                FontSize="12"
                x:Name="NewsLabel"/>
@@ -27,7 +28,7 @@
              VerticalOptions="Center"
              Spacing="4"
              x:Name="CheckInLayout">
-        <Label FontFamily="IconFilled"
+        <Label FontFamily="MaterialOutlinedFilled"
                Text="luggage"
                FontSize="24"
                VerticalOptions="Center"
@@ -43,7 +44,7 @@
              VerticalOptions="Center"
              Spacing="4"
              x:Name="ProfileLayout">
-        <Label FontFamily="IconFilled"
+        <Label FontFamily="MaterialOutlinedFilled"
                Text="person"
                FontSize="24"
                VerticalOptions="Center"

@@ -23,7 +23,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         private void InitLogoutCommand()
         {
             LogoutCommand = new Command(async () => {
-                _authService?.ClearToken();
+                await _authService.ClearTokenAsync();
                 await Current.GoToAsync($"//{nameof(LoginPage)}");
             });
         }
@@ -33,11 +33,13 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             if (e.Current.Location.OriginalString.Contains(nameof(LoginPage)))
                 return;
 
-            await Task.Delay(300);
-
-            if (!_authService.HasValidToken())
+            if (!e.Previous?.Location.OriginalString.Contains(nameof(LoginPage)) ?? true)
             {
-                await Current.GoToAsync($"//{nameof(LoginPage)}");
+                if (!await _authService.ValidateAccessTokenAsync())
+                {
+                    await Current.GoToAsync($"//{nameof(LoginPage)}");
+                    return;
+                }
             }
         }
 

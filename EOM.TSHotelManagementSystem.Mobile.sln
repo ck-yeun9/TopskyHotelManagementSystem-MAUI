@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EOM.TSHotelManagementSystem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EOM.TSHotelManagementSystem.Mobile.Contract", "EOM.TSHotelManagementSystem.Mobile.Contract\EOM.TSHotelManagementSystem.Mobile.Contract.csproj", "{E11F3059-7C57-4A97-BC86-32C692B6B0C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EOM.TSHotelManagementSystem.Mobile.Common.Utility", "EOM.TSHotelManagementSystem.Mobile.Common.Utility\EOM.TSHotelManagementSystem.Mobile.Common.Utility.csproj", "{A70B6A61-6A69-42DA-91F8-52C8D00B9C58}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{E11F3059-7C57-4A97-BC86-32C692B6B0C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E11F3059-7C57-4A97-BC86-32C692B6B0C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E11F3059-7C57-4A97-BC86-32C692B6B0C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A70B6A61-6A69-42DA-91F8-52C8D00B9C58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A70B6A61-6A69-42DA-91F8-52C8D00B9C58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A70B6A61-6A69-42DA-91F8-52C8D00B9C58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A70B6A61-6A69-42DA-91F8-52C8D00B9C58}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

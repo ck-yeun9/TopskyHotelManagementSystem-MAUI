@@ -47,6 +47,13 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             }
         }
 
+        private bool _isbusy;
+        public bool IsBusy
+        {
+            get => _isbusy;
+            set => SetField(ref _isbusy, value);
+        }
+
         public bool HasErrorMessage => !string.IsNullOrWhiteSpace(ErrorMessage);
 
         public ICommand LoginCommand { get; }
@@ -57,10 +64,12 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             Username = string.Empty;
             Password = string.Empty;
             ErrorMessage = string.Empty;
+            IsBusy = false;
         }
 
         private async Task LoginAsync()
         {
+            IsBusy = true;
             if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
             {
                 ErrorMessage = "用户名和密码不能为空";
@@ -80,6 +89,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             {
                 ErrorMessage = "登录失败，请检查用户名和密码";
             }
+            IsBusy = false;
         }
 
         private async void NavigateToRegister()

@@ -19,7 +19,11 @@
 
 1. ##### MAUI——.NET MAUI is the .NET Multi-platform App UI, a framework for building native device applications spanning mobile, tablet, and desktop.[MAUI,MIT License](https://github.com/dotnet/maui)
 
-1. ##### Plugin.Toolkit.Fonts.MaterialIcons.[Plugin.Toolkit.Fonts.MaterialIcons,Unknown License](https://github.com/andyapin/Plugin.Toolkit.Fonts.MaterialIcons)
+1. ##### UraniumUI——Uranium is a Free & Open-Source UI Kit for MAUI.[UraniumUI,Apache-2.0 License](https://github.com/enisn/UraniumUI)
+
+1. **Plugin.Fingerprint——Xamarin and MvvMCross plugin for authenticate a user via fingerprint sensor.[Plugin.Fingerprint,MS-PL Licenses](https://github.com/smstuebe/xamarin-fingerprint)**
+
+1. **RestSharp——Simple REST and HTTP API Client for .NET。[RestSharp,Apache-2.0 License](https://github.com/restsharp/RestSharp)**
 
 
 # :exclamation: Project Description:
@@ -96,6 +100,14 @@ EOM.TSHotelManagementSystem.Mobile
 
 **Download and install .NET SDK version 8 or above.**
 **Download and install Microsoft Visual Studio Professional 2022 or above, unzip the downloaded Zip package, and run the .sln file.**
+
+## License Information
+
+This project is licensed under the MIT License - see [LICENSE](LICENSE) file.
+
+Contains third-party components licensed under Apache 2.0:
+
+- See [licenses/THIRD-PARTY-NOTICE.md](licenses/THIRD-PARTY-NOTICE.md)
 
 
 

@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"  
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"  
-             xmlns:controls="clr-namespace:EOM.TSHotelManagementSystem.Mobile.UI"  
+             xmlns:controls="clr-namespace:EOM.TSHotelManagementSystem.Mobile.UI"
              x:Class="EOM.TSHotelManagementSystem.Mobile.UI.MainPage"
-             Title="TopSky酒店">
+             Title="{Binding CurrentTitle}">
     <Grid RowDefinitions="*,Auto">
-        <Frame Grid.Row="0" CornerRadius="0" Padding="0">
-            <ContentView x:Name="ContentHost" />
-        </Frame>
+        <ContentView x:Name="ContentHost" Grid.Row="0" />
 
         <controls:BottomNavigationBar 
             Grid.Row="1" 

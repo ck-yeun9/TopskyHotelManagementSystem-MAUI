@@ -12,7 +12,6 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 
         private string _activeTab = "checkin";
         private string _appName = "TopSky酒店";
-        private string _currentTitle = "TopSky酒店";
 
         public MainPageViewModel(
             INavigationService navigationService,
@@ -28,7 +27,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         {
             try
             {
-                if (!_authService.HasValidToken() || !await _authService.ValidateTokenAsync())
+                if (!await _authService.HasValidTokenAsync() || !await _authService.ValidateAccessTokenAsync())
                 {
                     await _navigationService.NavigateToAsync($"//{nameof(LoginPage)}");
                 }
@@ -58,11 +57,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             }
         }
 
-        public string CurrentTitle
-        {
-            get => _currentTitle;
-            set => SetField(ref _currentTitle, value);
-        }
+        public string CurrentTitle = "TopSky酒店";
 
         private void UpdateTitle()
         {

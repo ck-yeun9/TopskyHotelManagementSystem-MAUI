@@ -20,7 +20,11 @@
 
 1. ##### MAUI——.NET MAUI is the .NET Multi-platform App UI, a framework for building native device applications spanning mobile, tablet, and desktop.[MAUI,MIT开源协议](https://github.com/dotnet/maui)
 
-1. ##### Plugin.Toolkit.Fonts.MaterialIcons.[Plugin.Toolkit.Fonts.MaterialIcons,未标明开源协议](https://github.com/andyapin/Plugin.Toolkit.Fonts.MaterialIcons)
+1. ##### UraniumUI——Uranium is a Free & Open-Source UI Kit for MAUI.[UraniumUI,Apache-2.0 开源协议](https://github.com/enisn/UraniumUI)
+
+1. **Plugin.Fingerprint——Xamarin and MvvMCross plugin for authenticate a user via fingerprint sensor.[Plugin.Fingerprint,MS-PL 开源协议](https://github.com/smstuebe/xamarin-fingerprint)**
+
+1. **RestSharp——Simple REST and HTTP API Client for .NET。[RestSharp,Apache-2.0开源协议](https://github.com/restsharp/RestSharp)**
 
 
 #  :exclamation: 本项目说明：
@@ -95,6 +99,10 @@ EOM.TSHotelManagementSystem.Mobile
 **下载并安装.NET 8及以上SDK版本。**
 **下载并安装Microsoft Visual Studio Professional 2022及以上版本，并通过下载Zip包解压，打开.sln后缀格式文件运行。**
 
+## License Information
+This project is licensed under the MIT License - see [LICENSE](LICENSE) file.
 
+Contains third-party components licensed under Apache 2.0:
+- See [licenses/THIRD-PARTY-NOTICE.md](licenses/THIRD-PARTY-NOTICE.md)
 
 [![java-and-net/TopskyHotelManagementSystem-MAUI](https://gitee.com/java-and-net/topsky-hotel-management-system-maui/widgets/widget_card.svg?colors=4183c4,ffffff,ffffff,e3e9ed,666666,9b9b9b)](https://gitee.com/java-and-net/topsky-hotel-management-system-maui)

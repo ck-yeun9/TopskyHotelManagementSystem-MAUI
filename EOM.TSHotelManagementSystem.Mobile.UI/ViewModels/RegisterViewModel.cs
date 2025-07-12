@@ -50,6 +50,13 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             set => SetField(ref _confirmPassword, value);
         }
 
+        private bool _isbusy;
+        public bool IsBusy
+        {
+            get => _isbusy;
+            set => SetField(ref _isbusy, value);
+        }
+
         private string _errorMessage;
         public string ErrorMessage
         {
@@ -72,11 +79,14 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             Email = string.Empty;
             Password = string.Empty;
             ConfirmPassword = string.Empty;
+            IsBusy = false;
             ErrorMessage = string.Empty;
         }
 
         private async Task RegisterAsync()
         {
+            IsBusy = true;
+
             if (string.IsNullOrWhiteSpace(Username) ||
                 string.IsNullOrWhiteSpace(Email) ||
                 string.IsNullOrWhiteSpace(Password) ||
@@ -108,6 +118,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             {
                 ErrorMessage = "注册失败，请重试";
             }
+            IsBusy = false;
         }
 
         private void NavigateToLogin()

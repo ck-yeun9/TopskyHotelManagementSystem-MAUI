@@ -17,9 +17,9 @@
                 </StackLayout>
             </Frame>
 
-            <Button Text="个人信息设置" BackgroundColor="#3F51B5" TextColor="White" />
-            <Button Text="系统设置" BackgroundColor="#607D8B" TextColor="White" />
-            <Button Text="退出登录" BackgroundColor="#F44336" TextColor="White" />
+            <Button StyleClass="OutlinedButton" Text="个人信息设置" />
+            <Button StyleClass="OutlinedButton" Text="系统设置" />
+            <Button StyleClass="OutlinedButton" Text="退出登录" />
         </StackLayout>
     </ScrollView>
 </ContentView>

@@ -1,6 +1,6 @@
 ﻿using EOM.TSHotelManagementSystem.Mobile.Service;
 using Microsoft.Extensions.Logging;
-using Plugin.Toolkit.Fonts.MaterialIcons;
+using UraniumUI;
 
 namespace EOM.TSHotelManagementSystem.Mobile.UI
 {
@@ -14,11 +14,13 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseUraniumUI()
+                .UseUraniumUIMaterial()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                    fonts.AddMaterialIconsFonts();
+                    fonts.AddMaterialSymbolsFonts();
                 });
 
 #if DEBUG

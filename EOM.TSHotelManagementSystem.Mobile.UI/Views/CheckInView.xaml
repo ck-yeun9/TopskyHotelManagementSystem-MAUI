@@ -4,10 +4,6 @@
              x:Class="EOM.TSHotelManagementSystem.Mobile.UI.CheckInView">
     <Grid>
         <StackLayout Padding="20">
-            <Label Text="入住管理" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center" />
-            <Button Text="办理入住" BackgroundColor="#4CAF50" TextColor="White" Margin="0,20" />
-            <Button Text="查看房间状态" BackgroundColor="#2196F3" TextColor="White" Margin="0,10" />
-            <Button Text="房费结算" BackgroundColor="#FF9800" TextColor="White" Margin="0,10" />
         </StackLayout>
     </Grid>
 </ContentView>
