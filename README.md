@@ -14,7 +14,7 @@
 
 #  :exclamation: 重要说明：
 
-**项目基于.NET 8的MAUI进行开发，目前仅考虑安卓端，其他暂不具备测试条件**
+**项目基于.NET 10的MAUI进行开发，目前仅考虑安卓端，其他暂不具备测试条件**
 
 #  :pray: 引用的开源项目：
 
@@ -51,9 +51,9 @@
 
 开发平台：.Net
 
-开发框架：.Net 8
+开发框架：.Net 10
 
-开发技术：.NET 8 MAUI
+开发技术：.NET 10 MAUI
 
 #  :open_file_folder: 系统结构：
 
@@ -96,7 +96,7 @@ EOM.TSHotelManagementSystem.Mobile
 
 #  :computer: 项目运行部署：
 
-**下载并安装.NET 8及以上SDK版本。**
+**下载并安装.NET 10及以上SDK版本。**
 **下载并安装Microsoft Visual Studio Professional 2022及以上版本，并通过下载Zip包解压，打开.sln后缀格式文件运行。**
 
 # License Information

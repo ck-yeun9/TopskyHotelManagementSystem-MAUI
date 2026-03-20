@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
+using Microsoft.Maui.Storage;
 
 namespace EOM.TSHotelManagementSystem.Mobile.Service
 {

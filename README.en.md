@@ -13,7 +13,7 @@
 
 # :exclamation: Important Notice:
 
-**The project is developed using .NET 8 MAUI and currently focuses exclusively on the Android platform, as other platforms are not available for testing at this stage.**
+**The project is developed using .NET 10 MAUI and currently focuses exclusively on the Android platform, as other platforms are not available for testing at this stage.**
 
 # :pray: Open Source Projects Referenced:
 
@@ -54,9 +54,9 @@ Programming Languages: C# language, T-SQL language
 
 Development Platform: .Net
 
-Development Framework: .Net 8
+Development Framework: .Net 10
 
-Development Technology: .NET 8 MAUI
+Development Technology: .NET 10 MAUI
 
 # :open_file_folder: System Structure:
 

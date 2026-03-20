@@ -6,7 +6,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Web;
-using Xamarin.Essentials;
+using Microsoft.Maui.Networking;
+using Microsoft.Maui.Storage;
 
 namespace EOM.TSHotelManagementSystem.Mobile.Service
 {
