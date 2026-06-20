@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+             x:Class="EOM.TSHotelManagementSystem.Mobile.UI.PersonalInfoView"
+             Title="个人信息">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+            <Frame Padding="15" CornerRadius="10" BorderColor="LightGray">
+                <VerticalStackLayout Spacing="10">
+                    <Image Source="{Binding PhotoUrl, FallbackValue='dotnet_bot.png'}"
+                           HeightRequest="80" WidthRequest="80" HorizontalOptions="Center"
+                           Aspect="AspectFill"/>
+                    <Label Text="{Binding DisplayName}" FontSize="20" HorizontalOptions="Center"/>
+                    <Label Text="{Binding Account}" FontSize="14" HorizontalOptions="Center" TextColor="Gray"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Label Text="账号信息" FontSize="18" FontAttributes="Bold"/>
+            <Frame Padding="15" CornerRadius="10" BorderColor="LightGray">
+                <VerticalStackLayout Spacing="12">
+                    <Grid ColumnDefinitions="80,*" RowDefinitions="auto,auto">
+                        <Label Text="昵称" VerticalOptions="Center" TextColor="Gray"/>
+                        <Label Grid.Column="1" Text="{Binding DisplayName}" VerticalOptions="Center"/>
+                        <Label Grid.Row="1" Text="账号" VerticalOptions="Center" TextColor="Gray"/>
+                        <Label Grid.Row="1" Grid.Column="1" Text="{Binding Account}" VerticalOptions="Center"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Button StyleClass="OutlinedButton" Text="修改密码"
+                    Command="{Binding TogglePasswordSectionCommand}"/>
+
+            <Frame Padding="15" CornerRadius="10" BorderColor="LightGray"
+                   IsVisible="{Binding IsChangingPassword}">
+                <VerticalStackLayout Spacing="14">
+                    <Label Text="修改密码" FontSize="18" FontAttributes="Bold"/>
+                    <material:TextField Title="当前密码" IsPassword="True"
+                                        Text="{Binding CurrentPassword}"/>
+                    <material:TextField Title="新密码" IsPassword="True"
+                                        Text="{Binding NewPassword}"/>
+                    <material:TextField Title="确认新密码" IsPassword="True"
+                                        Text="{Binding ConfirmPassword}"/>
+                    <Button Text="确认修改" 
+                            StyleClass="FilledButton"
+                            Command="{Binding ChangePasswordCommand}"
+                            HeightRequest="48"/>
+                    <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Label Text="{Binding StatusMessage}" TextColor="{Binding StatusMessageColor}"
+                   IsVisible="True" LineBreakMode="WordWrap"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,4 +1,4 @@
-﻿using EOM.TSHotelManagementSystem.Mobile.Common.Utility;
+using EOM.TSHotelManagementSystem.Mobile.Common.Utility;
 using RestSharp;
 using System.Diagnostics;
 using System.Text;
@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using Microsoft.Maui.Networking;
 using Microsoft.Maui.Storage;
+using Microsoft.Maui.Devices;
 
 namespace EOM.TSHotelManagementSystem.Mobile.Service
 {
@@ -20,13 +21,15 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
         /// <summary>
         /// WebApi URL
         /// </summary>
-        public const string apiUrl = "https://tshotel-debug.oscode.top/api/";
+        public static string apiUrl => DeviceInfo.Platform == DevicePlatform.Android
+            ? "http://10.0.2.2:63001/api/"
+            : "http://localhost:63001/api/";
 
 #elif RELEASE
         /// <summary>
         /// WebApi URL
         /// </summary>
-        public const string apiUrl = "https://tshotel-api.oscode.top/api/";
+        //public const string apiUrl = "https://tshotel-api.oscode.top/api/";
 #endif
 
         public class IgnoreNullValuesConverter : JsonConverter<object>
@@ -90,7 +93,18 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                     return token;
 
                 token = Preferences.Get(Constant.AccessTokenKey, string.Empty);
-                return token;
+                if (string.IsNullOrEmpty(token))
+                    return string.Empty;
+
+                // 从 Preferences 获取的是加密后的 token，需要解密
+                try
+                {
+                    return System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(token));
+                }
+                catch
+                {
+                    return token;
+                }
             }
             catch (Exception ex)
             {
@@ -283,7 +297,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                 throw;
             }
 
-            return new ResponseMsg() { Message = resultContent };
+            return new ResponseMsg() { StatusCode = (int)rsp.StatusCode, Message = resultContent };
         }
 
         private async Task<ResponseMsg> DoPost(string url, string? jsonParam = null, string? contentType = null, string? referer = null, string? cookie = null, Dictionary<string, string>? dicHeaders = null)
@@ -332,7 +346,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
 
             var responseString = reponse.Content;
 
-            return new ResponseMsg() { Message = responseString };
+            return new ResponseMsg() { StatusCode = (int)reponse.StatusCode, Message = responseString };
         }
 
         private string GetMimeType(string fileName)
@@ -390,7 +404,11 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
 
         private bool CheckNetworkStatus()
         {
+#if DEBUG
+            return Connectivity.NetworkAccess != NetworkAccess.None;
+#else
             return Connectivity.NetworkAccess == NetworkAccess.Internet;
+#endif
         }
     }
 }

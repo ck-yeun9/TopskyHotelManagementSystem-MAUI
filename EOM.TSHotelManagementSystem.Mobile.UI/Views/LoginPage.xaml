@@ -3,24 +3,33 @@
              x:Class="EOM.TSHotelManagementSystem.Mobile.UI.LoginPage"
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
-             Title="登录"
-             BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1C1E}">
+             Title="欢迎使用，请先登录"
+             BackgroundColor="{AppThemeBinding Light=#F5F0FF, Dark=#1C1C1E}">
 
-    <ScrollView>
-        <StackLayout Padding="30" Spacing="25">
-            <Image Source="logo.png" HeightRequest="100" HorizontalOptions="Center"/>
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#F5F0FF" Offset="0.0"/>
+                <GradientStop Color="#E8E0F3" Offset="0.4"/>
+                <GradientStop Color="#DFD8F7" Offset="1.0"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <ScrollView>
+            <StackLayout Padding="30" Spacing="25">
+                <Image Source="logo.png" HeightRequest="100" HorizontalOptions="Center"/>
 
             <material:TextField Title="用户名/电子邮箱"
                    Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Account_circle}}"
-                   Text="{Binding Username}" BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2E}" />
+                   Text="{Binding Username}" BackgroundColor="White" />
 
             <material:TextField Title="密码"
                    Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Password}}"
                    Text="{Binding Password}"
                    IsPassword="True"
-                   BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2E}" />
+                   BackgroundColor="White" />
 
-            <Button Text="登录" StyleClass="OutlinedButton"
+            <Button Text="登录" StyleClass="FilledButton"
                     Command="{Binding LoginCommand}"
                     TextColor="White"
                     HeightRequest="50" />
@@ -30,10 +39,15 @@
                     TextColor="White"
                     HeightRequest="50" />
 
+            <Button Text="先逛逛，稍后登录" StyleClass="TextButton"
+                    Command="{Binding SkipLoginCommand}"
+                    HeightRequest="44" />
+
             <Label Text="{Binding ErrorMessage}" 
                    TextColor="#FF453A" 
                    HorizontalOptions="Center" 
                    IsVisible="{Binding HasErrorMessage}"/>
         </StackLayout>
-    </ScrollView>
+        </ScrollView>
+    </Grid>
 </ContentPage>

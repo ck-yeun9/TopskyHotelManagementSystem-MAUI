@@ -1,9 +1,172 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
              x:Class="EOM.TSHotelManagementSystem.Mobile.UI.CheckInView">
-    <Grid>
-        <StackLayout Padding="20">
-        </StackLayout>
+    <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="0" ColumnDefinitions="*,*,*" BackgroundColor="White" Padding="8,0">
+            <Border Grid.Column="0" 
+                    BackgroundColor="{Binding BookingTabColor}"
+                    StrokeShape="RoundRectangle 8"
+                    Margin="4"
+                    Padding="12,10">
+                <GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding SwitchTabCommand}" CommandParameter="booking" />
+                </GestureRecognizers>
+                <Label Text="房间预订" 
+                       HorizontalOptions="Center"
+                       FontSize="14"
+                       FontAttributes="Bold"
+                       TextColor="{Binding BookingTabTextColor}" />
+            </Border>
+            <Border Grid.Column="1" 
+                    BackgroundColor="{Binding CheckinTabColor}"
+                    StrokeShape="RoundRectangle 8"
+                    Margin="4"
+                    Padding="12,10">
+                <GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding SwitchTabCommand}" CommandParameter="checkin" />
+                </GestureRecognizers>
+                <Label Text="当前入住" 
+                       HorizontalOptions="Center"
+                       FontSize="14"
+                       FontAttributes="Bold"
+                       TextColor="{Binding CheckinTabTextColor}" />
+            </Border>
+            <Border Grid.Column="2" 
+                    BackgroundColor="{Binding HistoryTabColor}"
+                    StrokeShape="RoundRectangle 8"
+                    Margin="4"
+                    Padding="12,10">
+                <GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding SwitchTabCommand}" CommandParameter="history" />
+                </GestureRecognizers>
+                <Label Text="消费记录" 
+                       HorizontalOptions="Center"
+                       FontSize="14"
+                       FontAttributes="Bold"
+                       TextColor="{Binding HistoryTabTextColor}" />
+            </Border>
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="20" Spacing="16">
+                <ContentView IsVisible="{Binding IsBookingTab}">
+                    <VerticalStackLayout Spacing="16">
+                        <Border Padding="16"
+                                Stroke="#E5E7EB"
+                                StrokeShape="RoundRectangle 18"
+                                BackgroundColor="White">
+                            <VerticalStackLayout Spacing="14">
+                                <Label Text="搜索房间" FontSize="18" FontAttributes="Bold" TextColor="#111827" />
+                                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                                    <VerticalStackLayout Spacing="6">
+                                        <Label Text="入住日期" FontSize="13" TextColor="#6B7280" />
+                                        <DatePicker Date="{Binding CheckInDate}" MinimumDate="{Binding Today}" />
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="6">
+                                        <Label Text="离店日期" FontSize="13" TextColor="#6B7280" />
+                                        <DatePicker Date="{Binding CheckOutDate}" MinimumDate="{Binding MinCheckOutDate}" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                                <Button Text="搜索房间" StyleClass="FilledButton" Command="{Binding RefreshAvailableRoomsCommand}" HeightRequest="44" />
+                                <ActivityIndicator IsVisible="{Binding IsLoadingRooms}" IsRunning="{Binding IsLoadingRooms}" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Label Text="可选房间" FontSize="16" FontAttributes="Bold" TextColor="#111827" />
+                        <CollectionView ItemsSource="{Binding AvailableRooms}" SelectedItem="{Binding SelectedRoom, Mode=TwoWay}" SelectionMode="Single" EmptyView="暂无可选房间">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,12" Padding="16" Stroke="#E5E7EB" StrokeShape="RoundRectangle 18" BackgroundColor="White">
+                                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                                            <Label Text="{Binding RoomName}" FontSize="16" FontAttributes="Bold" TextColor="#111827" />
+                                            <Label Grid.Column="1" Text="{Binding PricePerNight, StringFormat='¥{0:F0}/天'}" FontSize="16" FontAttributes="Bold" TextColor="#EA580C" />
+                                            <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Description}" FontSize="12" TextColor="#6B7280" Margin="0,4,0,0" />
+                                            <Label Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding RemainingRooms, StringFormat='剩余 {0} 间'}" FontSize="13" FontAttributes="Bold" TextColor="#15803D" Margin="0,6,0,0" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                        <Border Padding="16" Stroke="#E5E7EB" StrokeShape="RoundRectangle 18" BackgroundColor="#F9FAFB">
+                            <VerticalStackLayout Spacing="8">
+                                <Label Text="预估摘要" FontSize="16" FontAttributes="Bold" TextColor="#111827" />
+                                <Label Text="{Binding SelectedRoomSummary}" FontSize="13" TextColor="#374151" />
+                                <Label Text="{Binding StaySummary}" FontSize="12" TextColor="#6B7280" />
+                                <Label Text="{Binding PriceSummary}" FontSize="15" FontAttributes="Bold" TextColor="#0F766E" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Padding="16" Stroke="#E5E7EB" StrokeShape="RoundRectangle 18" BackgroundColor="White">
+                            <VerticalStackLayout Spacing="12">
+                                <Label Text="入住人信息" FontSize="16" FontAttributes="Bold" TextColor="#111827" />
+                                <material:TextField Title="联系人姓名" Text="{Binding ContactName}" />
+                                <material:TextField Title="手机号码" Keyboard="Telephone" Text="{Binding PhoneNumber}" />
+                                <Button Text="提交预订" StyleClass="FilledButton" Command="{Binding SubmitReservationCommand}" HeightRequest="44" />
+                                <ActivityIndicator IsVisible="{Binding IsSubmitting}" IsRunning="{Binding IsSubmitting}" />
+                                <Label Text="{Binding StatusMessage}" TextColor="{Binding StatusMessageColor}" IsVisible="{Binding HasStatusMessage}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+                </ContentView>
+
+                <ContentView IsVisible="{Binding IsCheckinTab}">
+                    <VerticalStackLayout Spacing="16">
+                        <Border Padding="20" Stroke="#DBEAFE" StrokeShape="RoundRectangle 18" BackgroundColor="#EFF6FF">
+                            <VerticalStackLayout Spacing="12">
+                                <Label Text="当前入住状态" FontSize="18" FontAttributes="Bold" TextColor="#1E40AF" />
+                                <Label Text="{Binding CurrentCheckinMessage}" FontSize="14" TextColor="#3B82F6" />
+                            </VerticalStackLayout>
+                        </Border>
+                        <CollectionView ItemsSource="{Binding CurrentCheckins}" EmptyView="您当前没有正在入住的房间">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,12" Padding="16" Stroke="#DBEAFE" StrokeShape="RoundRectangle 18" BackgroundColor="White">
+                                        <VerticalStackLayout Spacing="8">
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <Label Text="{Binding RoomName}" FontSize="16" FontAttributes="Bold" TextColor="#111827" />
+                                                <Label Grid.Column="1" Text="{Binding Status}" FontSize="12" TextColor="#3B82F6" />
+                                            </Grid>
+                                            <Label Text="{Binding RoomNumber, StringFormat='房号: {0}'}" FontSize="13" TextColor="#6B7280" />
+                                            <Label Text="{Binding CheckInTime, StringFormat='入住时间: {0:yyyy-MM-dd HH:mm}'}" FontSize="13" TextColor="#6B7280" />
+                                            <Label Text="{Binding TotalAmount, StringFormat='当前消费: ¥{0:F0}'}" FontSize="14" FontAttributes="Bold" TextColor="#EA580C" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </ContentView>
+
+                <ContentView IsVisible="{Binding IsHistoryTab}">
+                    <VerticalStackLayout Spacing="16">
+                        <Border Padding="20" Stroke="#D1FAE5" StrokeShape="RoundRectangle 18" BackgroundColor="#ECFDF5">
+                            <VerticalStackLayout Spacing="12">
+                                <Label Text="消费记录" FontSize="18" FontAttributes="Bold" TextColor="#065F46" />
+                                <Label Text="查看您的历史入住和消费记录" FontSize="13" TextColor="#059669" />
+                            </VerticalStackLayout>
+                        </Border>
+                        <CollectionView ItemsSource="{Binding ConsumptionHistory}" EmptyView="暂无消费记录">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,12" Padding="16" Stroke="#E5E7EB" StrokeShape="RoundRectangle 18" BackgroundColor="White">
+                                        <VerticalStackLayout Spacing="6">
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <Label Text="{Binding RoomName}" FontSize="15" FontAttributes="Bold" TextColor="#111827" />
+                                                <Label Grid.Column="1" Text="{Binding TotalAmount, StringFormat='¥{0:F0}'}" FontSize="15" FontAttributes="Bold" TextColor="#EA580C" />
+                                            </Grid>
+                                            <Label Text="{Binding DateRange}" FontSize="12" TextColor="#6B7280" />
+                                            <Label Text="{Binding StatusText}" FontSize="12" TextColor="{Binding StatusColor}" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </ContentView>
+            </VerticalStackLayout>
+        </ScrollView>
     </Grid>
 </ContentView>

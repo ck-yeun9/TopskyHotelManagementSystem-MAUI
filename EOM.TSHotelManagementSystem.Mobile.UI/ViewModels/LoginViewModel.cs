@@ -1,4 +1,4 @@
-﻿using EOM.TSHotelManagementSystem.Mobile.Service;
+using EOM.TSHotelManagementSystem.Mobile.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +20,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 
             LoginCommand = new Command(async () => await LoginAsync());
             NavigateToRegisterCommand = new Command(NavigateToRegister);
+            SkipLoginCommand = new Command(async () => await SkipLoginAsync());
         }
 
         private string _username;
@@ -58,6 +59,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 
         public ICommand LoginCommand { get; }
         public ICommand NavigateToRegisterCommand { get; }
+        public ICommand SkipLoginCommand { get; }
 
         public void ResetState()
         {
@@ -73,6 +75,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
             {
                 ErrorMessage = "用户名和密码不能为空";
+                IsBusy = false;
                 return;
             }
 
@@ -80,16 +83,18 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 
             if (success)
             {
-                Application.Current.MainPage = MauiProgram.Services.GetRequiredService<AppShell>();
-
-                await MauiProgram.Services.GetRequiredService<INavigationService>()
-                    .NavigateToAsync($"//{nameof(MainPage)}");
+                await Shell.Current.GoToAsync($"//{nameof(MainPage)}");
             }
             else
             {
                 ErrorMessage = "登录失败，请检查用户名和密码";
             }
             IsBusy = false;
+        }
+
+        private async Task SkipLoginAsync()
+        {
+            await Shell.Current.GoToAsync($"//{nameof(MainPage)}");
         }
 
         private async void NavigateToRegister()

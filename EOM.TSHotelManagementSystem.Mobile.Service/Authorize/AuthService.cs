@@ -1,4 +1,4 @@
-﻿using EOM.TSHotelManagementSystem.Mobile.Common.Utility;
+using EOM.TSHotelManagementSystem.Mobile.Common.Utility;
 using EOM.TSHotelManagementSystem.Mobile.Contract;
 using Plugin.Fingerprint;
 using Plugin.Fingerprint.Abstractions;
@@ -41,13 +41,21 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                     })
                 );
 
-                var sourceResponse = HttpHelper.JsonToModel<SingleOutputDto<ReadCustomerAccountOutputDto>>(response.Message!);
-
-                if (sourceResponse.StatusCode == 200)
+                if (string.IsNullOrWhiteSpace(response?.Message))
                 {
-                    await SaveAccessTokenAsync(sourceResponse.Source.UserToken, DateTime.Now.AddDays(7));
+                    Debug.WriteLine("LoginAsync: 服务器无响应");
+                    return false;
+                }
+
+                var sourceResponse = HttpHelper.JsonToModel<SingleOutputDto<ReadCustomerAccountOutputDto>>(response.Message);
+
+                if (sourceResponse?.Success == true && sourceResponse.Data?.UserToken != null)
+                {
+                    await SaveAccessTokenAsync(sourceResponse.Data.UserToken, DateTime.Now.AddDays(7));
                     return true;
                 }
+
+                Debug.WriteLine($"LoginAsync: 登录失败 Code={sourceResponse?.Code} Message={sourceResponse?.Message}");
             }
             catch (Exception ex)
             {
@@ -70,13 +78,21 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                     })
                 );
 
-                var sourceResponse = HttpHelper.JsonToModel<SingleOutputDto<ReadCustomerAccountOutputDto>>(response.Message!);
-
-                if (sourceResponse.StatusCode == 200)
+                if (string.IsNullOrWhiteSpace(response?.Message))
                 {
-                    await SaveAccessTokenAsync(sourceResponse.Source.UserToken, DateTime.Now.AddDays(7));
+                    Debug.WriteLine("RegisterAsync: 服务器无响应");
+                    return false;
+                }
+
+                var sourceResponse = HttpHelper.JsonToModel<SingleOutputDto<ReadCustomerAccountOutputDto>>(response.Message);
+
+                if (sourceResponse?.Success == true && sourceResponse.Data?.UserToken != null)
+                {
+                    await SaveAccessTokenAsync(sourceResponse.Data.UserToken, DateTime.Now.AddDays(7));
                     return true;
                 }
+
+                Debug.WriteLine($"RegisterAsync: 注册失败 Code={sourceResponse?.Code} Message={sourceResponse?.Message}");
             }
             catch (Exception ex)
             {
@@ -161,22 +177,22 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                     json: refreshToken
                 );
 
-                if (response.StatusCode == 200)
+                if (!string.IsNullOrWhiteSpace(response?.Message))
                 {
-                    var newToken = JsonSerializer.Deserialize<string>(response.Message!);
-                    if (!string.IsNullOrEmpty(newToken))
+                    var result = HttpHelper.JsonToModel<SingleOutputDto<string>>(response.Message);
+                    if (result?.Success == true && !string.IsNullOrEmpty(result.Data))
                     {
-                        await SaveAccessTokenAsync(newToken, DateTime.Now.AddDays(7));
+                        await SaveAccessTokenAsync(result.Data, DateTime.Now.AddDays(7));
                         Debug.WriteLine("令牌刷新成功");
                     }
                     else
                     {
-                        Debug.WriteLine("刷新令牌返回空值");
+                        Debug.WriteLine($"刷新令牌失败: {result?.Message}");
                     }
                 }
                 else
                 {
-                    Debug.WriteLine($"刷新令牌失败，状态码: {response.StatusCode}");
+                    Debug.WriteLine("刷新令牌请求失败: 服务器无响应");
                 }
             }
             catch (Exception ex)

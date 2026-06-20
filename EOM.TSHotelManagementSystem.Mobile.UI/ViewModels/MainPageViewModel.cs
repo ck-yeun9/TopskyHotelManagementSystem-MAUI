@@ -1,4 +1,4 @@
-﻿using EOM.TSHotelManagementSystem.Mobile.Service;
+using EOM.TSHotelManagementSystem.Mobile.Service;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -19,24 +19,6 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         {
             _navigationService = navigationService;
             _authService = authService;
-
-            CheckAuthStatus();
-        }
-
-        private async Task CheckAuthStatus()
-        {
-            try
-            {
-                if (!await _authService.HasValidTokenAsync() || !await _authService.ValidateAccessTokenAsync())
-                {
-                    await _navigationService.NavigateToAsync($"//{nameof(LoginPage)}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"验证令牌错误: {ex.Message}");
-                await _navigationService.NavigateToAsync($"//{nameof(LoginPage)}");
-            }
         }
 
         public string AppName
@@ -57,7 +39,12 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             }
         }
 
-        public string CurrentTitle = "TopSky酒店";
+        private string _currentTitle = "TopSky酒店";
+        public string CurrentTitle
+        {
+            get => _currentTitle;
+            set => SetField(ref _currentTitle, value);
+        }
 
         private void UpdateTitle()
         {
@@ -69,9 +56,8 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 _ => AppName
             };
 
-            // 更新AppShell标题
             var appShell = Application.Current?.MainPage as AppShell;
-            appShell?.UpdateTitle(CurrentTitle);
+            appShell?.Title = CurrentTitle;
         }
     }
 }

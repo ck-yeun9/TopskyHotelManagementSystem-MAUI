@@ -27,15 +27,10 @@ public partial class MainPage : ContentPage
         {
             BottomNavBar.UpdateActiveTab(_viewModel.ActiveTab);
         }
+        LoadTabContent(_viewModel.ActiveTab);
     }
 
-    protected override void OnDisappearing()
-    {
-        base.OnDisappearing();
-        _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
-    }
-
-    private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(MainPageViewModel.ActiveTab))
         {
@@ -55,7 +50,6 @@ public partial class MainPage : ContentPage
         }
         else
         {
-            // Ë¢ÐÂµ±Ç°±êÇ©Ò³
             LoadTabContent(tabName);
         }
     }
@@ -64,8 +58,13 @@ public partial class MainPage : ContentPage
     {
         try
         {
-            ContentView contentView = null;
-            object bindingContext = null;
+            if (ContentHost.Content?.BindingContext is ILoadableViewModel currentLoadable)
+            {
+                currentLoadable.OnViewDisappearing();
+            }
+
+            ContentView? contentView = null;
+            object? bindingContext = null;
 
             switch (tabName)
             {
@@ -73,16 +72,15 @@ public partial class MainPage : ContentPage
                     contentView = _serviceProvider.GetRequiredService<NewsView>();
                     bindingContext = _serviceProvider.GetRequiredService<NewsViewModel>();
 
-                    // ÉèÖÃÒ³Ãæ±êÌâ
                     if (bindingContext is NewsViewModel newsViewModel)
                     {
-                        newsViewModel.PageTitle = "ÐÂÎÅ×ÊÑ¶";
+                        newsViewModel.PageTitle = "æ–°é—»èµ„è®¯";
                     }
                     break;
 
                 case "checkin":
                     contentView = _serviceProvider.GetRequiredService<CheckInView>();
-                    bindingContext = _viewModel; // Ê¹ÓÃMainPageViewModel×ÔÉí
+                    bindingContext = _serviceProvider.GetRequiredService<CheckInViewModel>();
                     break;
 
                 case "profile":
@@ -104,8 +102,7 @@ public partial class MainPage : ContentPage
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"¼ÓÔØ±êÇ©Ò³´íÎó: {ex.Message}");
-            // Ìí¼ÓUI´íÎó´¦ÀíÂß¼­
+            Debug.WriteLine($"åŠ è½½æ ‡ç­¾é¡µé”™è¯¯: {ex.Message}");
         }
     }
 }

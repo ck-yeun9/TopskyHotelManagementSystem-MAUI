@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EOM.TSHotelManagementSystem.Mobile.UI.ReservationListView"
+             Title="我的预约">
+
+    <Grid>
+        <RefreshView IsRefreshing="{Binding IsLoading}"
+                     Command="{Binding LoadCommand}"
+                     RefreshColor="{AppThemeBinding Light=#FF5722, Dark=#FF9B6A}">
+            <CollectionView ItemsSource="{Binding Reservations}"
+                            EmptyView="暂无预约记录"
+                            Margin="15">
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="15"
+                               CornerRadius="10"
+                               Margin="0,0,0,10"
+                               BackgroundColor="{AppThemeBinding Light=White, Dark=#2D2D30}"
+                               HasShadow="True">
+                            <StackLayout Spacing="8">
+                                <Grid ColumnDefinitions="*,auto">
+                                    <Label Text="{Binding ReservationRoomNumber, FallbackValue='未分配房间'}"
+                                           FontSize="16"
+                                           FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light=#212121, Dark=White}"/>
+                                    <Label Grid.Column="1"
+                                           Text="{Binding ReservationChannelDescription, FallbackValue='APP'}"
+                                           FontSize="12"
+                                           TextColor="#FF5722"
+                                           VerticalOptions="Center"/>
+                                </Grid>
+
+                                <Grid ColumnDefinitions="auto,*" RowDefinitions="auto,auto,auto" RowSpacing="4" ColumnSpacing="10">
+                                    <Label Grid.Row="0" Grid.Column="0" Text="预约编号:" FontSize="12" TextColor="Gray"/>
+                                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding ReservationId}" FontSize="12" TextColor="{AppThemeBinding Light=#424242, Dark=#BDBDBD}"/>
+
+                                    <Label Grid.Row="1" Grid.Column="0" Text="入住日期:" FontSize="12" TextColor="Gray"/>
+                                    <Label Grid.Row="1" Grid.Column="1"
+                                           Text="{Binding ReservationStartDate, StringFormat='{0:yyyy-MM-dd}'}"
+                                           FontSize="12" TextColor="{AppThemeBinding Light=#424242, Dark=#BDBDBD}"/>
+
+                                    <Label Grid.Row="2" Grid.Column="0" Text="离店日期:" FontSize="12" TextColor="Gray"/>
+                                    <Label Grid.Row="2" Grid.Column="1"
+                                           Text="{Binding ReservationEndDate, StringFormat='{0:yyyy-MM-dd}'}"
+                                           FontSize="12" TextColor="{AppThemeBinding Light=#424242, Dark=#BDBDBD}"/>
+                                </Grid>
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <ActivityIndicator IsRunning="{Binding IsInitializing}"
+                           IsVisible="{Binding IsInitializing}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           Color="{AppThemeBinding Light=#FF5722, Dark=#FF9B6A}"/>
+    </Grid>
+</ContentPage>

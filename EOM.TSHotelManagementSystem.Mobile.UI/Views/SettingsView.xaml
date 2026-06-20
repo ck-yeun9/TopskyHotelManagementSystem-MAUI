@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EOM.TSHotelManagementSystem.Mobile.UI.SettingsView"
+             Title="系统设置">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+            <Label Text="外观" FontSize="18" FontAttributes="Bold"/>
+            <Frame Padding="15" CornerRadius="10" BorderColor="LightGray">
+                <Grid ColumnDefinitions="*,auto">
+                    <Label Text="深色模式" VerticalOptions="Center" FontSize="16"/>
+                    <Switch Grid.Column="1" IsToggled="{Binding IsDarkMode}"
+                            ThumbColor="{AppThemeBinding Light=#FF5722, Dark=#FF9B6A}"/>
+                </Grid>
+            </Frame>
+
+            <Label Text="其他" FontSize="18" FontAttributes="Bold"/>
+            <Button StyleClass="OutlinedButton" Text="清除缓存"
+                    Command="{Binding ClearCacheCommand}"/>
+
+            <Label Text="关于" FontSize="18" FontAttributes="Bold"/>
+            <Frame Padding="15" CornerRadius="10" BorderColor="LightGray">
+                <VerticalStackLayout Spacing="8">
+                    <Grid ColumnDefinitions="*,auto">
+                        <Label Text="应用版本" VerticalOptions="Center" FontSize="16"/>
+                        <Label Grid.Column="1" Text="{Binding AppVersion}" VerticalOptions="Center" TextColor="Gray"/>
+                    </Grid>
+                    <Grid ColumnDefinitions="*,auto">
+                        <Label Text="应用名称" VerticalOptions="Center" FontSize="16"/>
+                        <Label Grid.Column="1" Text="TopSky酒店" VerticalOptions="Center" TextColor="Gray"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

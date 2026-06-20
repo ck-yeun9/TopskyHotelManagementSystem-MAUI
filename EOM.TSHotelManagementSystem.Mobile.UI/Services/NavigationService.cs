@@ -156,7 +156,11 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 { "//" + nameof(ProfileView), typeof(ProfileView) },
                 { nameof(ProfileView), typeof(ProfileView) },
                 { "//" + nameof(CheckInView), typeof(CheckInView) },
-                { nameof(CheckInView), typeof(CheckInView) }
+                { nameof(CheckInView), typeof(CheckInView) },
+                { "//" + nameof(ReservationListView), typeof(ReservationListView) },
+                { nameof(ReservationListView), typeof(ReservationListView) },
+                { "//" + nameof(NewsDetailView), typeof(NewsDetailView) },
+                { nameof(NewsDetailView), typeof(NewsDetailView) }
             };
 
             foreach (var mapping in routeMap)

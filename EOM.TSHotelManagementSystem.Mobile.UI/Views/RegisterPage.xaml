@@ -32,15 +32,13 @@
                    BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2E}" />
 
             <Button Text="注册" 
+                    StyleClass="FilledButton"
                     Command="{Binding RegisterCommand}"
-                    BackgroundColor="#007AFF"
-                    TextColor="White"
                     HeightRequest="50" />
 
             <Button Text="返回登录" 
+                    StyleClass="TextButton"
                     Command="{Binding NavigateToLoginCommand}"
-                    BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2E}"
-                    TextColor="{AppThemeBinding Light=#007AFF, Dark=#0A84FF}"
                     HeightRequest="50" />
 
             <Label Text="{Binding ErrorMessage}" 

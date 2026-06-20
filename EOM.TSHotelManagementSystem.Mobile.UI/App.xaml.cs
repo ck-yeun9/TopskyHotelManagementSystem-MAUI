@@ -11,16 +11,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 
             var serviceProvider = MauiProgram.Services;
 
-            var authService = serviceProvider.GetRequiredService<IAuthService>();
-
-            if (Task.Run(() => authService.HasValidTokenAsync()).Result)
-            {
-                MainPage = serviceProvider.GetRequiredService<AppShell>();
-            }
-            else
-            {
-                MainPage = new NavigationPage(serviceProvider.GetRequiredService<LoginPage>());
-            }
+            MainPage = serviceProvider.GetRequiredService<AppShell>();
         }
     }
 }

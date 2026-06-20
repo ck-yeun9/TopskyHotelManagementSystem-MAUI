@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>net10.0-android</TargetFrameworks>
@@ -20,10 +20,10 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>TopSky酒店</ApplicationTitle>
+		<ApplicationTitle>Topsy</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.eom.tshotel.mobile</ApplicationId>
+		<ApplicationId>com.eom.topsy.mobile</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
@@ -60,11 +60,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.50" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.50" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
-		<PackageReference Include="UraniumUI.Icons.MaterialSymbols" Version="2.15.0" />
-		<PackageReference Include="UraniumUI.Material" Version="2.15.0" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.71" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.71" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.9" />
+		<PackageReference Include="UraniumUI.Icons.MaterialSymbols" Version="3.0.0" />
+		<PackageReference Include="UraniumUI.Material" Version="3.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -81,10 +81,7 @@
 	  <MauiXaml Update="Views\CheckInView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\LoadingPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\LoginPage.xaml">
+<MauiXaml Update="Views\LoginPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Navigation\BottomNavigationBar.xaml">
@@ -100,6 +97,12 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\RegisterPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\ReservationListView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\NewsDetailView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

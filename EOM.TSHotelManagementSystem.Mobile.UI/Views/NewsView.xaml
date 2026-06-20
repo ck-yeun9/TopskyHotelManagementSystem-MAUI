@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView  xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
              x:Class="EOM.TSHotelManagementSystem.Mobile.UI.NewsView">
 
     <Grid>
@@ -9,8 +10,8 @@
                      Command="{Binding RefreshCommand}"
                      RefreshColor="{AppThemeBinding Light=#FF5722, Dark=#FF9B6A}">
             <CollectionView x:Name="NewsCollection"
-                            ItemsSource="{Binding NewsItems}" 
-                            SelectionMode="None"
+                            ItemsSource="{Binding NewsItems}"
+                            SelectionMode="Single"
                             Margin="15"
                             EmptyView="暂无新闻数据">
 
@@ -50,58 +51,21 @@
                                            LineBreakMode="TailTruncation"
                                            MaxLines="2"
                                            VerticalOptions="Center"/>
-                                    <Grid HorizontalOptions="Start" 
-                                          VerticalOptions="Center"
-                                          RowSpacing="0"
-                                          ColumnSpacing="10"
-                                          Margin="0,0,0,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="auto"/>
-                                            <ColumnDefinition Width="auto"/>
-                                            <ColumnDefinition Width="auto"/>
-                                        </Grid.ColumnDefinitions>
+                                    <HorizontalStackLayout Spacing="3"
+                                                             VerticalOptions="Center">
+                                        <Label FontFamily="MaterialOutlinedFilled" 
+                                               Text="date_range" 
+                                               FontSize="12"
+                                               TextColor="{AppThemeBinding Light=#757575, Dark=#BDBDBD}"
+                                               VerticalTextAlignment="Center"
+                                               VerticalOptions="Center"/>
 
-                                        <StackLayout Orientation="Horizontal" 
-                                                     Spacing="3"
-                                                     Grid.Column="0"
-                                                     VerticalOptions="Center">
-                                            <Label FontFamily="IconFilled" 
-                                                   Text="date_range" 
-                                                   FontSize="12"
-                                                   TextColor="{AppThemeBinding Light=#757575, Dark=#BDBDBD}"
-                                                   VerticalTextAlignment="Center"
-                                                   VerticalOptions="Center"/>
-                                            <Label Text="{Binding Date, StringFormat='{0:yyyy-MM-dd}'}" 
-                                                   FontSize="12" 
-                                                   TextColor="{AppThemeBinding Light=#757575, Dark=#BDBDBD}"
-                                                   VerticalTextAlignment="Center"
-                                                   VerticalOptions="Center"/>
-                                        </StackLayout>
-
-                                        <BoxView Grid.Column="1"
-                                                 WidthRequest="1" 
-                                                 HeightRequest="10"
-                                                 Color="{AppThemeBinding Light=#E0E0E0, Dark=#4D4D4D}"
-                                                 VerticalOptions="Center"/>
-
-                                        <StackLayout Orientation="Horizontal" 
-                                                     Spacing="3"
-                                                     Grid.Column="2"
-                                                     VerticalOptions="Center">
-                                            <Label FontFamily="IconFilled" 
-                                                   Text="visibility" 
-                                                   FontSize="12"
-                                                   Margin="0,3,0,0"
-                                                   TextColor="{AppThemeBinding Light=#757575, Dark=#BDBDBD}"
-                                                   VerticalTextAlignment="Center"
-                                                   VerticalOptions="Center"/>
-                                            <Label Text="{Binding ViewCount, StringFormat='{0} 阅读'}"
-                                                   FontSize="12" 
-                                                   TextColor="{AppThemeBinding Light=#757575, Dark=#BDBDBD}"
-                                                   VerticalTextAlignment="Center"
-                                                   VerticalOptions="Center"/>
-                                        </StackLayout>
-                                    </Grid>
+                                        <Label Text="{Binding Date, StringFormat='{0:yyyy-MM-dd}'}" 
+                                               FontSize="12" 
+                                               TextColor="{AppThemeBinding Light=#757575, Dark=#BDBDBD}"
+                                               VerticalTextAlignment="Center"
+                                               VerticalOptions="Center"/>
+                                    </HorizontalStackLayout>
                                 </StackLayout>
                             </Grid>
 

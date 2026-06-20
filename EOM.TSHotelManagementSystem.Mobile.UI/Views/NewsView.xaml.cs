@@ -13,6 +13,7 @@ public partial class NewsView : ContentView
         if (NewsCollection != null)
         {
             NewsCollection.Scrolled += OnNewsCollectionScrolled;
+            NewsCollection.SelectionChanged += OnNewsSelectionChanged;
         }
     }
 
@@ -25,9 +26,6 @@ public partial class NewsView : ContentView
         }
     }
 
-    /// <summary>
-    /// 滚动到底部加载更多
-    /// </summary>
     private async void OnNewsCollectionScrolled(object sender, ItemsViewScrolledEventArgs e)
     {
         if (BindingContext is not NewsViewModel viewModel)
@@ -43,5 +41,19 @@ public partial class NewsView : ContentView
         {
             await viewModel.LoadMoreNewsAsync();
         }
+    }
+
+    private async void OnNewsSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.CurrentSelection.FirstOrDefault() is NewsItem newsItem)
+        {
+            var detailPage = MauiProgram.Services.GetService<NewsDetailView>();
+            if (detailPage != null)
+            {
+                detailPage.SetNewsItem(newsItem);
+                await Navigation.PushAsync(detailPage);
+            }
+        }
+        ((CollectionView)sender).SelectedItem = null;
     }
 }

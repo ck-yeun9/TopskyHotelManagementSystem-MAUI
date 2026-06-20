@@ -1,25 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
              x:Class="EOM.TSHotelManagementSystem.Mobile.UI.ProfileView">
     <ScrollView>
         <StackLayout Padding="20" Spacing="20">
+            
             <Frame Padding="15" CornerRadius="10" BorderColor="LightGray">
                 <StackLayout Spacing="10">
-                    <Image Source="dotnet_bot.png" HeightRequest="80" WidthRequest="80" HorizontalOptions="Center" />
+                    <Image Source="{Binding PhotoUrl, FallbackValue='dotnet_bot.png'}"
+                           HeightRequest="80" WidthRequest="80" HorizontalOptions="Center"
+                           Aspect="AspectFill"/>
                     <Label Text="{Binding UserName}" FontSize="20" HorizontalOptions="Center" TextColor="Black"/>
-                    <Label Text="{Binding UserLevel}" FontSize="14" HorizontalOptions="Center" TextColor="Black" />
-                    <Label Text="个人中心" FontSize="14" TextColor="Blue" HorizontalOptions="Center">
-                        <Label.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding NavigateToPersonalCenterCommand}" />
-                        </Label.GestureRecognizers>
-                    </Label>
+                    <Label Text="{Binding UserAccount}" FontSize="12" HorizontalOptions="Center" TextColor="Gray"/>
+                    <Label Text="{Binding UserLevel}" FontSize="14" HorizontalOptions="Center" TextColor="#FF5722" />
                 </StackLayout>
             </Frame>
 
-            <Button StyleClass="OutlinedButton" Text="个人信息设置" />
-            <Button StyleClass="OutlinedButton" Text="系统设置" />
-            <Button StyleClass="OutlinedButton" Text="退出登录" />
+            <Button StyleClass="OutlinedButton" Text="我的预约"
+                    Command="{Binding NavigateToReservationsCommand}"
+                    IsVisible="{Binding IsLoggedIn}"/>
+            <Button StyleClass="OutlinedButton" Text="个人信息设置"
+                    Command="{Binding NavigateToPersonalInfoCommand}"
+                    IsVisible="{Binding IsLoggedIn}"/>
+            <Button StyleClass="OutlinedButton" Text="系统设置"
+                    Command="{Binding NavigateToSettingsCommand}"/>
+            <Button StyleClass="OutlinedButton" Text="退出登录"
+                    Command="{Binding LogoutCommand}"
+                    TextColor="Red"
+                    IsVisible="{Binding IsLoggedIn}"/>
+            
+            <Button StyleClass="FilledButton" Text="登录/注册"
+                    Command="{Binding NavigateToLoginCommand}"
+                    IsVisible="{Binding IsNotLoggedIn}"/>
         </StackLayout>
     </ScrollView>
 </ContentView>

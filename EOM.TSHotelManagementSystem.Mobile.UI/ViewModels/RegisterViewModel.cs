@@ -1,4 +1,4 @@
-﻿using EOM.TSHotelManagementSystem.Mobile.Service;
+using EOM.TSHotelManagementSystem.Mobile.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,37 +93,46 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 string.IsNullOrWhiteSpace(ConfirmPassword))
             {
                 ErrorMessage = "所有字段都必须填写";
+                IsBusy = false;
                 return;
             }
 
             if (Password != ConfirmPassword)
             {
                 ErrorMessage = "两次输入的密码不一致";
+                IsBusy = false;
                 return;
             }
 
             if (Password.Length < 6)
             {
                 ErrorMessage = "密码长度至少为6位";
+                IsBusy = false;
                 return;
             }
 
-            var success = await _authService.RegisterAsync(Username, Email, Password);
+            try
+            {
+                var success = await _authService.RegisterAsync(Username, Email, Password);
 
-            if (success)
-            {
-                await _navigationService.NavigateToAsync(nameof(MainPage));
+                if (success)
+                {
+                    await Shell.Current.GoToAsync($"//{nameof(MainPage)}");
+                }
+                else
+                {
+                    ErrorMessage = "注册失败，请重试";
+                }
             }
-            else
+            finally
             {
-                ErrorMessage = "注册失败，请重试";
+                IsBusy = false;
             }
-            IsBusy = false;
         }
 
-        private void NavigateToLogin()
+        private async void NavigateToLogin()
         {
-            _navigationService.NavigateToAsync(nameof(LoginPage));
+            await Shell.Current.GoToAsync(nameof(LoginPage));
         }
     }
 }

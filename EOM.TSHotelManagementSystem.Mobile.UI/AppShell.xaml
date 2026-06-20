@@ -4,29 +4,11 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:EOM.TSHotelManagementSystem.Mobile.UI"
-    Shell.FlyoutBehavior="Disabled">
-
-    <Shell.TitleView>
-        <Grid>
-            <Label Text="{Binding AppName}" 
-                   HorizontalOptions="Center" 
-                   VerticalOptions="Center"
-                   FontSize="18"
-                   FontAttributes="Bold"/>
-        </Grid>
-    </Shell.TitleView>
+    Shell.FlyoutBehavior="Disabled"
+    Title="TopSky酒店">
 
     <ShellContent Route="MainPage" 
                   ContentTemplate="{DataTemplate local:MainPage}" 
                   Title="主页"/>
-    
-    <Shell.FlyoutFooter>
-        <Grid Padding="10">
-            <Button Text="退出登录" 
-                Command="{Binding LogoutCommand}"
-                BackgroundColor="#FF3B30"
-                TextColor="White"
-                CornerRadius="5"/>
-        </Grid>
-    </Shell.FlyoutFooter>
+
 </Shell>
