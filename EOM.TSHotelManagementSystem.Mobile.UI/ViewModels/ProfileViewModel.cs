@@ -133,7 +133,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"导航到个人信息页面失败: {ex.Message}");
+                await Shell.Current.DisplayAlertAsync("错误", $"导航失败: {ex.Message}", "确定");
             }
         }
 
@@ -145,7 +145,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"导航到设置页面失败: {ex.Message}");
+                await Shell.Current.DisplayAlertAsync("错误", $"导航失败: {ex.Message}", "确定");
             }
         }
 
@@ -157,7 +157,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"导航到预约列表页面失败: {ex.Message}");
+                await Shell.Current.DisplayAlertAsync("错误", $"导航失败: {ex.Message}", "确定");
             }
         }
 
@@ -169,7 +169,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"导航到登录页面失败: {ex.Message}");
+                await Shell.Current.DisplayAlertAsync("错误", $"导航失败: {ex.Message}", "确定");
             }
         }
 

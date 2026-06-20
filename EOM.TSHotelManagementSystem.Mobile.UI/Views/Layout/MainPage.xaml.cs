@@ -55,18 +55,6 @@ public partial class MainPage : ContentPage
         }
     }
 
-    private void OnTabSelected(object sender, string tabName)
-    {
-        if (_viewModel.ActiveTab != tabName)
-        {
-            _viewModel.ActiveTab = tabName;
-        }
-        else
-        {
-            LoadTabContent(tabName);
-        }
-    }
-
     private void LoadTabContent(string tabName)
     {
         try

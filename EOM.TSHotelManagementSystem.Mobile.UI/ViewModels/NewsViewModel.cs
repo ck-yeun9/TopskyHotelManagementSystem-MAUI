@@ -95,7 +95,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"加载新闻失败: {ex.Message}");
+                await Shell.Current.DisplayAlertAsync("错误", $"加载新闻失败: {ex.Message}", "确定");
             }
         }
 
@@ -116,7 +116,6 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"加载更多新闻失败: {ex.Message}");
                 _currentPage--;
             }
             finally

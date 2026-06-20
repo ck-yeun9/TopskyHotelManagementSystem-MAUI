@@ -71,7 +71,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"加载预约记录失败: {ex.Message}");
+                await Shell.Current.DisplayAlertAsync("错误", $"加载预约记录失败: {ex.Message}", "确定");
             }
             finally
             {
