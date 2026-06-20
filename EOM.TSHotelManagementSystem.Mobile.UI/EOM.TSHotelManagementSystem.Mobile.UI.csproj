@@ -38,7 +38,13 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-android|AnyCPU'">
-	  <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+		<!-- 关键：开启快速部署 -->
+		<EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
+		<!-- 不用 AOT 调试 -->
+		<AndroidEnableProguard>false</AndroidEnableProguard>
+		<AndroidLinkMode>None</AndroidLinkMode>
+		<!-- 确保用 JIT 路径 -->
+		<AndroidUseAapt2>true</AndroidUseAapt2>
 	</PropertyGroup>
 
 	<ItemGroup>

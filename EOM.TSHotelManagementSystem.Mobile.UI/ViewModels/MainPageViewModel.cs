@@ -19,6 +19,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         {
             _navigationService = navigationService;
             _authService = authService;
+            UpdateTitle();
         }
 
         public string AppName
@@ -50,9 +51,9 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         {
             CurrentTitle = ActiveTab switch
             {
-                "news" => "最新资讯",
-                "checkin" => "入住管理",
-                "profile" => "个人中心",
+                "news" => $"新闻资讯 - {AppName}",
+                "checkin" => $"入住管理 - {AppName}",
+                "profile" => $"个人中心 - {AppName}",
                 _ => AppName
             };
 

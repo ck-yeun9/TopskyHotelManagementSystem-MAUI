@@ -11,40 +11,39 @@
                      RefreshColor="{AppThemeBinding Light=#FF5722, Dark=#FF9B6A}">
             <CollectionView x:Name="NewsCollection"
                             ItemsSource="{Binding NewsItems}"
-                            SelectionMode="Single"
                             Margin="15"
                             EmptyView="暂无新闻数据">
 
-                <CollectionView.Header>
-                    <StackLayout Padding="10" HorizontalOptions="Fill">
-                        <Label Text="{Binding PageTitle, FallbackValue='新闻资讯'}" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center" />
-                    </StackLayout>
-                </CollectionView.Header>
-
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame Padding="0"
-                               CornerRadius="15"
-                               Margin="0,0,0,15"
-                               BackgroundColor="{AppThemeBinding Light=White, Dark=#2D2D30}"
-                               HasShadow="True">
+                        <Border Padding="0"
+                                StrokeShape="RoundRectangle 15"
+                                Margin="0,0,0,15"
+                                BackgroundColor="{AppThemeBinding Light=White, Dark=#2D2D30}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnNewsItemTapped" />
+                            </Border.GestureRecognizers>
 
-                            <Grid ColumnDefinitions="100,*" RowDefinitions="auto,auto">
-                                <Image Source="{Binding ImageUrl, TargetNullValue='placeholder_news.png'}" 
-                                       Aspect="AspectFill"
-                                       Grid.Column="0"
-                                       Grid.Row="0"
-                                       Grid.RowSpan="2"
-                                       HeightRequest="80"
-                                       Margin="0">
-                                </Image>
+                            <Grid ColumnDefinitions="60,*" RowDefinitions="auto,auto">
+                                <Border BackgroundColor="{AppThemeBinding Light=#FFF3E0, Dark=#3E2723}"
+                                        StrokeShape="RoundRectangle 12"
+                                        HeightRequest="50"
+                                        WidthRequest="50"
+                                        Grid.RowSpan="2"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center">
+                                    <Label FontFamily="MaterialOutlinedFilled" 
+                                           Text="campaign" 
+                                           FontSize="28"
+                                           TextColor="{AppThemeBinding Light=#FF5722, Dark=#FF9B6A}"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </Border>
 
                                 <StackLayout Grid.Column="1" 
-                                             Padding="15"
+                                             Padding="15,10"
                                              VerticalOptions="Fill">
-                                    <Label Grid.Row="0" 
-                                           Grid.Column="1"
-                                           Text="{Binding Title}" 
+                                    <Label Text="{Binding Title}" 
                                            FontSize="16" 
                                            FontAttributes="Bold" 
                                            TextColor="{AppThemeBinding Light=#212121, Dark=White}"
@@ -68,19 +67,7 @@
                                     </HorizontalStackLayout>
                                 </StackLayout>
                             </Grid>
-
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal"/>
-                                    <VisualState x:Name="Pressed">
-                                        <VisualState.Setters>
-                                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#F5F5F5, Dark=#383838}"/>
-                                            <Setter Property="Scale" Value="0.98"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                        </Frame>
+                        </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
 

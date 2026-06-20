@@ -34,6 +34,11 @@
                     TextColor="White"
                     HeightRequest="50" />
 
+            <Button Text="{Binding BiometricButtonText}" StyleClass="OutlinedButton"
+                    Command="{Binding BiometricLoginCommand}"
+                    IsVisible="{Binding IsBiometricAvailable}"
+                    HeightRequest="50" />
+
             <Button Text="注册" StyleClass="FilledButton" 
                     Command="{Binding NavigateToRegisterCommand}"
                     TextColor="White"

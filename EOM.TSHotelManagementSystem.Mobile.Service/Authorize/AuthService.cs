@@ -52,6 +52,13 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                 if (sourceResponse?.Success == true && sourceResponse.Data?.UserToken != null)
                 {
                     await SaveAccessTokenAsync(sourceResponse.Data.UserToken, DateTime.Now.AddDays(7));
+
+                    if (!string.IsNullOrEmpty(sourceResponse.Data.RefreshToken))
+                    {
+                        await SaveRefreshTokenAsync(sourceResponse.Data.RefreshToken);
+                        Debug.WriteLine("LoginAsync: RefreshToken已保存");
+                    }
+
                     return true;
                 }
 
@@ -150,54 +157,76 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
         {
             try
             {
-                var token = await GetAccessToken();
-                if (string.IsNullOrEmpty(token)) return;
-
-                var expiration = await GetTokenExpiration();
-
-                if (expiration > DateTime.Now)
+                var accessToken = await GetAccessToken();
+                if (string.IsNullOrEmpty(accessToken))
                 {
-                    Debug.WriteLine("令牌尚未过期，无需刷新");
+                    Debug.WriteLine("RefreshTokenAsync: 无AccessToken，跳过刷新");
                     return;
                 }
 
-                Debug.WriteLine("令牌已过期，启动生物识别验证");
+                var expiration = await GetTokenExpiration();
+                if (expiration > DateTime.Now)
+                {
+                    Debug.WriteLine("RefreshTokenAsync: 令牌尚未过期，无需刷新");
+                    return;
+                }
+
+                Debug.WriteLine("RefreshTokenAsync: 令牌已过期，启动生物识别验证");
                 var authResult = await AuthenticateWithBiometricsAsync();
 
                 if (!authResult)
                 {
-                    Debug.WriteLine("生物识别验证失败，跳过令牌刷新");
+                    Debug.WriteLine("RefreshTokenAsync: 生物识别验证失败");
+                    await ClearTokenAsync();
                     return;
                 }
 
-                Debug.WriteLine("生物识别验证通过，开始刷新令牌");
+                Debug.WriteLine("RefreshTokenAsync: 生物识别验证通过，开始刷新令牌");
                 var refreshToken = await GetRefreshToken();
-                var response = await _httpService.RequestAsync(
-                    "CustomerAccount/RefreshToken",
-                    json: refreshToken
-                );
 
-                if (!string.IsNullOrWhiteSpace(response?.Message))
+                if (string.IsNullOrWhiteSpace(refreshToken))
                 {
-                    var result = HttpHelper.JsonToModel<SingleOutputDto<string>>(response.Message);
-                    if (result?.Success == true && !string.IsNullOrEmpty(result.Data))
+                    Debug.WriteLine("RefreshTokenAsync: 无RefreshToken，需要重新登录");
+                    await ClearTokenAsync();
+                    return;
+                }
+
+                var json = JsonSerializer.Serialize(new { RefreshToken = refreshToken });
+                var response = await _httpService.RequestAsync("Login/RefreshToken", json: json);
+
+                if (string.IsNullOrWhiteSpace(response?.Message))
+                {
+                    Debug.WriteLine("RefreshTokenAsync: 服务器无响应");
+                    await ClearTokenAsync();
+                    return;
+                }
+
+                var result = HttpHelper.JsonToModel<SingleOutputDto<RefreshTokenResponseDto>>(response.Message);
+
+                if (result?.Success == true && result.Data != null)
+                {
+                    if (!string.IsNullOrEmpty(result.Data.AccessToken))
                     {
-                        await SaveAccessTokenAsync(result.Data, DateTime.Now.AddDays(7));
-                        Debug.WriteLine("令牌刷新成功");
+                        await SaveAccessTokenAsync(result.Data.AccessToken, DateTime.Now.AddDays(7));
+                        Debug.WriteLine("RefreshTokenAsync: AccessToken刷新成功");
                     }
-                    else
+
+                    if (!string.IsNullOrEmpty(result.Data.RefreshToken))
                     {
-                        Debug.WriteLine($"刷新令牌失败: {result?.Message}");
+                        await SaveRefreshTokenAsync(result.Data.RefreshToken);
+                        Debug.WriteLine("RefreshTokenAsync: RefreshToken更新成功");
                     }
                 }
                 else
                 {
-                    Debug.WriteLine("刷新令牌请求失败: 服务器无响应");
+                    Debug.WriteLine($"RefreshTokenAsync: 刷新失败 - {result?.Message}");
+                    await ClearTokenAsync();
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"RefreshTokenAsync Exception: {ex.Message}");
+                await ClearTokenAsync();
             }
         }
 
@@ -323,6 +352,90 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
         private async Task<bool> IsBiometricsSupportedAsync()
         {
             return await CrossFingerprint.Current.IsAvailableAsync(false);
+        }
+
+        public async Task<bool> IsBiometricEnabledAsync()
+        {
+            try
+            {
+                var enabled = await SecureStorage.GetAsync("BiometricEnabled");
+                return enabled == "true";
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task SaveBiometricCredentialsAsync(string username, string password)
+        {
+            try
+            {
+                await SecureStorage.SetAsync("BiometricUsername", Obfuscate(username));
+                await SecureStorage.SetAsync("BiometricPassword", Obfuscate(password));
+                await SecureStorage.SetAsync("BiometricEnabled", "true");
+                Debug.WriteLine("生物识别凭据已保存");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"保存生物识别凭据失败: {ex.Message}");
+            }
+        }
+
+        public async Task<bool> LoginWithBiometricAsync()
+        {
+            try
+            {
+                if (!await IsBiometricsSupportedAsync())
+                {
+                    Debug.WriteLine("设备不支持生物识别");
+                    return false;
+                }
+
+                var authResult = await CrossFingerprint.Current.AuthenticateAsync(
+                    new AuthenticationRequestConfiguration("生物识别登录", "使用指纹或面容登录")
+                    {
+                        CancelTitle = "取消",
+                        FallbackTitle = "使用密码"
+                    });
+
+                if (!authResult.Authenticated)
+                {
+                    Debug.WriteLine("生物识别验证失败");
+                    return false;
+                }
+
+                var username = Deobfuscate(await SecureStorage.GetAsync("BiometricUsername"));
+                var password = Deobfuscate(await SecureStorage.GetAsync("BiometricPassword"));
+
+                if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+                {
+                    Debug.WriteLine("未找到保存的凭据");
+                    return false;
+                }
+
+                return await LoginAsync(username, password);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"生物识别登录异常: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task ClearBiometricCredentialsAsync()
+        {
+            try
+            {
+                SecureStorage.Remove("BiometricUsername");
+                SecureStorage.Remove("BiometricPassword");
+                SecureStorage.Remove("BiometricEnabled");
+                Debug.WriteLine("生物识别凭据已清除");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"清除生物识别凭据失败: {ex.Message}");
+            }
         }
     }
 }

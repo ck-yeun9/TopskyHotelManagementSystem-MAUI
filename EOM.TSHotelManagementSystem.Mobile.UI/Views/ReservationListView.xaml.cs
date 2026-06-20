@@ -13,6 +13,7 @@ public partial class ReservationListView : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
+        Shell.Current.Title = "我的预约";
         _viewModel.OnViewAppearing();
     }
 }

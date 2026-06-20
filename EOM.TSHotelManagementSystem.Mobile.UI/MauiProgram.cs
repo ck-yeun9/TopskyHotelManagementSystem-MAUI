@@ -62,6 +62,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             services.AddTransient<MainPageViewModel>();
             services.AddTransient<CheckInViewModel>();
             services.AddTransient<NewsViewModel>();
+            services.AddTransient<NewsDetailViewModel>();
             services.AddTransient<ProfileViewModel>();
             services.AddTransient<LoginViewModel>();
             services.AddTransient<RegisterViewModel>();
@@ -71,6 +72,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 
             services.AddTransient<CheckInView>();
             services.AddTransient<NewsView>();
+            services.AddTransient<NewsDetailView>();
             services.AddTransient<ProfileView>();
             services.AddTransient<LoginPage>();
             services.AddTransient<RegisterPage>();

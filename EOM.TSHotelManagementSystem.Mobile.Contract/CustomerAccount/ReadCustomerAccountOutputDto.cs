@@ -36,5 +36,9 @@ namespace EOM.TSHotelManagementSystem.Mobile.Contract
         /// 最后一次登录时间 (Last Login Time)
         /// </summary>
         public DateTime? LastLoginTime { get; set; }
+        /// <summary>
+        /// 刷新令牌 (Refresh Token)
+        /// </summary>
+        public string RefreshToken { get; set; }
     }
 }

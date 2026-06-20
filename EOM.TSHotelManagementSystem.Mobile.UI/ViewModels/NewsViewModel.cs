@@ -20,6 +20,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             _navigationService = navigationService;
             _newsService = newsService;
             NavigateCommand = new Command<string>(NavigateTo);
+            NewsSelectedCommand = new Command<NewsItem>(async (item) => await NavigateToDetailAsync(item));
 
             RefreshCommand = new Command(async () => await RefreshNewsAsync());
             LoadMoreCommand = new Command(async () => await LoadMoreNewsAsync());
@@ -30,6 +31,13 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         {
             get => _pageTitle;
             set => SetField(ref _pageTitle, value);
+        }
+
+        private NewsItem _selectedNews;
+        public NewsItem SelectedNews
+        {
+            get => _selectedNews;
+            set => SetField(ref _selectedNews, value);
         }
 
         public async void OnViewAppearing()
@@ -49,6 +57,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         }
 
         public Command<string> NavigateCommand { get; }
+        public Command<NewsItem> NewsSelectedCommand { get; }
         public ICommand RefreshCommand { get; }
         public ICommand LoadMoreCommand { get; }
 
@@ -138,9 +147,9 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 Title = dto.NewsTitle,
                 Content = dto.NewsContent,
                 Date = dto.NewsDate,
-                Type = dto.NewsTypeDescription ?? dto.NewsType,
+                Type = !string.IsNullOrWhiteSpace(dto.NewsTypeDescription) ? dto.NewsTypeDescription : dto.NewsType,
                 ImageUrl = dto.NewsImage,
-                Status = dto.NewsStatusDescription ?? dto.NewsStatus,
+                Status = !string.IsNullOrWhiteSpace(dto.NewsStatusDescription) ? dto.NewsStatusDescription : dto.NewsStatus,
                 IsHot = dto.NewsType?.Contains("热点") == true
             };
         }
@@ -148,6 +157,26 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         private async void NavigateTo(string route)
         {
             _navigationService?.NavigateToAsync(route);
+        }
+
+        private async Task NavigateToDetailAsync(NewsItem item)
+        {
+            if (item == null) return;
+
+            try
+            {
+                var detailPage = MauiProgram.Services.GetRequiredService<NewsDetailView>();
+                detailPage.LoadNewsItem(item);
+                await Shell.Current.Navigation.PushAsync(detailPage);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"NavigateToDetailAsync Exception: {ex.Message}");
+            }
+            finally
+            {
+                SelectedNews = null;
+            }
         }
 
         public void OnViewDisappearing()

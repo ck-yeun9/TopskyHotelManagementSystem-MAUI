@@ -11,5 +11,10 @@
         Task RefreshTokenAsync();
         Task<bool> ValidateAccessTokenAsync();
         Task<string> GetAccessToken();
+
+        Task<bool> IsBiometricEnabledAsync();
+        Task SaveBiometricCredentialsAsync(string username, string password);
+        Task<bool> LoginWithBiometricAsync();
+        Task ClearBiometricCredentialsAsync();
     }
 }

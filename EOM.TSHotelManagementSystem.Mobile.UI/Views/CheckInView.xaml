@@ -5,48 +5,36 @@
              x:Class="EOM.TSHotelManagementSystem.Mobile.UI.CheckInView">
     <Grid RowDefinitions="Auto,*">
         <Grid Grid.Row="0" ColumnDefinitions="*,*,*" BackgroundColor="White" Padding="8,0">
-            <Border Grid.Column="0" 
+            <Button Grid.Column="0"
+                    Text="房间预订"
                     BackgroundColor="{Binding BookingTabColor}"
-                    StrokeShape="RoundRectangle 8"
+                    TextColor="{Binding BookingTabTextColor}"
+                    FontSize="14"
+                    FontAttributes="Bold"
+                    CornerRadius="8"
                     Margin="4"
-                    Padding="12,10">
-                <GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding SwitchTabCommand}" CommandParameter="booking" />
-                </GestureRecognizers>
-                <Label Text="房间预订" 
-                       HorizontalOptions="Center"
-                       FontSize="14"
-                       FontAttributes="Bold"
-                       TextColor="{Binding BookingTabTextColor}" />
-            </Border>
-            <Border Grid.Column="1" 
+                    Command="{Binding SwitchTabCommand}"
+                    CommandParameter="booking" />
+            <Button Grid.Column="1"
+                    Text="当前入住"
                     BackgroundColor="{Binding CheckinTabColor}"
-                    StrokeShape="RoundRectangle 8"
+                    TextColor="{Binding CheckinTabTextColor}"
+                    FontSize="14"
+                    FontAttributes="Bold"
+                    CornerRadius="8"
                     Margin="4"
-                    Padding="12,10">
-                <GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding SwitchTabCommand}" CommandParameter="checkin" />
-                </GestureRecognizers>
-                <Label Text="当前入住" 
-                       HorizontalOptions="Center"
-                       FontSize="14"
-                       FontAttributes="Bold"
-                       TextColor="{Binding CheckinTabTextColor}" />
-            </Border>
-            <Border Grid.Column="2" 
+                    Command="{Binding SwitchTabCommand}"
+                    CommandParameter="checkin" />
+            <Button Grid.Column="2"
+                    Text="消费记录"
                     BackgroundColor="{Binding HistoryTabColor}"
-                    StrokeShape="RoundRectangle 8"
+                    TextColor="{Binding HistoryTabTextColor}"
+                    FontSize="14"
+                    FontAttributes="Bold"
+                    CornerRadius="8"
                     Margin="4"
-                    Padding="12,10">
-                <GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding SwitchTabCommand}" CommandParameter="history" />
-                </GestureRecognizers>
-                <Label Text="消费记录" 
-                       HorizontalOptions="Center"
-                       FontSize="14"
-                       FontAttributes="Bold"
-                       TextColor="{Binding HistoryTabTextColor}" />
-            </Border>
+                    Command="{Binding SwitchTabCommand}"
+                    CommandParameter="history" />
         </Grid>
 
         <ScrollView Grid.Row="1">
@@ -75,15 +63,40 @@
                         </Border>
 
                         <Label Text="可选房间" FontSize="16" FontAttributes="Bold" TextColor="#111827" />
-                        <CollectionView ItemsSource="{Binding AvailableRooms}" SelectedItem="{Binding SelectedRoom, Mode=TwoWay}" SelectionMode="Single" EmptyView="暂无可选房间">
+                        <CollectionView ItemsSource="{Binding AvailableRooms}" EmptyView="暂无可选房间">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Margin="0,0,0,12" Padding="16" Stroke="#E5E7EB" StrokeShape="RoundRectangle 18" BackgroundColor="White">
-                                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
-                                            <Label Text="{Binding RoomName}" FontSize="16" FontAttributes="Bold" TextColor="#111827" />
-                                            <Label Grid.Column="1" Text="{Binding PricePerNight, StringFormat='¥{0:F0}/天'}" FontSize="16" FontAttributes="Bold" TextColor="#EA580C" />
-                                            <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Description}" FontSize="12" TextColor="#6B7280" Margin="0,4,0,0" />
-                                            <Label Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding RemainingRooms, StringFormat='剩余 {0} 间'}" FontSize="13" FontAttributes="Bold" TextColor="#15803D" Margin="0,6,0,0" />
+                                    <Border Margin="0,0,0,12" Padding="0" 
+                                            Stroke="#E5E7EB" 
+                                            StrokeShape="RoundRectangle 18" 
+                                            BackgroundColor="White">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnRoomTapped" />
+                                        </Border.GestureRecognizers>
+                                        <Grid ColumnDefinitions="60,*" RowDefinitions="Auto">
+                                            <Border BackgroundColor="#ECFDF5"
+                                                    StrokeShape="RoundRectangle 12"
+                                                    HeightRequest="50"
+                                                    WidthRequest="50"
+                                                    Grid.RowSpan="3"
+                                                    HorizontalOptions="Center"
+                                                    VerticalOptions="Center">
+                                                <Label FontFamily="MaterialOutlinedFilled"
+                                                       Text="bed"
+                                                       FontSize="28"
+                                                       TextColor="#059669"
+                                                       HorizontalOptions="Center"
+                                                       VerticalOptions="Center" />
+                                            </Border>
+
+                                            <VerticalStackLayout Grid.Column="1" Padding="15,12" Spacing="6">
+                                                <Grid ColumnDefinitions="*,Auto">
+                                                    <Label Text="{Binding RoomName}" FontSize="16" FontAttributes="Bold" TextColor="#111827" />
+                                                    <Label Grid.Column="1" Text="{Binding PricePerNight, StringFormat='¥{0:F0}/天'}" FontSize="16" FontAttributes="Bold" TextColor="#EA580C" />
+                                                </Grid>
+                                                <Label Text="{Binding Description}" FontSize="12" TextColor="#6B7280" />
+                                                <Label Text="{Binding RemainingRooms, StringFormat='剩余 {0} 间'}" FontSize="13" FontAttributes="Bold" TextColor="#15803D" />
+                                            </VerticalStackLayout>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>

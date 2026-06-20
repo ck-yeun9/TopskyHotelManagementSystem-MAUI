@@ -2,13 +2,16 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI;
 
 public partial class NewsDetailView : ContentPage
 {
-    public NewsDetailView()
+    private readonly NewsDetailViewModel _viewModel;
+
+    public NewsDetailView(NewsDetailViewModel viewModel)
     {
         InitializeComponent();
+        BindingContext = _viewModel = viewModel;
     }
 
-    public void SetNewsItem(NewsItem newsItem)
+    public void LoadNewsItem(NewsItem newsItem)
     {
-        BindingContext = newsItem;
+        _viewModel.LoadNewsItem(newsItem);
     }
 }

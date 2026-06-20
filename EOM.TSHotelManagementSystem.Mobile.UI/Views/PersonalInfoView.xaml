@@ -8,9 +8,19 @@
         <VerticalStackLayout Padding="20" Spacing="20">
             <Frame Padding="15" CornerRadius="10" BorderColor="LightGray">
                 <VerticalStackLayout Spacing="10">
-                    <Image Source="{Binding PhotoUrl, FallbackValue='dotnet_bot.png'}"
-                           HeightRequest="80" WidthRequest="80" HorizontalOptions="Center"
-                           Aspect="AspectFill"/>
+                    <Grid HeightRequest="80" WidthRequest="80" HorizontalOptions="Center">
+                        <Label FontFamily="MaterialOutlinedFilled"
+                               Text="account_circle"
+                               FontSize="80"
+                               TextColor="{AppThemeBinding Light=#CCCCCC, Dark=#666666}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               IsVisible="{Binding HasPhoto, Converter={StaticResource InvertBoolConverter}}" />
+                        <Image Source="{Binding PhotoUrl}"
+                               HeightRequest="80" WidthRequest="80"
+                               Aspect="AspectFill"
+                               IsVisible="{Binding HasPhoto}"/>
+                    </Grid>
                     <Label Text="{Binding DisplayName}" FontSize="20" HorizontalOptions="Center"/>
                     <Label Text="{Binding Account}" FontSize="14" HorizontalOptions="Center" TextColor="Gray"/>
                 </VerticalStackLayout>

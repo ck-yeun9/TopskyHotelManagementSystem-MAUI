@@ -28,6 +28,19 @@ public partial class MainPage : ContentPage
             BottomNavBar.UpdateActiveTab(_viewModel.ActiveTab);
         }
         LoadTabContent(_viewModel.ActiveTab);
+        UpdateShellTitle();
+    }
+
+    private void UpdateShellTitle()
+    {
+        var title = _viewModel.ActiveTab switch
+        {
+            "news" => "最新资讯",
+            "checkin" => "入住管理",
+            "profile" => "个人中心",
+            _ => "TopSky酒店"
+        };
+        Shell.Current.Title = title;
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)

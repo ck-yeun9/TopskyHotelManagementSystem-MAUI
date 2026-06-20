@@ -31,7 +31,18 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 
         public string DisplayName { get => _displayName; set => SetField(ref _displayName, value); }
         public string Account { get => _account; set => SetField(ref _account, value); }
-        public string PhotoUrl { get => _photoUrl; set => SetField(ref _photoUrl, value); }
+        public string PhotoUrl
+        {
+            get => _photoUrl;
+            set
+            {
+                if (SetField(ref _photoUrl, value))
+                {
+                    OnPropertyChanged(nameof(HasPhoto));
+                }
+            }
+        }
+        public bool HasPhoto => !string.IsNullOrWhiteSpace(PhotoUrl);
         public string CurrentPassword { get => _currentPassword; set => SetField(ref _currentPassword, value); }
         public string NewPassword { get => _newPassword; set => SetField(ref _newPassword, value); }
         public string ConfirmPassword { get => _confirmPassword; set => SetField(ref _confirmPassword, value); }

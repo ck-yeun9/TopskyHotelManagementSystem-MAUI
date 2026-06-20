@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Shell
     x:Class="EOM.TSHotelManagementSystem.Mobile.UI.AppShell"
+    x:Name="AppShellPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:EOM.TSHotelManagementSystem.Mobile.UI"
     Shell.FlyoutBehavior="Disabled"
     Title="TopSky酒店">
+
+    <Shell.TitleView>
+        <Grid HeightRequest="44">
+            <Label Text="{Binding Source={x:Reference AppShellPage}, Path=Title}"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   TextColor="{AppThemeBinding Light=Black, Dark=White}" />
+        </Grid>
+    </Shell.TitleView>
 
     <ShellContent Route="MainPage" 
                   ContentTemplate="{DataTemplate local:MainPage}" 

@@ -34,8 +34,16 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         public string PhotoUrl
         {
             get => _photoUrl;
-            set => SetField(ref _photoUrl, value);
+            set
+            {
+                if (SetField(ref _photoUrl, value))
+                {
+                    OnPropertyChanged(nameof(HasPhoto));
+                }
+            }
         }
+
+        public bool HasPhoto => !string.IsNullOrWhiteSpace(PhotoUrl);
 
         private bool _isLoggedIn;
         public bool IsLoggedIn

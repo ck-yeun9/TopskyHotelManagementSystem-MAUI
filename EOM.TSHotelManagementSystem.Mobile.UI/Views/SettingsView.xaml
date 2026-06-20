@@ -14,6 +14,23 @@
                 </Grid>
             </Frame>
 
+            <Label Text="安全" FontSize="18" FontAttributes="Bold"/>
+            <Frame Padding="15" CornerRadius="10" BorderColor="LightGray"
+                   IsVisible="{Binding IsBiometricAvailable}">
+                <VerticalStackLayout Spacing="8">
+                    <Grid ColumnDefinitions="*,auto">
+                        <Label Text="生物识别登录" VerticalOptions="Center" FontSize="16"/>
+                        <Switch Grid.Column="1" IsToggled="{Binding IsBiometricEnabled}"
+                                ThumbColor="{AppThemeBinding Light=#FF5722, Dark=#FF9B6A}"/>
+                    </Grid>
+                    <Label Text="开启后可使用指纹或面容快速登录" FontSize="12" TextColor="Gray"/>
+                </VerticalStackLayout>
+            </Frame>
+            <Frame Padding="15" CornerRadius="10" BorderColor="LightGray"
+                   IsVisible="{Binding IsBiometricAvailable, Converter={StaticResource InvertBoolConverter}}">
+                <Label Text="您的设备不支持生物识别或未登录" FontSize="14" TextColor="Gray"/>
+            </Frame>
+
             <Label Text="其他" FontSize="18" FontAttributes="Bold"/>
             <Button StyleClass="OutlinedButton" Text="清除缓存"
                     Command="{Binding ClearCacheCommand}"/>

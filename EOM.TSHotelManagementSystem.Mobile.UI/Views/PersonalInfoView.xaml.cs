@@ -13,6 +13,7 @@ public partial class PersonalInfoView : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
+        Shell.Current.Title = "个人信息设置";
         if (BindingContext is ILoadableViewModel loadable)
         {
             loadable.OnViewAppearing();
