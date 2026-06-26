@@ -20,6 +20,11 @@ public partial class MainPage : ContentPage
         LoadTabContent(_viewModel.ActiveTab);
     }
 
+    private void OnTabSelected(object? sender, string tabName)
+    {
+        _viewModel.ActiveTab = tabName;
+    }
+
     protected override void OnAppearing()
     {
         base.OnAppearing();

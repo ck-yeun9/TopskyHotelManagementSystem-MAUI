@@ -2,7 +2,8 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
-             x:Class="EOM.TSHotelManagementSystem.Mobile.UI.CheckInView">
+             x:Class="EOM.TSHotelManagementSystem.Mobile.UI.CheckInView"
+             x:Name="CheckInViewPage">
     <Grid RowDefinitions="Auto,*">
         <Grid Grid.Row="0" ColumnDefinitions="*,*,*" BackgroundColor="White" Padding="8,0">
             <Button Grid.Column="0"
@@ -127,16 +128,21 @@
 
                 <ContentView IsVisible="{Binding IsCheckinTab}">
                     <VerticalStackLayout Spacing="16">
-                        <Border Padding="20" Stroke="#DBEAFE" StrokeShape="RoundRectangle 18" BackgroundColor="#EFF6FF">
+                        <Border Padding="20" Stroke="#DBEAFE" StrokeShape="RoundRectangle 18" BackgroundColor="#EFF6FF"
+                                IsVisible="{Binding HasNoCheckins}">
                             <VerticalStackLayout Spacing="12">
                                 <Label Text="当前入住状态" FontSize="18" FontAttributes="Bold" TextColor="#1E40AF" />
                                 <Label Text="{Binding CurrentCheckinMessage}" FontSize="14" TextColor="#3B82F6" />
                             </VerticalStackLayout>
                         </Border>
+                        <ActivityIndicator IsRunning="{Binding IsLoadingCheckins}" IsVisible="{Binding IsLoadingCheckins}" Color="#512BD4" />
                         <CollectionView ItemsSource="{Binding CurrentCheckins}" EmptyView="您当前没有正在入住的房间">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
                                     <Border Margin="0,0,0,12" Padding="16" Stroke="#DBEAFE" StrokeShape="RoundRectangle 18" BackgroundColor="White">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={x:Reference CheckInViewPage}, Path=BindingContext.SelectCheckinCommand}" CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
                                         <VerticalStackLayout Spacing="8">
                                             <Grid ColumnDefinitions="*,Auto">
                                                 <Label Text="{Binding RoomName}" FontSize="16" FontAttributes="Bold" TextColor="#111827" />
@@ -144,7 +150,22 @@
                                             </Grid>
                                             <Label Text="{Binding RoomNumber, StringFormat='房号: {0}'}" FontSize="13" TextColor="#6B7280" />
                                             <Label Text="{Binding CheckInTime, StringFormat='入住时间: {0:yyyy-MM-dd HH:mm}'}" FontSize="13" TextColor="#6B7280" />
-                                            <Label Text="{Binding TotalAmount, StringFormat='当前消费: ¥{0:F0}'}" FontSize="14" FontAttributes="Bold" TextColor="#EA580C" />
+                                            <Label Text="{Binding TotalAmount, StringFormat='当前消费: ¥{0:F0}'}" FontSize="15" FontAttributes="Bold" TextColor="#EA580C" />
+                                            <Label Text="{Binding ProductConsumption, StringFormat='商品消费: ¥{0:F0}'}" FontSize="13" TextColor="#D97706"
+                                                   IsVisible="{Binding HasProductConsumption}" />
+                                            <Label Text="{Binding DiscountSummary}" FontSize="12" TextColor="#6B7280" />
+                                            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8" 
+                                                  IsVisible="{Binding IsSelected}">
+                                                <Button Text="房间详情" FontSize="12" Padding="8,6" CornerRadius="8"
+                                                        BackgroundColor="#EFF6FF" TextColor="#1E40AF"
+                                                        Command="{Binding Source={x:Reference CheckInViewPage}, Path=BindingContext.ViewRoomDetailCommand}" />
+                                                <Button Grid.Column="1" Text="商品消费" FontSize="12" Padding="8,6" CornerRadius="8"
+                                                        BackgroundColor="#ECFDF5" TextColor="#065F46"
+                                                        Command="{Binding Source={x:Reference CheckInViewPage}, Path=BindingContext.ConsumeProductCommand}" />
+                                                <Button Grid.Column="2" Text="历史评价" FontSize="12" Padding="8,6" CornerRadius="8"
+                                                        BackgroundColor="#FEF3C7" TextColor="#92400E"
+                                                        Command="{Binding Source={x:Reference CheckInViewPage}, Path=BindingContext.ViewHistoryReviewCommand}" />
+                                            </Grid>
                                         </VerticalStackLayout>
                                     </Border>
                                 </DataTemplate>
@@ -161,7 +182,11 @@
                                 <Label Text="查看您的历史入住和消费记录" FontSize="13" TextColor="#059669" />
                             </VerticalStackLayout>
                         </Border>
-                        <CollectionView ItemsSource="{Binding ConsumptionHistory}" EmptyView="暂无消费记录">
+                        <ActivityIndicator IsRunning="{Binding IsLoadingHistory}" IsVisible="{Binding IsLoadingHistory}" Color="#512BD4" />
+                        <CollectionView ItemsSource="{Binding ConsumptionHistory}" 
+                                        EmptyView="暂无消费记录"
+                                        RemainingItemsThreshold="5"
+                                        RemainingItemsThresholdReachedCommand="{Binding LoadMoreHistoryCommand}">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
                                     <Border Margin="0,0,0,12" Padding="16" Stroke="#E5E7EB" StrokeShape="RoundRectangle 18" BackgroundColor="White">
@@ -177,6 +202,7 @@
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
+                        <ActivityIndicator IsRunning="{Binding IsLoadingMoreHistory}" IsVisible="{Binding IsLoadingMoreHistory}" Color="#512BD4" />
                     </VerticalStackLayout>
                 </ContentView>
             </VerticalStackLayout>

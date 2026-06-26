@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +18,11 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
         /// <returns></returns>
         public static List<T>? JsonToList<T>(this string JsonStr)
         {
-            return JsonSerializer.Deserialize<List<T>>(JsonStr);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = null
+            };
+            return JsonSerializer.Deserialize<List<T>>(JsonStr, options);
         }
 
         /// <summary>
@@ -29,7 +33,11 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
         /// <returns></returns>
         public static T? JsonToPageList<T>(this string json) where T : class
         {
-            return JsonSerializer.Deserialize<T>(json);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = null
+            };
+            return JsonSerializer.Deserialize<T>(json, options);
         }
 
         /// <summary>
@@ -40,7 +48,11 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
         /// <returns></returns>
         public static T? JsonToModel<T>(this string input)
         {
-            return JsonSerializer.Deserialize<T>(input);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = null
+            };
+            return JsonSerializer.Deserialize<T>(input, options);
         }
 
         /// <summary>
