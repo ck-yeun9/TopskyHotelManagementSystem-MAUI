@@ -12,12 +12,11 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
             _httpService = httpService;
         }
 
-        public async Task<List<ReadReserOutputDto>> GetMyReservationsAsync(string customerName)
+        public async Task<List<ReadReserOutputDto>> GetMyReservationsAsync()
         {
             try
             {
-                var response = await _httpService.RequestAsync(
-                    $"MobileBooking/GetReservations?customerName={Uri.EscapeDataString(customerName)}");
+                var response = await _httpService.RequestAsync("MobileBooking/GetMyReservations");
 
                 if (string.IsNullOrWhiteSpace(response?.Message))
                     return new List<ReadReserOutputDto>();

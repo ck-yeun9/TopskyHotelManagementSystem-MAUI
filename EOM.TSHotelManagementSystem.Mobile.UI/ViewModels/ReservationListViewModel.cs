@@ -8,14 +8,12 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
     public class ReservationListViewModel : ViewModelBase, ILoadableViewModel
     {
         private readonly IReservationService _reservationService;
-        private readonly IProfileService _profileService;
         private bool _isLoading;
         private bool _isInitializing;
 
-        public ReservationListViewModel(IReservationService reservationService, IProfileService profileService)
+        public ReservationListViewModel(IReservationService reservationService)
         {
             _reservationService = reservationService;
-            _profileService = profileService;
             LoadCommand = new Command(async () => await LoadReservationsAsync());
         }
 
@@ -55,11 +53,8 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             try
             {
                 IsLoading = true;
-                var profile = await _profileService.GetUserProfileAsync();
-                if (profile == null) return;
 
-                var reservations = await _reservationService.GetMyReservationsAsync(
-                    profile.DisplayName ?? profile.Account);
+                var reservations = await _reservationService.GetMyReservationsAsync();
 
                 Reservations.Clear();
                 foreach (var item in reservations)
@@ -71,7 +66,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlertAsync("错误", $"加载预约记录失败: {ex.Message}", "确定");
+                await Shell.Current.DisplayAlert("错误", $"加载预约记录失败: {ex.Message}", "确定");
             }
             finally
             {
