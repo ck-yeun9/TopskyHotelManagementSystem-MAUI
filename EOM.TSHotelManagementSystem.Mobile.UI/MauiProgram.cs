@@ -40,7 +40,6 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             Routing.RegisterRoute(nameof(RegisterPage), typeof(RegisterPage));
             Routing.RegisterRoute(nameof(NewsView), typeof(NewsView));
             Routing.RegisterRoute(nameof(ProfileView), typeof(ProfileView));
-            Routing.RegisterRoute(nameof(CheckInView), typeof(CheckInView));
             Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
             Routing.RegisterRoute(nameof(ReservationListView), typeof(ReservationListView));
             Routing.RegisterRoute(nameof(NewsDetailView), typeof(NewsDetailView));
@@ -58,6 +57,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             services.AddSingleton<IProfileService, ProfileService>();
             services.AddSingleton<IReservationService, ReservationService>();
             services.AddSingleton<IThemeService, ThemeService>();
+            services.AddSingleton<IShopService, ShopService>();
 
             services.AddTransient<MainPageViewModel>();
             services.AddTransient<CheckInViewModel>();
@@ -69,6 +69,8 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             services.AddTransient<ReservationListViewModel>();
             services.AddTransient<PersonalInfoViewModel>();
             services.AddTransient<SettingsViewModel>();
+            services.AddTransient<ProductShopViewModel>();
+            services.AddTransient<OrderCheckoutViewModel>();
 
             services.AddTransient<CheckInView>();
             services.AddTransient<NewsView>();
@@ -81,6 +83,8 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             services.AddTransient<NewsDetailView>();
             services.AddTransient<PersonalInfoView>();
             services.AddTransient<SettingsView>();
+            services.AddTransient<ProductShopView>();
+            services.AddTransient<OrderCheckoutView>();
 
             services.AddSingleton<AppShell>(sp => new AppShell(
                 sp.GetRequiredService<IAuthService>(),

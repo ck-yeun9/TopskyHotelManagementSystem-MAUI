@@ -3,6 +3,7 @@ using EOM.TSHotelManagementSystem.Mobile.Service;
 using Microsoft.Maui.Graphics;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
 
@@ -31,7 +32,9 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         private bool _isLoadingRooms;
         private bool _isLoadingCheckins;
         private bool _isLoadingHistory;
+        private bool _isRefreshing;
         private bool _isSubmitting;
+        private bool _isNavigatingToShop;
         private string _statusMessage = string.Empty;
         private Color _statusMessageColor = Colors.Transparent;
         private CreateReservationOutputDto? _latestReservation;
@@ -53,6 +56,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             ConsumeProductCommand = new Command(async () => await OnConsumeProduct());
             ViewHistoryReviewCommand = new Command(async () => await OnViewHistoryReview());
             LoadMoreHistoryCommand = new Command(async () => await LoadMoreHistoryAsync());
+            RefreshCommand = new Command(async () => await RefreshAsync());
         }
 
         public ObservableCollection<AvailableRoomDto> AvailableRooms { get; }
@@ -68,6 +72,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         public ICommand ConsumeProductCommand { get; }
         public ICommand ViewHistoryReviewCommand { get; }
         public ICommand LoadMoreHistoryCommand { get; }
+        public ICommand RefreshCommand { get; }
 
         public CurrentCheckinDto? SelectedCheckin
         {
@@ -131,6 +136,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             : "您当前没有正在入住的房间";
 
         public bool HasNoCheckins => CurrentCheckins.Count == 0;
+        public bool HasNoConsumptionHistory => ConsumptionHistory.Count == 0;
 
         public DateTime Today => DateTime.Today;
 
@@ -226,10 +232,22 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             set => SetField(ref _isLoadingHistory, value);
         }
 
+        public bool IsRefreshing
+        {
+            get => _isRefreshing;
+            set => SetField(ref _isRefreshing, value);
+        }
+
         public bool IsSubmitting
         {
             get => _isSubmitting;
             set => SetField(ref _isSubmitting, value);
+        }
+
+        public bool IsNavigatingToShop
+        {
+            get => _isNavigatingToShop;
+            set => SetField(ref _isNavigatingToShop, value);
         }
 
         public string StatusMessage
@@ -331,7 +349,23 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         private async Task OnConsumeProduct()
         {
             if (SelectedCheckin == null) return;
-            await Shell.Current.DisplayAlert("商品消费", $"房号: {SelectedCheckin.RoomNumber}\n商品消费功能开发中...", "确定");
+            try
+            {
+                IsNavigatingToShop = true;
+                var vm = MauiProgram.Services.GetService<ProductShopViewModel>();
+                vm.Initialize(SelectedCheckin.RoomNumber);
+                var page = new ProductShopView(vm);
+                await Application.Current.MainPage.Navigation.PushAsync(page);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"OnConsumeProduct Exception: {ex}");
+                await Shell.Current.DisplayAlert("错误", ex.Message, "确定");
+            }
+            finally
+            {
+                IsNavigatingToShop = false;
+            }
         }
 
         private async Task OnViewHistoryReview()
@@ -340,17 +374,49 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             await Shell.Current.DisplayAlert("历史评价", $"房号: {SelectedCheckin.RoomNumber}\n历史评价功能开发中...", "确定");
         }
 
+        private async Task RefreshAsync()
+        {
+            try
+            {
+                IsRefreshing = true;
+                if (ActiveTab == "checkin")
+                {
+                    _hasLoadedCheckins = false;
+                    await LoadCurrentCheckinsAsync();
+                }
+                else if (ActiveTab == "history")
+                {
+                    _hasLoadedHistory = false;
+                    await LoadConsumptionHistoryAsync();
+                }
+            }
+            finally
+            {
+                IsRefreshing = false;
+            }
+        }
+
         private async Task SwitchTabAsync(string tab)
         {
+            System.Diagnostics.Debug.WriteLine($"SwitchTabAsync called with tab={tab}, _hasLoadedHistory={_hasLoadedHistory}");
             ActiveTab = tab;
 
-            if (tab == "checkin" && !_hasLoadedCheckins)
+            try
             {
-                await LoadCurrentCheckinsAsync();
+                if (tab == "checkin" && !_hasLoadedCheckins)
+                {
+                    await LoadCurrentCheckinsAsync();
+                }
+                else if (tab == "history" && !_hasLoadedHistory)
+                {
+                    System.Diagnostics.Debug.WriteLine("SwitchTabAsync: calling LoadConsumptionHistoryAsync");
+                    await LoadConsumptionHistoryAsync();
+                    System.Diagnostics.Debug.WriteLine($"SwitchTabAsync: LoadConsumptionHistoryAsync done, count={ConsumptionHistory.Count}");
+                }
             }
-            else if (tab == "history" && !_hasLoadedHistory)
+            catch (Exception ex)
             {
-                await LoadConsumptionHistoryAsync();
+                System.Diagnostics.Debug.WriteLine($"SwitchTabAsync Exception: {ex}");
             }
         }
 
@@ -460,39 +526,55 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 HasMoreHistory = true;
 
                 var isLoggedIn = await _authService.HasValidTokenAsync();
+                System.Diagnostics.Debug.WriteLine($"LoadConsumptionHistoryAsync: isLoggedIn={isLoggedIn}");
                 if (!isLoggedIn)
                 {
                     ConsumptionHistory.Clear();
-                    System.Diagnostics.Debug.WriteLine("LoadConsumptionHistoryAsync: Not logged in");
                     return;
                 }
 
                 var httpService = MauiProgram.Services.GetService<IHttpService>();
-                var response = await httpService.RequestAsync($"MobileBooking/GetConsumptionHistory?page={_historyPage}&pageSize={_historyPageSize}");
+                var url = $"MobileBooking/GetProductConsumptionHistory?Page={_historyPage}&PageSize={_historyPageSize}";
+                System.Diagnostics.Debug.WriteLine($"LoadConsumptionHistoryAsync: requesting {url}");
+                var response = await httpService.RequestAsync(url);
 
-                System.Diagnostics.Debug.WriteLine($"LoadConsumptionHistoryAsync Response: {response?.Message}");
+                System.Diagnostics.Debug.WriteLine($"LoadConsumptionHistoryAsync: StatusCode={response?.StatusCode}, MessageLength={response?.Message?.Length}");
 
                 if (string.IsNullOrWhiteSpace(response?.Message))
+                {
+                    System.Diagnostics.Debug.WriteLine("LoadConsumptionHistoryAsync: empty response");
                     return;
+                }
 
                 var result = HttpHelper.JsonToModel<ApiResponse<PagedData<ConsumptionRecordDto>>>(response.Message);
-                System.Diagnostics.Debug.WriteLine($"LoadConsumptionHistoryAsync Result: Code={result?.Code}, Data?.Items?.Count={result?.Data?.Items?.Count}");
+                System.Diagnostics.Debug.WriteLine($"LoadConsumptionHistoryAsync: Code={result?.Code}, Items={result?.Data?.Items?.Count}");
 
                 if (result?.Code == 0 && result.Data?.Items != null)
                 {
-                    ConsumptionHistory.Clear();
                     foreach (var item in result.Data.Items)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"HistoryItem: Product={item.ProductName}, Status={item.SettlementStatus}, Time={item.ConsumptionTime}");
+                    }
+
+                    var sorted = result.Data.Items
+                        .OrderBy(i => i.SettlementStatus == "UnSettle" ? 0 : 1)
+                        .ThenByDescending(i => i.ConsumptionTime)
+                        .ToList();
+
+                    ConsumptionHistory.Clear();
+                    foreach (var item in sorted)
                     {
                         ConsumptionHistory.Add(item);
                     }
                     _hasLoadedHistory = true;
                     HasMoreHistory = ConsumptionHistory.Count < result.Data.TotalCount;
+                    OnPropertyChanged(nameof(HasNoConsumptionHistory));
+                    System.Diagnostics.Debug.WriteLine($"LoadConsumptionHistoryAsync: loaded {ConsumptionHistory.Count} items");
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"LoadConsumptionHistoryAsync Exception: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"LoadConsumptionHistoryAsync StackTrace: {ex.StackTrace}");
+                System.Diagnostics.Debug.WriteLine($"LoadConsumptionHistoryAsync Exception: {ex}");
             }
             finally
             {
@@ -517,7 +599,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 }
 
                 var httpService = MauiProgram.Services.GetService<IHttpService>();
-                var response = await httpService.RequestAsync($"MobileBooking/GetConsumptionHistory?page={_historyPage}&pageSize={_historyPageSize}");
+                var response = await httpService.RequestAsync($"MobileBooking/GetProductConsumptionHistory?Page={_historyPage}&PageSize={_historyPageSize}");
 
                 if (string.IsNullOrWhiteSpace(response?.Message))
                     return;
@@ -684,12 +766,15 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 
     public class ConsumptionRecordDto
     {
-        public string RoomName { get; set; }
-        public DateTime CheckInDate { get; set; }
-        public DateTime CheckOutDate { get; set; }
-        public decimal TotalAmount { get; set; }
-        public string StatusText { get; set; }
-        public string StatusColor { get; set; }
-        public string DateRange => $"{CheckInDate:yyyy-MM-dd} 至 {CheckOutDate:yyyy-MM-dd}";
+        public string RoomNumber { get; set; }
+        public string ProductName { get; set; }
+        public int Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
+        public decimal Amount { get; set; }
+        public DateTime ConsumptionTime { get; set; }
+        public string SettlementStatus { get; set; }
+        public string StatusDisplay => SettlementStatus == "UnSettle" ? "未结算" : "已结算";
+        public string StatusColor => SettlementStatus == "UnSettle" ? "#F59E0B" : "#10B981";
+        public string Summary => $"房号 {RoomNumber} × {Quantity}  ¥{UnitPrice:F0}/件";
     }
 }

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             xmlns:local="clr-namespace:EOM.TSHotelManagementSystem.Mobile.UI"
+             x:Class="EOM.TSHotelManagementSystem.Mobile.UI.OrderCheckoutView"
+             x:Name="CheckoutPage"
+             Title="确认订单">
+    <ContentPage.Resources>
+        <local:BoolToBgColorConverter x:Key="BoolToBgColor" />
+        <local:BoolToTextColorConverter x:Key="BoolToTextColor" />
+    </ContentPage.Resources>
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView Grid.Row="0">
+            <VerticalStackLayout Padding="20" Spacing="16">
+                <!-- 配送方式 -->
+                <Border Padding="16" Stroke="#E5E7EB" StrokeShape="RoundRectangle 18" BackgroundColor="White">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="配送方式" FontSize="16" FontAttributes="Bold" TextColor="#111827" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                            <!-- 自提 -->
+                            <Button Text="🏪 自提" FontSize="14"
+                                    BackgroundColor="{Binding IsSelfPickup, Converter={StaticResource BoolToBgColor}}"
+                                    TextColor="{Binding IsSelfPickup, Converter={StaticResource BoolToTextColor}}"
+                                    Command="{Binding SelectDeliveryCommand}" CommandParameter="SelfPickup"
+                                    CornerRadius="12" HeightRequest="60" />
+                            <!-- 送到房间 -->
+                            <Button Grid.Column="1" Text="🚪 送到房间" FontSize="14"
+                                    BackgroundColor="{Binding IsRoomDelivery, Converter={StaticResource BoolToBgColor}}"
+                                    TextColor="{Binding IsRoomDelivery, Converter={StaticResource BoolToTextColor}}"
+                                    Command="{Binding SelectDeliveryCommand}" CommandParameter="RoomDelivery"
+                                    CornerRadius="12" HeightRequest="60" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- 配送时间 -->
+                <Border Padding="16" Stroke="#E5E7EB" StrokeShape="RoundRectangle 18" BackgroundColor="White">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="配送时间" FontSize="16" FontAttributes="Bold" TextColor="#111827" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                            <DatePicker Date="{Binding DeliveryDate}" MinimumDate="{x:Static sys:DateTime.Today}" />
+                            <TimePicker Grid.Column="1" Time="{Binding DeliveryTime}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- 商品明细 -->
+                <Border Padding="16" Stroke="#E5E7EB" StrokeShape="RoundRectangle 18" BackgroundColor="White">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="商品明细" FontSize="16" FontAttributes="Bold" TextColor="#111827" />
+                        <CollectionView ItemsSource="{Binding OrderItems}" HeightRequest="200">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="*,Auto,Auto,Auto" Padding="0,6" ColumnSpacing="12">
+                                        <VerticalStackLayout>
+                                            <Label Text="{Binding ProductName}" FontSize="14" FontAttributes="Bold" TextColor="#111827" />
+                                            <Label Text="{Binding Specification}" FontSize="12" TextColor="#6B7280" />
+                                        </VerticalStackLayout>
+                                        <Label Grid.Column="1" Text="{Binding Quantity, StringFormat='x{0}'}"
+                                               FontSize="13" TextColor="#6B7280" VerticalOptions="Center" />
+                                        <Label Grid.Column="2" Text="{Binding ProductPrice, StringFormat='¥{0:F0}'}"
+                                               FontSize="13" TextColor="#374151" VerticalOptions="Center" />
+                                        <Label Grid.Column="3" Text="{Binding Subtotal, StringFormat='¥{0:F0}'}"
+                                               FontSize="14" FontAttributes="Bold" TextColor="#EA580C" VerticalOptions="Center" />
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- 支付方式 -->
+                <Border Padding="16" Stroke="#E5E7EB" StrokeShape="RoundRectangle 18" BackgroundColor="White">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="支付方式" FontSize="16" FontAttributes="Bold" TextColor="#111827" />
+                        <RadioButton Content="退房时结算" GroupName="Payment" IsChecked="True"
+                                     Command="{Binding SelectPaymentCommand}" CommandParameter="CheckoutSettle"
+                                     FontSize="14" TextColor="#111827" />
+                        <RadioButton Content="立即支付" GroupName="Payment"
+                                     Command="{Binding SelectPaymentCommand}" CommandParameter="Immediate"
+                                     FontSize="14" TextColor="#111827" />
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- 底部支付栏 -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Padding="20,12"
+              BackgroundColor="White" Stroke="#E5E7EB" StrokeShape="RoundRectangle 0,0,0,0">
+            <Label VerticalOptions="Center" Text="{Binding TotalAmount, StringFormat='合计: ¥{0:F0}'}"
+                   FontSize="18" FontAttributes="Bold" TextColor="#EA580C" />
+            <Button Grid.Column="1" Text="💳 支付"
+                    BackgroundColor="#512BD4" TextColor="White"
+                    Command="{Binding PlaceOrderCommand}" HeightRequest="44"
+                    CornerRadius="10" Padding="24,0" />
+        </Grid>
+    </Grid>
+</ContentPage>

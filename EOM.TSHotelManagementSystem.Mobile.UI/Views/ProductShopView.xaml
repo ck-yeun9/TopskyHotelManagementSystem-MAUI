@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EOM.TSHotelManagementSystem.Mobile.UI.ProductShopView"
+             x:Name="ShopPage"
+             Title="商品消费">
+    <Grid RowDefinitions="*,Auto">
+        <!-- 主内容区: 左分类 + 右商品 -->
+        <Grid Grid.Row="0" ColumnDefinitions="80,*">
+            <!-- 左侧分类列表 -->
+            <CollectionView Grid.Column="0"
+                            ItemsSource="{Binding Categories}"
+                            SelectionMode="None"
+                            BackgroundColor="#F5F5F5">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Padding="14,10"
+                                BackgroundColor="Transparent"
+                                Stroke="Transparent">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={x:Reference ShopPage}, Path=BindingContext.SelectCategoryCommand}"
+                                                      CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="{Binding Label}" FontSize="13" HorizontalOptions="Center"
+                                   TextColor="#666666" LineBreakMode="TailTruncation">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label"
+                                                 Binding="{Binding IsSelected}"
+                                                 Value="True">
+                                        <Setter Property="TextColor" Value="#E4393C" />
+                                        <Setter Property="FontAttributes" Value="Bold" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- 右侧商品列表 -->
+            <Grid Grid.Column="1" RowDefinitions="Auto,*">
+                <ActivityIndicator Grid.Row="0" IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" Color="#E4393C" />
+                <CollectionView Grid.Row="1"
+                                ItemsSource="{Binding Products}"
+                                EmptyView="该分类暂无商品">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="8,4" Padding="10" ColumnDefinitions="*,Auto"
+                                  RowDefinitions="Auto,Auto,Auto" BackgroundColor="White">
+                                <!-- 商品名 -->
+                                <Label Text="{Binding ProductName}" FontSize="14" FontAttributes="Bold" TextColor="#333333" />
+                                <!-- 价格 -->
+                                <Label Grid.Column="1" Grid.RowSpan="3" VerticalOptions="Center"
+                                       Text="{Binding ProductPrice, StringFormat='¥{0:F0}'}"
+                                       FontSize="16" FontAttributes="Bold" TextColor="#E4393C" />
+                                <!-- 规格 -->
+                                <Label Grid.Row="1" Text="{Binding Specification}" FontSize="11" TextColor="#999999" />
+                                <!-- 库存 + 加减按钮 -->
+                                <Grid Grid.Row="2" ColumnDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="4"
+                                      VerticalOptions="Center" Margin="0,4,0,0">
+                                    <Label Text="{Binding AvailableStock, StringFormat='库存{0}'}" FontSize="11" TextColor="#BBBBBB"
+                                           VerticalOptions="Center" Margin="0,0,4,0" />
+                                    <!-- 减号 -->
+                                    <Border Grid.Column="1" WidthRequest="24" HeightRequest="24"
+                                            BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 4">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={x:Reference ShopPage}, Path=BindingContext.RemoveFromCartCommand}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <Label Text="−" FontSize="14" TextColor="#333333"
+                                               HorizontalOptions="Center" VerticalOptions="Center" />
+                                    </Border>
+                                    <!-- 数量（可点击输入） -->
+                                    <Label Grid.Column="2" Text="{Binding CartQuantity}" FontSize="13"
+                                           TextColor="#E4393C" FontAttributes="Bold"
+                                           HorizontalOptions="Center" VerticalOptions="Center"
+                                           WidthRequest="28" HorizontalTextAlignment="Center"
+                                           BackgroundColor="#FFF0F0">
+                                        <Label.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={x:Reference ShopPage}, Path=BindingContext.SetCartQuantityCommand}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Label.GestureRecognizers>
+                                    </Label>
+                                    <!-- 加号 -->
+                                    <Border Grid.Column="3" WidthRequest="24" HeightRequest="24"
+                                            BackgroundColor="#E4393C" StrokeShape="RoundRectangle 4">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={x:Reference ShopPage}, Path=BindingContext.AddToCartCommand}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <Label Text="+" FontSize="14" TextColor="White"
+                                               HorizontalOptions="Center" VerticalOptions="Center" />
+                                    </Border>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+        </Grid>
+
+        <!-- 底部购物车栏 -->
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" Padding="12,8"
+              BackgroundColor="White" StrokeShape="RoundRectangle 0">
+            <!-- 购物车图标 + 角标 -->
+            <Grid ColumnDefinitions="Auto,Auto">
+                <Border BackgroundColor="{Binding CartIconColor}" WidthRequest="40" HeightRequest="40"
+                        StrokeShape="RoundRectangle 20" HorizontalOptions="Start">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ToggleCartCommand}" />
+                    </Border.GestureRecognizers>
+                    <Label Text="🛒" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
+                <Border Grid.Column="1" BackgroundColor="#E4393C" WidthRequest="18" HeightRequest="18"
+                        StrokeShape="RoundRectangle 9" Margin="-8,-4,0,0"
+                        IsVisible="{Binding HasCartItems}">
+                    <Label Text="{Binding CartItemCount}" FontSize="10" FontAttributes="Bold"
+                           TextColor="White" HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
+            </Grid>
+            <!-- 合计 -->
+            <Label Grid.Column="1" VerticalOptions="Center" HorizontalOptions="End" Margin="0,0,12,0"
+                   Text="{Binding CartTotal, StringFormat='¥{0:F0}'}"
+                   FontSize="18" FontAttributes="Bold" TextColor="#E4393C" />
+            <!-- 结算按钮 -->
+            <Button Grid.Column="2" Text="去结算"
+                    BackgroundColor="#E4393C" TextColor="White" FontSize="14"
+                    Command="{Binding CheckoutCommand}" HeightRequest="36"
+                    CornerRadius="18" Padding="16,0" />
+        </Grid>
+
+        <!-- 购物车弹出浮层 (只盖主内容区，底部栏保持可见) -->
+        <Grid Grid.Row="0" RowDefinitions="*,Auto"
+              IsVisible="{Binding IsCartOpen}">
+            <!-- 上方遮罩区域：点击关闭 -->
+            <BoxView Grid.Row="0" BackgroundColor="#66000000">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding CloseCartCommand}" />
+                </BoxView.GestureRecognizers>
+            </BoxView>
+            <!-- 下方购物车面板 -->
+            <Border Grid.Row="1" HeightRequest="340"
+                    BackgroundColor="White" Padding="0">
+                <Grid RowDefinitions="Auto,*,Auto">
+                    <!-- 标题栏 -->
+                    <Grid ColumnDefinitions="*,Auto" Padding="16,12"
+                          BackgroundColor="#F5F5F5">
+                        <Label Text="购物车" FontSize="16" FontAttributes="Bold" TextColor="#333333"
+                               VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="清空" FontSize="13" TextColor="#999999"
+                               VerticalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ClearCartCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Grid>
+                    <!-- 购物车列表 -->
+                    <CollectionView Grid.Row="1" ItemsSource="{Binding CartItems}"
+                                    EmptyView="购物车为空" Margin="0,4,0,0">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="16,10" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                    <!-- 商品名 + 规格 -->
+                                    <VerticalStackLayout>
+                                        <Label Text="{Binding ProductName}" FontSize="14" TextColor="#333333" />
+                                        <Label Text="{Binding Specification}" FontSize="11" TextColor="#999999" Margin="0,2,0,0" />
+                                    </VerticalStackLayout>
+                                    <!-- 单价 -->
+                                    <Label Grid.Column="1" Grid.RowSpan="2" VerticalOptions="Center"
+                                           Text="{Binding ProductPrice, StringFormat='¥{0:F0}'}"
+                                           FontSize="14" FontAttributes="Bold" TextColor="#E4393C" />
+                                    <!-- 数量控制 -->
+                                    <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,Auto" ColumnSpacing="6"
+                                          Margin="0,6,0,0">
+                                        <Border WidthRequest="22" HeightRequest="22"
+                                                BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 4">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Source={x:Reference ShopPage}, Path=BindingContext.RemoveCartItemCommand}"
+                                                                      CommandParameter="{Binding .}" />
+                                            </Border.GestureRecognizers>
+                                            <Label Text="−" FontSize="12" TextColor="#333333"
+                                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                                        </Border>
+                                        <Label Grid.Column="1" Text="{Binding Quantity}" FontSize="13"
+                                               TextColor="#333333" FontAttributes="Bold"
+                                               HorizontalOptions="Center" VerticalOptions="Center"
+                                               WidthRequest="20" HorizontalTextAlignment="Center" />
+                                        <Border Grid.Column="2" WidthRequest="22" HeightRequest="22"
+                                                BackgroundColor="#E4393C" StrokeShape="RoundRectangle 4">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Source={x:Reference ShopPage}, Path=BindingContext.AddCartItemCommand}"
+                                                                      CommandParameter="{Binding .}" />
+                                            </Border.GestureRecognizers>
+                                            <Label Text="+" FontSize="12" TextColor="White"
+                                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                                        </Border>
+                                    </Grid>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    <!-- 底部合计 -->
+                    <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Padding="16,10"
+                          BackgroundColor="#F5F5F5">
+                        <Label VerticalOptions="Center" Text="合计" FontSize="13" TextColor="#666666" />
+                        <Label Grid.Column="1" VerticalOptions="Center"
+                               Text="{Binding CartTotal, StringFormat='¥{0:F0}'}"
+                               FontSize="18" FontAttributes="Bold" TextColor="#E4393C" />
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</ContentPage>

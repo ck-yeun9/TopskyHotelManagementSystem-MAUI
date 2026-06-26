@@ -4,7 +4,7 @@
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
              x:Class="EOM.TSHotelManagementSystem.Mobile.UI.CheckInView"
              x:Name="CheckInViewPage">
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,*" x:Name="RootGrid">
         <Grid Grid.Row="0" ColumnDefinitions="*,*,*" BackgroundColor="White" Padding="8,0">
             <Button Grid.Column="0"
                     Text="房间预订"
@@ -135,7 +135,9 @@
                                 <Label Text="{Binding CurrentCheckinMessage}" FontSize="14" TextColor="#3B82F6" />
                             </VerticalStackLayout>
                         </Border>
-                        <ActivityIndicator IsRunning="{Binding IsLoadingCheckins}" IsVisible="{Binding IsLoadingCheckins}" Color="#512BD4" />
+                        <ActivityIndicator IsRunning="{Binding IsLoadingCheckins}" IsVisible="{Binding IsLoadingCheckins}" Color="#FF5722" />
+                        <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}"
+                                     RefreshColor="#FF5722">
                         <CollectionView ItemsSource="{Binding CurrentCheckins}" EmptyView="您当前没有正在入住的房间">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
@@ -171,18 +173,22 @@
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
+                        </RefreshView>
                     </VerticalStackLayout>
                 </ContentView>
 
                 <ContentView IsVisible="{Binding IsHistoryTab}">
                     <VerticalStackLayout Spacing="16">
-                        <Border Padding="20" Stroke="#D1FAE5" StrokeShape="RoundRectangle 18" BackgroundColor="#ECFDF5">
+                        <Border Padding="20" Stroke="#D1FAE5" StrokeShape="RoundRectangle 18" BackgroundColor="#ECFDF5"
+                                IsVisible="{Binding HasNoConsumptionHistory}">
                             <VerticalStackLayout Spacing="12">
-                                <Label Text="消费记录" FontSize="18" FontAttributes="Bold" TextColor="#065F46" />
-                                <Label Text="查看您的历史入住和消费记录" FontSize="13" TextColor="#059669" />
+                                <Label Text="商品消费记录" FontSize="18" FontAttributes="Bold" TextColor="#065F46" />
+                                <Label Text="暂无消费记录" FontSize="13" TextColor="#059669" />
                             </VerticalStackLayout>
                         </Border>
-                        <ActivityIndicator IsRunning="{Binding IsLoadingHistory}" IsVisible="{Binding IsLoadingHistory}" Color="#512BD4" />
+                        <ActivityIndicator IsRunning="{Binding IsLoadingHistory}" IsVisible="{Binding IsLoadingHistory}" Color="#FF5722" />
+                        <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}"
+                                     RefreshColor="#FF5722">
                         <CollectionView ItemsSource="{Binding ConsumptionHistory}" 
                                         EmptyView="暂无消费记录"
                                         RemainingItemsThreshold="5"
@@ -190,22 +196,38 @@
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
                                     <Border Margin="0,0,0,12" Padding="16" Stroke="#E5E7EB" StrokeShape="RoundRectangle 18" BackgroundColor="White">
-                                        <VerticalStackLayout Spacing="6">
-                                            <Grid ColumnDefinitions="*,Auto">
-                                                <Label Text="{Binding RoomName}" FontSize="15" FontAttributes="Bold" TextColor="#111827" />
-                                                <Label Grid.Column="1" Text="{Binding TotalAmount, StringFormat='¥{0:F0}'}" FontSize="15" FontAttributes="Bold" TextColor="#EA580C" />
+                                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                                            <Label Text="{Binding ProductName}" FontSize="15" FontAttributes="Bold" TextColor="#111827" />
+                                            <Label Grid.Column="1" Grid.RowSpan="3" VerticalOptions="Center"
+                                                   Text="{Binding Amount, StringFormat='¥{0:F0}'}"
+                                                   FontSize="16" FontAttributes="Bold" TextColor="#EA580C" />
+                                            <Label Grid.Row="1" Text="{Binding Summary}" FontSize="12" TextColor="#6B7280" />
+                                            <Grid Grid.Row="2" ColumnDefinitions="Auto,Auto" ColumnSpacing="8">
+                                                <Label Text="{Binding ConsumptionTime, StringFormat='{0:yyyy-MM-dd HH:mm}'}" FontSize="12" TextColor="#9CA3AF" />
+                                                <Label Grid.Column="1" Text="{Binding StatusDisplay}" FontSize="12" TextColor="{Binding StatusColor}" />
                                             </Grid>
-                                            <Label Text="{Binding DateRange}" FontSize="12" TextColor="#6B7280" />
-                                            <Label Text="{Binding StatusText}" FontSize="12" TextColor="{Binding StatusColor}" />
-                                        </VerticalStackLayout>
+                                        </Grid>
                                     </Border>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
-                        <ActivityIndicator IsRunning="{Binding IsLoadingMoreHistory}" IsVisible="{Binding IsLoadingMoreHistory}" Color="#512BD4" />
+                        </RefreshView>
+                        <ActivityIndicator IsRunning="{Binding IsLoadingMoreHistory}" IsVisible="{Binding IsLoadingMoreHistory}" Color="#FF5722" />
                     </VerticalStackLayout>
                 </ContentView>
             </VerticalStackLayout>
         </ScrollView>
+
+        <!-- Loading 遮罩 -->
+        <Grid Grid.Row="0" Grid.RowSpan="2"
+              IsVisible="{Binding IsNavigatingToShop}"
+              BackgroundColor="#80FFFFFF"
+              VerticalOptions="Fill" HorizontalOptions="Fill">
+            <ActivityIndicator IsRunning="True" Color="#512BD4"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+            <Label Text="正在加载..." FontSize="14" TextColor="#6B7280"
+                   HorizontalOptions="Center" VerticalOptions="Center"
+                   Margin="0,50,0,0" />
+        </Grid>
     </Grid>
 </ContentView>
