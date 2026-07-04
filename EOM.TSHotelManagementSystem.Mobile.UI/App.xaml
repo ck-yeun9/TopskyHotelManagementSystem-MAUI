@@ -16,6 +16,7 @@
 
             <converters:TabToVisibilityConverter x:Key="TabToVisibilityConverter" />
             <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
+            <converters:IsNotCanceledConverter x:Key="IsNotCanceledConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

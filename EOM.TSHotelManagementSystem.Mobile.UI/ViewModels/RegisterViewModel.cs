@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -104,9 +105,19 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 return;
             }
 
-            if (Password.Length < 6)
+            if (Password.Length < 8)
             {
-                ErrorMessage = "密码长度至少为6位";
+                ErrorMessage = "密码长度至少为8位";
+                IsBusy = false;
+                return;
+            }
+
+            var hasLetter = Regex.IsMatch(Password, "[a-zA-Z]");
+            var hasDigit = Regex.IsMatch(Password, @"\d");
+            var hasSymbol = Regex.IsMatch(Password, "[^a-zA-Z\\d]");
+            if ((hasLetter ? 1 : 0) + (hasDigit ? 1 : 0) + (hasSymbol ? 1 : 0) < 2)
+            {
+                ErrorMessage = "密码必须包含字母、数字、标点符号中的至少两种";
                 IsBusy = false;
                 return;
             }

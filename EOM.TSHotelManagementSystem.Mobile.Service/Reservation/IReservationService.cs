@@ -5,5 +5,6 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
     public interface IReservationService
     {
         Task<List<ReadReserOutputDto>> GetMyReservationsAsync();
+        Task<bool> CancelReservationAsync(int reservationId);
     }
 }

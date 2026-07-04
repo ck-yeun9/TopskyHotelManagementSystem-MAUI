@@ -36,5 +36,25 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                 return new List<ReadReserOutputDto>();
             }
         }
+
+        public async Task<bool> CancelReservationAsync(int reservationId)
+        {
+            try
+            {
+                var json = HttpHelper.ModelToJson(new { ReservationId = reservationId });
+                var response = await _httpService.RequestAsync("MobileBooking/CancelReservation", json: json);
+
+                if (string.IsNullOrWhiteSpace(response?.Message))
+                    return false;
+
+                var result = HttpHelper.JsonToModel<ApiResponse>(response.Message);
+                return result?.Code == 0;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"CancelReservationAsync Exception: {ex.Message}");
+                return false;
+            }
+        }
     }
 }

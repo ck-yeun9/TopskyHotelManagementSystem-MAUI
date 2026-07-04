@@ -335,15 +335,19 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         private async Task OnViewRoomDetail()
         {
             if (SelectedCheckin == null) return;
-            await Shell.Current.DisplayAlert("房间详情",
-                $"房号: {SelectedCheckin.RoomNumber}\n" +
-                $"房型: {SelectedCheckin.RoomName}\n" +
-                $"入住时间: {SelectedCheckin.CheckInTime:yyyy-MM-dd HH:mm}\n" +
-                $"房费: ¥{SelectedCheckin.DailyRate:F0}/天\n" +
-                $"会员等级: {SelectedCheckin.CustomerLevelName} ({SelectedCheckin.DiscountDisplay})\n" +
-                $"折扣后房费: ¥{SelectedCheckin.DiscountedDailyRate:F0}/天\n" +
-                $"商品消费: ¥{SelectedCheckin.ProductConsumption:F0}\n" +
-                $"当前消费: ¥{SelectedCheckin.TotalAmount:F0}", "确定");
+            var detail = $"房号: {SelectedCheckin.RoomNumber}";
+            if (!string.IsNullOrWhiteSpace(SelectedCheckin.RoomArea))
+                detail += $"\n区域: {SelectedCheckin.RoomArea}";
+            if (SelectedCheckin.RoomFloor.HasValue)
+                detail += $"\n楼层: {SelectedCheckin.RoomFloor}F";
+            detail += $"\n房型: {SelectedCheckin.RoomName}" +
+                $"\n入住时间: {SelectedCheckin.CheckInTime:yyyy-MM-dd HH:mm}" +
+                $"\n房费: ¥{SelectedCheckin.DailyRate:F0}/天" +
+                $"\n客户类型: {SelectedCheckin.CustomerLevelName} ({SelectedCheckin.DiscountDisplay})" +
+                $"\n折扣后房费: ¥{SelectedCheckin.DiscountedDailyRate:F0}/天" +
+                $"\n商品消费: ¥{SelectedCheckin.ProductConsumption:F0}" +
+                $"\n当前消费: ¥{SelectedCheckin.TotalAmount:F0}";
+            await Shell.Current.DisplayAlertAsync("房间详情", detail, "确定");
         }
 
         private async Task OnConsumeProduct()
@@ -360,7 +364,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"OnConsumeProduct Exception: {ex}");
-                await Shell.Current.DisplayAlert("错误", ex.Message, "确定");
+                await Shell.Current.DisplayAlertAsync("错误", ex.Message, "确定");
             }
             finally
             {
@@ -371,7 +375,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         private async Task OnViewHistoryReview()
         {
             if (SelectedCheckin == null) return;
-            await Shell.Current.DisplayAlert("历史评价", $"房号: {SelectedCheckin.RoomNumber}\n历史评价功能开发中...", "确定");
+            await Shell.Current.DisplayAlertAsync("历史评价", $"房号: {SelectedCheckin.RoomNumber}\n历史评价功能开发中...", "确定");
         }
 
         private async Task RefreshAsync()
@@ -628,24 +632,24 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 
         private async Task SubmitReservationAsync()
         {
-            if (!await _authService.HasValidTokenAsync())
-            {
-                StatusMessage = "请先登录后再进行预约。";
-                StatusMessageColor = Colors.OrangeRed;
-                await Shell.Current.GoToAsync(nameof(LoginPage));
-                return;
-            }
-
-            var validationMessage = ValidateForm();
-            if (!string.IsNullOrEmpty(validationMessage))
-            {
-                StatusMessage = validationMessage;
-                StatusMessageColor = Colors.OrangeRed;
-                return;
-            }
-
             try
             {
+                if (!await _authService.HasValidTokenAsync())
+                {
+                    StatusMessage = "请先登录后再进行预约。";
+                    StatusMessageColor = Colors.OrangeRed;
+                    await Shell.Current.GoToAsync(nameof(LoginPage));
+                    return;
+                }
+
+                var validationMessage = ValidateForm();
+                if (!string.IsNullOrEmpty(validationMessage))
+                {
+                    StatusMessage = validationMessage;
+                    StatusMessageColor = Colors.OrangeRed;
+                    return;
+                }
+
                 IsSubmitting = true;
                 StatusMessage = string.Empty;
 
@@ -667,6 +671,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"SubmitReservationAsync Exception: {ex}");
                 StatusMessage = $"预订失败: {ex.Message}";
                 StatusMessageColor = Colors.OrangeRed;
             }
@@ -729,6 +734,8 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 
         public string RoomName { get; set; }
         public string RoomNumber { get; set; }
+        public string RoomArea { get; set; }
+        public int? RoomFloor { get; set; }
         public DateTime CheckInTime { get; set; }
         public decimal DailyRate { get; set; }
         public string CustomerLevelName { get; set; }

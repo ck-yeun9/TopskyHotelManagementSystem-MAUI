@@ -12,6 +12,7 @@
             <CollectionView x:Name="NewsCollection"
                             ItemsSource="{Binding NewsItems}"
                             Margin="15"
+                            VerticalScrollBarVisibility="Never"
                             EmptyView="暂无新闻数据">
 
                 <CollectionView.ItemTemplate>

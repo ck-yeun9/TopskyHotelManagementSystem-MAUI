@@ -21,14 +21,14 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"OnAppearing Exception: {ex}");
-                await DisplayAlert("页面加载错误", ex.ToString(), "确定");
+                await DisplayAlertAsync("页面加载错误", ex.ToString(), "确定");
             }
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            Shell.Current.Title = "入住管理";
+            Shell.Current.Title = "商品消费";
         }
     }
 }

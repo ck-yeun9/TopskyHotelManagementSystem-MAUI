@@ -15,5 +15,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.Contract
         public string ReservationChannelDescription { get; set; }
         public DateTime ReservationStartDate { get; set; }
         public DateTime ReservationEndDate { get; set; }
+        public int ReservationStatus { get; set; }
+        public string ReservationStatusDescription { get; set; }
     }
 }

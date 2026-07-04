@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="EOM.TSHotelManagementSystem.Mobile.UI.ReservationListView"
+             x:Name="ReservationListPage"
              Title="我的预约">
 
     <Grid>
@@ -20,12 +21,27 @@
                                BackgroundColor="{AppThemeBinding Light=White, Dark=#2D2D30}"
                                HasShadow="True">
                             <StackLayout Spacing="8">
-                                <Grid ColumnDefinitions="*,auto">
-                                    <Label Text="{Binding ReservationRoomNumber, FallbackValue='未分配房间'}"
-                                           FontSize="16"
-                                           FontAttributes="Bold"
-                                           TextColor="{AppThemeBinding Light=#212121, Dark=White}"/>
+                                <Grid ColumnDefinitions="*,auto,auto">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="{Binding ReservationRoomNumber, FallbackValue='未分配房间'}"
+                                               FontSize="16"
+                                               FontAttributes="Bold"
+                                               TextColor="{AppThemeBinding Light=#212121, Dark=White}"/>
+                                        <Label FontSize="12" TextColor="Gray">
+                                            <Label.Text>
+                                                <MultiBinding StringFormat="{}{0} {1}F">
+                                                    <Binding Path="RoomArea" FallbackValue="" />
+                                                    <Binding Path="RoomFloor" FallbackValue="" />
+                                                </MultiBinding>
+                                            </Label.Text>
+                                        </Label>
+                                    </VerticalStackLayout>
                                     <Label Grid.Column="1"
+                                           Text="{Binding ReservationStatusDescription}"
+                                           FontSize="12"
+                                           VerticalOptions="Center"
+                                           Margin="8,0"/>
+                                    <Label Grid.Column="2"
                                            Text="{Binding ReservationChannelDescription, FallbackValue='APP'}"
                                            FontSize="12"
                                            TextColor="#FF5722"
@@ -46,6 +62,16 @@
                                            Text="{Binding ReservationEndDate, StringFormat='{0:yyyy-MM-dd}'}"
                                            FontSize="12" TextColor="{AppThemeBinding Light=#424242, Dark=#BDBDBD}"/>
                                 </Grid>
+
+                                <Button Text="取消预约" StyleClass="FilledButton"
+                                        FontSize="13"
+                                        TextColor="White"
+                                        BackgroundColor="#EF4444"
+                                        CornerRadius="8"
+                                        HeightRequest="36"
+                                        Command="{Binding Source={x:Reference ReservationListPage}, Path=BindingContext.CancelReservationCommand}"
+                                        CommandParameter="{Binding .}"
+                                        IsVisible="{Binding ReservationStatus, Converter={StaticResource IsNotCanceledConverter}}" />
                             </StackLayout>
                         </Frame>
                     </DataTemplate>

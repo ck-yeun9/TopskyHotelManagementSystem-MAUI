@@ -15,9 +15,11 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         {
             _reservationService = reservationService;
             LoadCommand = new Command(async () => await LoadReservationsAsync());
+            CancelReservationCommand = new Command<ReadReserOutputDto>(async (r) => await CancelReservationAsync(r));
         }
 
         public ICommand LoadCommand { get; }
+        public ICommand CancelReservationCommand { get; }
 
         public ObservableCollection<ReadReserOutputDto> Reservations { get; set; } = new();
 
@@ -66,7 +68,42 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("错误", $"加载预约记录失败: {ex.Message}", "确定");
+                await Shell.Current.DisplayAlertAsync("错误", $"加载预约记录失败: {ex.Message}", "确定");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        private async Task CancelReservationAsync(ReadReserOutputDto reservation)
+        {
+            if (reservation == null) return;
+
+            var confirm = await Shell.Current.DisplayAlertAsync("取消预约",
+                $"确定取消预约 {reservation.ReservationId} 吗？\n房号: {reservation.ReservationRoomNumber}",
+                "确定", "取消");
+
+            if (!confirm) return;
+
+            try
+            {
+                IsLoading = true;
+                var success = await _reservationService.CancelReservationAsync(reservation.Id ?? 0);
+
+                if (success)
+                {
+                    await Shell.Current.DisplayAlertAsync("成功", "预约已取消", "确定");
+                    await LoadReservationsAsync();
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlertAsync("失败", "取消预约失败，请稍后重试", "确定");
+                }
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlertAsync("错误", $"取消预约失败: {ex.Message}", "确定");
             }
             finally
             {

@@ -150,7 +150,11 @@
                                                 <Label Text="{Binding RoomName}" FontSize="16" FontAttributes="Bold" TextColor="#111827" />
                                                 <Label Grid.Column="1" Text="{Binding Status}" FontSize="12" TextColor="#3B82F6" />
                                             </Grid>
-                                            <Label Text="{Binding RoomNumber, StringFormat='房号: {0}'}" FontSize="13" TextColor="#6B7280" />
+                                            <VerticalStackLayout Spacing="2">
+                                                <Label Text="{Binding RoomNumber, StringFormat='房号: {0}'}" FontSize="13" TextColor="#6B7280" />
+                                                <Label Text="{Binding RoomArea, StringFormat='区域: {0}'}" FontSize="12" TextColor="#6B7280" />
+                                                <Label Text="{Binding RoomFloor, StringFormat='楼层: {0}F'}" FontSize="12" TextColor="#6B7280" />
+                                            </VerticalStackLayout>
                                             <Label Text="{Binding CheckInTime, StringFormat='入住时间: {0:yyyy-MM-dd HH:mm}'}" FontSize="13" TextColor="#6B7280" />
                                             <Label Text="{Binding TotalAmount, StringFormat='当前消费: ¥{0:F0}'}" FontSize="15" FontAttributes="Bold" TextColor="#EA580C" />
                                             <Label Text="{Binding ProductConsumption, StringFormat='商品消费: ¥{0:F0}'}" FontSize="13" TextColor="#D97706"

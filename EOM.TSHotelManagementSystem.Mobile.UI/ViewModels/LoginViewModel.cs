@@ -166,7 +166,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 }
 
                 System.Diagnostics.Debug.WriteLine("[Biometric] 弹出询问对话框...");
-                var enable = await Shell.Current.DisplayAlert("登录成功", "是否开启指纹/面容登录？下次可快速登录", "开启", "暂不");
+                var enable = await Shell.Current.DisplayAlertAsync("登录成功", "是否开启指纹/面容登录？下次可快速登录", "开启", "暂不");
                 System.Diagnostics.Debug.WriteLine($"[Biometric] 用户选择: {enable}");
 
                 if (!enable) return;
@@ -181,7 +181,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 {
                     await _authService.SaveBiometricCredentialsAsync(username, password);
                     await Microsoft.Maui.Storage.SecureStorage.SetAsync("BiometricEnabled", "true");
-                    await Shell.Current.DisplayAlert("开启成功", "已开启生物识别登录，下次可使用指纹/面容快速登录", "确定");
+                    await Shell.Current.DisplayAlertAsync("开启成功", "已开启生物识别登录，下次可使用指纹/面容快速登录", "确定");
                     System.Diagnostics.Debug.WriteLine("[Biometric] 开启成功");
                 }
                 else

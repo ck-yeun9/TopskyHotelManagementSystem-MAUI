@@ -94,7 +94,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                     if (!isSupported)
                     {
                         IsBiometricEnabled = false;
-                        await Shell.Current.DisplayAlert("提示", "您的设备不支持生物识别", "确定");
+                        await Shell.Current.DisplayAlertAsync("提示", "您的设备不支持生物识别", "确定");
                         return;
                     }
 
@@ -102,18 +102,18 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                     if (!isLoggedIn)
                     {
                         IsBiometricEnabled = false;
-                        await Shell.Current.DisplayAlert("提示", "请先登录后再开启生物识别", "确定");
+                        await Shell.Current.DisplayAlertAsync("提示", "请先登录后再开启生物识别", "确定");
                         return;
                     }
 
                     await Microsoft.Maui.Storage.SecureStorage.SetAsync("BiometricEnabled", "true");
-                    await Shell.Current.DisplayAlert("提示", "生物识别已开启，下次登录可使用指纹/面容", "确定");
+                    await Shell.Current.DisplayAlertAsync("提示", "生物识别已开启，下次登录可使用指纹/面容", "确定");
                 }
                 else
                 {
                     Microsoft.Maui.Storage.SecureStorage.Remove("BiometricEnabled");
                     await _authService.ClearBiometricCredentialsAsync();
-                    await Shell.Current.DisplayAlert("提示", "生物识别已关闭", "确定");
+                    await Shell.Current.DisplayAlertAsync("提示", "生物识别已关闭", "确定");
                 }
             }
             catch (Exception ex)
@@ -144,7 +144,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 {
                     if (Shell.Current != null)
                     {
-                        await Shell.Current.DisplayAlert("提示", "缓存已清除", "确定");
+                        await Shell.Current.DisplayAlertAsync("提示", "缓存已清除", "确定");
                     }
                 });
             }
@@ -154,7 +154,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 {
                     if (Shell.Current != null)
                     {
-                        await Shell.Current.DisplayAlert("错误", $"清除缓存失败: {ex.Message}", "确定");
+                        await Shell.Current.DisplayAlertAsync("错误", $"清除缓存失败: {ex.Message}", "确定");
                     }
                 });
             }

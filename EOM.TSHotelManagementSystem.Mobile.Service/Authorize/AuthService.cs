@@ -43,7 +43,6 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
 
                 if (string.IsNullOrWhiteSpace(response?.Message))
                 {
-                    Debug.WriteLine("LoginAsync: 服务器无响应");
                     return false;
                 }
 
@@ -56,13 +55,11 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                     if (!string.IsNullOrEmpty(sourceResponse.Data.RefreshToken))
                     {
                         await SaveRefreshTokenAsync(sourceResponse.Data.RefreshToken);
-                        Debug.WriteLine("LoginAsync: RefreshToken已保存");
                     }
 
                     return true;
                 }
 
-                Debug.WriteLine($"LoginAsync: 登录失败 Code={sourceResponse?.Code} Message={sourceResponse?.Message}");
             }
             catch (Exception ex)
             {
@@ -87,7 +84,6 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
 
                 if (string.IsNullOrWhiteSpace(response?.Message))
                 {
-                    Debug.WriteLine("RegisterAsync: 服务器无响应");
                     return false;
                 }
 
@@ -99,7 +95,6 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                     return true;
                 }
 
-                Debug.WriteLine($"RegisterAsync: 注册失败 Code={sourceResponse?.Code} Message={sourceResponse?.Message}");
             }
             catch (Exception ex)
             {
@@ -238,6 +233,50 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
             var expiration = await GetTokenExpiration();
 
             return expiration > DateTime.Now.AddMinutes(10);
+        }
+
+        public async Task<string> GetCustomerNumberAsync()
+        {
+            try
+            {
+                var token = await GetAccessToken();
+                if (string.IsNullOrEmpty(token))
+                    return string.Empty;
+
+                var parts = token.Split('.');
+                if (parts.Length < 2)
+                    return string.Empty;
+
+                var payload = parts[1];
+                // 补齐 base64 padding
+                payload = payload.Replace('-', '+').Replace('_', '/');
+                switch (payload.Length % 4)
+                {
+                    case 2: payload += "=="; break;
+                    case 3: payload += "="; break;
+                }
+
+                var jsonBytes = Convert.FromBase64String(payload);
+                var json = Encoding.UTF8.GetString(jsonBytes);
+                using var doc = JsonDocument.Parse(json);
+                var root = doc.RootElement;
+
+                // 后端使用 ClaimTypes.SerialNumber = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/serialnumber"
+                var claimKey = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/serialnumber";
+                if (root.TryGetProperty(claimKey, out var claimElement))
+                    return claimElement.GetString() ?? string.Empty;
+
+                // 备用：小写 key
+                if (root.TryGetProperty("serialnumber", out var snElement))
+                    return snElement.GetString() ?? string.Empty;
+
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"GetCustomerNumberAsync Exception: {ex.Message}");
+                return string.Empty;
+            }
         }
 
         public async Task<string> GetAccessToken()

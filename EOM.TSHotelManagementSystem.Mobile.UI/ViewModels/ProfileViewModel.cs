@@ -1,4 +1,6 @@
+using EOM.TSHotelManagementSystem.Mobile.Contract;
 using EOM.TSHotelManagementSystem.Mobile.Service;
+using System.Linq;
 using System.Windows.Input;
 
 namespace EOM.TSHotelManagementSystem.Mobile.UI
@@ -99,7 +101,12 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                         UserName = profile.DisplayName ?? profile.Account;
                         UserAccount = profile.Account;
                         PhotoUrl = profile.PhotoUrl;
-                        UserLevel = "会员";
+
+                        // 读取客户类型名称
+                        var customerTypes = await _profileService.GetCustomerTypesAsync();
+                        var match = customerTypes.FirstOrDefault(c => c.CustomerType == profile.CustomerType.GetValueOrDefault());
+                        UserLevel = match?.CustomerTypeName ?? "普通客户";
+
                         System.Diagnostics.Debug.WriteLine($"LoadUserDataAsync: UserName={UserName}, UserAccount={UserAccount}");
                     }
                     else

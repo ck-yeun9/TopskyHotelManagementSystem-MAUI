@@ -69,5 +69,76 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                 return null;
             }
         }
+
+        public async Task<bool> UpdateProfileAsync(UpdateProfileInputDto input)
+        {
+            try
+            {
+                var json = HttpHelper.ModelToJson(input);
+                var response = await _httpService.RequestAsync("Profile/UpdateProfile", json: json);
+
+                if (string.IsNullOrWhiteSpace(response?.Message))
+                    return false;
+
+                var result = HttpHelper.JsonToModel<ApiResponse>(response.Message);
+                return result?.Code == 0;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[ProfileService] UpdateProfileAsync Exception: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<List<CustoTypeOutputDto>> GetCustomerTypesAsync()
+        {
+            try
+            {
+                var response = await _httpService.RequestAsync("MobileBooking/GetCustomerTypes");
+                if (string.IsNullOrWhiteSpace(response?.Message)) return new List<CustoTypeOutputDto>();
+
+                var result = HttpHelper.JsonToModel<ApiResponse<PagedData<CustoTypeOutputDto>>>(response.Message);
+                return result?.Code == 0 ? result.Data?.Items ?? new List<CustoTypeOutputDto>() : new List<CustoTypeOutputDto>();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[ProfileService] GetCustomerTypesAsync Exception: {ex.Message}");
+                return new List<CustoTypeOutputDto>();
+            }
+        }
+
+        public async Task<List<NationOutputDto>> GetNationsAsync()
+        {
+            try
+            {
+                var response = await _httpService.RequestAsync("MobileBooking/GetNations");
+                if (string.IsNullOrWhiteSpace(response?.Message)) return new List<NationOutputDto>();
+
+                var result = HttpHelper.JsonToModel<ApiResponse<PagedData<NationOutputDto>>>(response.Message);
+                return result?.Code == 0 ? result.Data?.Items ?? new List<NationOutputDto>() : new List<NationOutputDto>();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[ProfileService] GetNationsAsync Exception: {ex.Message}");
+                return new List<NationOutputDto>();
+            }
+        }
+
+        public async Task<List<EducationOutputDto>> GetEducationsAsync()
+        {
+            try
+            {
+                var response = await _httpService.RequestAsync("MobileBooking/GetEducations");
+                if (string.IsNullOrWhiteSpace(response?.Message)) return new List<EducationOutputDto>();
+
+                var result = HttpHelper.JsonToModel<ApiResponse<PagedData<EducationOutputDto>>>(response.Message);
+                return result?.Code == 0 ? result.Data?.Items ?? new List<EducationOutputDto>() : new List<EducationOutputDto>();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[ProfileService] GetEducationsAsync Exception: {ex.Message}");
+                return new List<EducationOutputDto>();
+            }
+        }
     }
 }

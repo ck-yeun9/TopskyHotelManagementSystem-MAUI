@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using static EOM.TSHotelManagementSystem.Mobile.Service.HttpService;
 
 namespace EOM.TSHotelManagementSystem.Mobile.Service
 {
@@ -67,7 +61,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
             {
                 var options = new JsonSerializerOptions
                 {
-                    Converters = { new IgnoreNullValuesConverter(true) },
+                    DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
                     WriteIndented = true
                 };
                 return JsonSerializer.Serialize(input, options);

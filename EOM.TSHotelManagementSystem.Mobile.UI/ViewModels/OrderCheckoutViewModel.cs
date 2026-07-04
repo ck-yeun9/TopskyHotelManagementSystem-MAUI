@@ -111,17 +111,17 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 if (success)
                 {
                     ProductShopViewModel.NeedsReload = true;
-                    await Shell.Current.DisplayAlert("成功", "下单成功！", "确定");
+                    await Shell.Current.DisplayAlertAsync("成功", "下单成功！", "确定");
                     await Application.Current.MainPage.Navigation.PopAsync();
                 }
                 else
                 {
-                    await Shell.Current.DisplayAlert("失败", "下单失败，请重试。", "确定");
+                    await Shell.Current.DisplayAlertAsync("失败", "下单失败，请重试。", "确定");
                 }
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("错误", $"下单异常: {ex.Message}", "确定");
+                await Shell.Current.DisplayAlertAsync("错误", $"下单异常: {ex.Message}", "确定");
             }
             finally
             {

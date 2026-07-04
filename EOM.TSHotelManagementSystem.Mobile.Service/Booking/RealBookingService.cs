@@ -7,10 +7,12 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
     public class RealBookingService : IBookingService
     {
         private readonly IHttpService _httpService;
+        private readonly IAuthService _authService;
 
-        public RealBookingService(IHttpService httpService)
+        public RealBookingService(IHttpService httpService, IAuthService authService)
         {
             _httpService = httpService;
+            _authService = authService;
         }
 
         public async Task<IReadOnlyList<AvailableRoomDto>> GetAvailableRoomsAsync(
@@ -73,21 +75,45 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
         {
             try
             {
-                var reservationId = $"TS{DateTime.Now:yyyyMMddHHmmss}";
-                var roomId = int.TryParse(input.RoomTypeId, out var id) ? id : (int?)null;
+                // 从可用房间列表中查找所选房型下的一个具体房间
+                var availableRoomResponse = await _httpService.RequestAsync("MobileBooking/GetAvailableRooms");
+                if (string.IsNullOrWhiteSpace(availableRoomResponse?.Message))
+                    throw new InvalidOperationException("无法获取可用房间列表");
+
+                var availableRoomResult = HttpHelper.JsonToModel<ApiResponse<PagedData<ReadRoomOutputDto>>>(availableRoomResponse.Message);
+                if (availableRoomResult?.Code != 0 || availableRoomResult.Data?.Items == null)
+                    throw new InvalidOperationException("获取可用房间列表失败");
+
+                var targetRoomTypeId = int.TryParse(input.RoomTypeId, out var parsedTypeId) ? parsedTypeId : 0;
+                var targetRoom = availableRoomResult.Data.Items
+                    .FirstOrDefault(r => r.RoomTypeId == targetRoomTypeId && r.RoomStateId == 1);
+
+                if (targetRoom == null)
+                    throw new InvalidOperationException("所选房型已无可用房间，请重新搜索");
+
+                var reservationId = $"RSE-{DateTime.Now:yyyyMMddHHmmss}";
+
+                // 获取客户编号存入 Remarks，以便 GetMyReservations 按编号查询
+                var customerNumber = await _authService.GetCustomerNumberAsync();
+                if (string.IsNullOrEmpty(customerNumber))
+                    throw new InvalidOperationException("无法获取客户信息，请重新登录");
+
+                var remarks = string.IsNullOrWhiteSpace(input.SpecialRequest)
+                    ? customerNumber
+                    : $"{customerNumber}|{input.SpecialRequest}";
 
                 var reserInput = new CreateReserInputDto
                 {
                     ReservationId = reservationId,
                     CustomerName = input.ContactName,
                     ReservationPhoneNumber = input.PhoneNumber,
-                    RoomId = roomId,
-                    ReservationRoomNumber = input.RoomName,
-                    ReservationChannel = "APP",
+                    RoomId = targetRoom.Id,
+                    ReservationRoomNumber = targetRoom.RoomNumber,
+                    ReservationChannel = "App",
                     ReservationStartDate = input.CheckInDate,
                     ReservationEndDate = input.CheckOutDate,
                     ReservationStatus = 0,
-                    Remarks = input.SpecialRequest
+                    Remarks = remarks
                 };
 
                 var json = HttpHelper.ModelToJson(reserInput);
@@ -102,12 +128,12 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                 {
                     var nights = Math.Max(1, (input.CheckOutDate.Date - input.CheckInDate.Date).Days);
 
-                    var roomResponse = await _httpService.RequestAsync("MobileBooking/GetRoomTypes");
-                    if (string.IsNullOrWhiteSpace(roomResponse?.Message))
-                        throw new InvalidOperationException("无法获取房间信息");
+                    var roomTypeResponse = await _httpService.RequestAsync("MobileBooking/GetRoomTypes");
+                    if (string.IsNullOrWhiteSpace(roomTypeResponse?.Message))
+                        throw new InvalidOperationException("无法获取房型信息");
 
-                    var roomResult = HttpHelper.JsonToModel<ApiResponse<PagedData<ReadRoomTypeOutputDto>>>(roomResponse.Message);
-                    var roomType = roomResult?.Data?.Items?.FirstOrDefault(rt => rt.RoomTypeId.ToString() == input.RoomTypeId);
+                    var roomTypeResult = HttpHelper.JsonToModel<ApiResponse<PagedData<ReadRoomTypeOutputDto>>>(roomTypeResponse.Message);
+                    var roomType = roomTypeResult?.Data?.Items?.FirstOrDefault(rt => rt.RoomTypeId == targetRoomTypeId);
                     var pricePerNight = roomType?.RoomRent ?? 0;
 
                     return new CreateReservationOutputDto

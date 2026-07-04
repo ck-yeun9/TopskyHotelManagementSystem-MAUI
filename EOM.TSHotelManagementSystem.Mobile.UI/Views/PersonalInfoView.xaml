@@ -38,6 +38,39 @@
                 </VerticalStackLayout>
             </Frame>
 
+            <Label Text="个人信息" FontSize="18" FontAttributes="Bold"/>
+            <Frame Padding="15" CornerRadius="10" BorderColor="LightGray">
+                <VerticalStackLayout Spacing="14">
+                    <material:TextField Title="昵称" Text="{Binding EditName}" />
+                    <material:TextField Title="邮箱" Text="{Binding EditEmail}" Keyboard="Email" />
+                    <material:TextField Title="手机号" Text="{Binding EditPhone}" Keyboard="Telephone" />
+                    <material:TextField Title="地址" Text="{Binding EditAddress}" />
+                    <Label Text="生日" FontSize="12" TextColor="Gray" />
+                    <DatePicker Date="{Binding EditBirthDate}" MinimumDate="1900-01-01" />
+                    <Label Text="性别" FontSize="12" TextColor="Gray" />
+                    <Picker ItemsSource="{Binding GenderOptions}"
+                            SelectedIndex="{Binding SelectedGenderIndex}"
+                            Title="请选择性别" />
+                    <Label Text="民族" FontSize="12" TextColor="Gray" />
+                    <Picker ItemsSource="{Binding NationNames}"
+                            SelectedIndex="{Binding SelectedNationIndex}"
+                            Title="请选择民族" />
+                    <Label Text="学历" FontSize="12" TextColor="Gray" />
+                    <Picker ItemsSource="{Binding EducationNames}"
+                            SelectedIndex="{Binding SelectedEducationIndex}"
+                            Title="请选择学历" />
+                    <Grid ColumnDefinitions="80,*">
+                        <Label Text="客户类型" VerticalOptions="Center" TextColor="Gray"/>
+                        <Label Grid.Column="1" Text="{Binding CustomerTypeDisplay}" VerticalOptions="Center"/>
+                    </Grid>
+                    <Button Text="保存信息"
+                            StyleClass="FilledButton"
+                            Command="{Binding SaveProfileCommand}"
+                            HeightRequest="48" />
+                    <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" />
+                </VerticalStackLayout>
+            </Frame>
+
             <Button StyleClass="OutlinedButton" Text="修改密码"
                     Command="{Binding TogglePasswordSectionCommand}"/>
 

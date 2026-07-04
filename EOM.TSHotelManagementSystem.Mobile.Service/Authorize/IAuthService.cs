@@ -11,6 +11,7 @@
         Task RefreshTokenAsync();
         Task<bool> ValidateAccessTokenAsync();
         Task<string> GetAccessToken();
+        Task<string> GetCustomerNumberAsync();
 
         Task<bool> IsBiometricEnabledAsync();
         Task SaveBiometricCredentialsAsync(string username, string password);

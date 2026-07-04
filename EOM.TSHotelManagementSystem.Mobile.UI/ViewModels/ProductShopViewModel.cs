@@ -110,7 +110,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"LoadDataAsync Exception: {ex}");
-                await Shell.Current.DisplayAlert("加载失败", ex.ToString(), "确定");
+                await Shell.Current.DisplayAlertAsync("加载失败", ex.ToString(), "确定");
             }
             finally
             {
@@ -243,7 +243,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 
             if (!int.TryParse(result, out var qty) || qty < 0)
             {
-                await Shell.Current.DisplayAlert("提示", "请输入有效的数量", "确定");
+                await Shell.Current.DisplayAlertAsync("提示", "请输入有效的数量", "确定");
                 return;
             }
 
@@ -301,7 +301,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         {
             if (CartItems.Count == 0)
             {
-                await Shell.Current.DisplayAlert("提示", "购物车为空，请先添加商品。", "确定");
+                await Shell.Current.DisplayAlertAsync("提示", "购物车为空，请先添加商品。", "确定");
                 return;
             }
 
