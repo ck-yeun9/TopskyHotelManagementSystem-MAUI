@@ -38,12 +38,9 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-android|AnyCPU'">
-		<!-- 关键：开启快速部署 -->
 		<EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
-		<!-- 不用 AOT 调试 -->
 		<AndroidEnableProguard>false</AndroidEnableProguard>
-		<AndroidLinkMode>None</AndroidLinkMode>
-		<!-- 确保用 JIT 路径 -->
+		<AndroidLinkerEnabled>false</AndroidLinkerEnabled>
 		<AndroidUseAapt2>true</AndroidUseAapt2>
 	</PropertyGroup>
 
@@ -52,7 +49,7 @@
 		<MauiIcon Include="Resources\AppIcon\logo.png" ForegroundFile="Resources\AppIcon\logo.png" />
 
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+		<MauiSplashScreen Include="Resources\Splash\logo.svg" Color="#1E293B" BaseSize="256,256" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
@@ -112,5 +109,25 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
+
+	<!-- ================= 签名配置（仅 Release） ================= -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Release' AND '$(TargetFramework)' == 'net10.0-android'">
+
+		<!-- 生成 APK（而不是 AAB，方便直接安装） -->
+		<AndroidPackageFormat>apk</AndroidPackageFormat>
+
+		<!-- 启用签名 -->
+		<AndroidKeyStore>True</AndroidKeyStore>
+
+		<!-- keystore 路径（相对项目根目录） -->
+		<AndroidSigningKeyStore>topsy.keystore</AndroidSigningKeyStore>
+
+		<!-- 别名 -->
+		<AndroidSigningKeyAlias>topsy</AndroidSigningKeyAlias>
+
+		<AndroidSigningKeyPass>env:ANDROID_KEY_PASS</AndroidSigningKeyPass>
+		<AndroidSigningStorePass>env:ANDROID_STORE_PASS</AndroidSigningStorePass>
+
+	</PropertyGroup>
 
 </Project>
