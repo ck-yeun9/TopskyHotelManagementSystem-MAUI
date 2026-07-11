@@ -49,7 +49,7 @@
 		<MauiIcon Include="Resources\AppIcon\logo.png" ForegroundFile="Resources\AppIcon\logo.png" />
 
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\logo.svg" Color="#1E293B" BaseSize="256,256" />
+		<MauiSplashScreen Include="Resources\Splash\logo.svg" Color="#FFFFFF" BaseSize="256,256" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
@@ -63,8 +63,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.71" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.71" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.80" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.80" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.9" />
 		<PackageReference Include="UraniumUI.Icons.MaterialSymbols" Version="3.0.0" />
 		<PackageReference Include="UraniumUI.Material" Version="3.0.0" />
@@ -108,7 +108,16 @@
 	  <MauiXaml Update="Views\NewsDetailView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	</ItemGroup>
+	  <MauiXaml Update="Views\EvaluationStatsView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+  <MauiXaml Update="Views\EvaluationView.xaml">
+    <Generator>MSBuild:Compile</Generator>
+  </MauiXaml>
+  <MauiXaml Update="Controls\PageHeader.xaml">
+    <Generator>MSBuild:Compile</Generator>
+  </MauiXaml>
+</ItemGroup>
 
 	<!-- ================= 签名配置（仅 Release） ================= -->
 	<PropertyGroup Condition="'$(Configuration)' == 'Release' AND '$(TargetFramework)' == 'net10.0-android'">

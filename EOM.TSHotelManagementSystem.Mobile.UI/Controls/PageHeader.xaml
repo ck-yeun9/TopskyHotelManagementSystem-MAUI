@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EOM.TSHotelManagementSystem.Mobile.UI.Controls.PageHeader"
+             x:Name="This">
+    <Grid HeightRequest="50"
+          BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1F1F1F}">
+        <Grid.Triggers>
+            <DataTrigger TargetType="Grid"
+                         Binding="{Binding TransparentBackground, Source={x:Reference This}}"
+                         Value="True">
+                <Setter Property="BackgroundColor" Value="Transparent" />
+            </DataTrigger>
+        </Grid.Triggers>
+        <Grid.Padding>
+            <OnPlatform x:TypeArguments="Thickness">
+                <On Platform="Android" Value="8,20,8,0" />
+                <On Platform="iOS" Value="8,12,8,0" />
+                <On Platform="Default" Value="8,8,8,0" />
+            </OnPlatform>
+        </Grid.Padding>
+        <!-- 左侧返回按钮：44x44 命中区，矢量左箭头在其中绝对居中 -->
+        <Grid x:Name="BackButton"
+              WidthRequest="44" HeightRequest="44"
+              VerticalOptions="Center"
+              HorizontalOptions="Start"
+              IsVisible="{Binding ShowBack, Source={x:Reference This}}">
+            <Path Data="M15,8 L9,14 L15,20"
+                  Stroke="{AppThemeBinding Light=#212121, Dark=#E0E0E0}"
+                  StrokeThickness="2.5"
+                  StrokeLineCap="Round"
+                  StrokeLineJoin="Round"
+                  WidthRequest="24" HeightRequest="28"
+                  VerticalOptions="Center"
+                  HorizontalOptions="Center" />
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding BackCommand, Source={x:Reference This}}" />
+            </Grid.GestureRecognizers>
+        </Grid>
+
+        <!-- 右侧内容槽（可选，如“写评价”按钮） -->
+        <ContentView Content="{Binding RightContent, Source={x:Reference This}}"
+                     VerticalOptions="Center"
+                     HorizontalOptions="End" />
+
+        <!-- 绝对居中标题：覆盖整栏，不受左右按钮挤压 -->
+        <Label Text="{Binding Title, Source={x:Reference This}}"
+               FontSize="18"
+               FontAttributes="Bold"
+               TextColor="{AppThemeBinding Light=#212121, Dark=#E0E0E0}"
+               VerticalOptions="Center"
+               HorizontalOptions="Center" />
+    </Grid>
+</ContentView>

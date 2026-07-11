@@ -7,7 +7,13 @@
     <ScrollView>
         <StackLayout Padding="20" Spacing="20">
             
-            <Frame Padding="15" CornerRadius="10" BorderColor="LightGray">
+            <Frame Padding="15" CornerRadius="10" BorderColor="Transparent">
+                <Frame.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#FFE0B2" Offset="0.0" />
+                        <GradientStop Color="#FFAB91" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Frame.Background>
                 <StackLayout Spacing="10">
                     <Grid HeightRequest="80" WidthRequest="80" HorizontalOptions="Center">
                         <Label FontFamily="MaterialOutlinedFilled"
@@ -36,9 +42,8 @@
                     IsVisible="{Binding IsLoggedIn}"/>
             <Button StyleClass="OutlinedButton" Text="系统设置"
                     Command="{Binding NavigateToSettingsCommand}"/>
-            <Button StyleClass="OutlinedButton" Text="退出登录"
+            <Button StyleClass="DangerButton" Text="退出登录"
                     Command="{Binding LogoutCommand}"
-                    TextColor="Red"
                     IsVisible="{Binding IsLoggedIn}"/>
             
             <Button StyleClass="FilledButton" Text="登录/注册"

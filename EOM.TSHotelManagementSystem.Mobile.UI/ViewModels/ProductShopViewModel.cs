@@ -10,6 +10,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         public static bool NeedsReload { get; set; }
         private readonly IShopService _shopService;
         private string _roomNumber;
+        private string _currentRoomNumber;
         private string _selectedCategory;
         private bool _isLoading;
         private bool _isCartOpen;
@@ -74,6 +75,13 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 
         public void Initialize(string roomNumber)
         {
+            // ViewModel 为单例，购物车数据跨房间会残留。
+            // 切换房间时清空上一次购物车，避免把 A 房间的商品结算到 B 房间。
+            if (!string.Equals(_currentRoomNumber, roomNumber, StringComparison.Ordinal))
+            {
+                ClearCart();
+                _currentRoomNumber = roomNumber;
+            }
             _roomNumber = roomNumber;
         }
 

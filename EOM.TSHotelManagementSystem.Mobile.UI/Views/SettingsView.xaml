@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:EOM.TSHotelManagementSystem.Mobile.UI.Controls"
              x:Class="EOM.TSHotelManagementSystem.Mobile.UI.SettingsView"
-             Title="系统设置">
-    <ScrollView>
+             Title="系统设置"
+             Shell.NavBarIsVisible="False">
+    <Grid RowDefinitions="Auto,*">
+        <controls:PageHeader Grid.Row="0" Title="系统设置" ShowBack="True" />
+        <ScrollView Grid.Row="1">
         <VerticalStackLayout Padding="20" Spacing="20">
             <Label Text="外观" FontSize="18" FontAttributes="Bold"/>
             <Frame Padding="15" CornerRadius="10" BorderColor="LightGray">
@@ -23,12 +27,12 @@
                         <Switch Grid.Column="1" IsToggled="{Binding IsBiometricEnabled}"
                                 ThumbColor="{AppThemeBinding Light=#FF5722, Dark=#FF9B6A}"/>
                     </Grid>
-                    <Label Text="开启后可使用指纹或面容快速登录" FontSize="12" TextColor="Gray"/>
+                    <Label Text="开启后可使用指纹或面容快速登录" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}"/>
                 </VerticalStackLayout>
             </Frame>
             <Frame Padding="15" CornerRadius="10" BorderColor="LightGray"
                    IsVisible="{Binding IsBiometricAvailable, Converter={StaticResource InvertBoolConverter}}">
-                <Label Text="您的设备不支持生物识别或未登录" FontSize="14" TextColor="Gray"/>
+                <Label Text="您的设备不支持生物识别或未登录" FontSize="14" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}"/>
             </Frame>
 
             <Label Text="其他" FontSize="18" FontAttributes="Bold"/>
@@ -40,14 +44,15 @@
                 <VerticalStackLayout Spacing="8">
                     <Grid ColumnDefinitions="*,auto">
                         <Label Text="应用版本" VerticalOptions="Center" FontSize="16"/>
-                        <Label Grid.Column="1" Text="{Binding AppVersion}" VerticalOptions="Center" TextColor="Gray"/>
+                        <Label Grid.Column="1" Text="{Binding AppVersion}" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}"/>
                     </Grid>
                     <Grid ColumnDefinitions="*,auto">
                         <Label Text="应用名称" VerticalOptions="Center" FontSize="16"/>
-                        <Label Grid.Column="1" Text="TopSky酒店" VerticalOptions="Center" TextColor="Gray"/>
+                        <Label Grid.Column="1" Text="TopSky酒店" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}"/>
                     </Grid>
                 </VerticalStackLayout>
             </Frame>
         </VerticalStackLayout>
-    </ScrollView>
+        </ScrollView>
+    </Grid>
 </ContentPage>

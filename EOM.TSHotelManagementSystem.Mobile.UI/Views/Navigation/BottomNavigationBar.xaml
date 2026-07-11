@@ -7,51 +7,72 @@
       HeightRequest="60"
       ColumnDefinitions="*,*,*">
 
-    <StackLayout Grid.Column="0" 
-             HorizontalOptions="Center"
-             VerticalOptions="Center"
-             Spacing="4"
-             x:Name="NewsLayout" >
-        <Label FontFamily="MaterialOutlinedFilled"
-               Text="newspaper"
-               FontSize="24"
-               VerticalOptions="Center"
-               HorizontalOptions="Center"
-               x:Name="NewsIcon" />
-        <Label Text="新闻" 
-               FontSize="12"
-               x:Name="NewsLabel"/>
-    </StackLayout>
+    <Border x:Name="NewsBorder"
+            Grid.Column="0"
+            Stroke="Transparent"
+            StrokeThickness="0"
+            StrokeShape="RoundRectangle 20"
+            BackgroundColor="Transparent"
+            HorizontalOptions="Center"
+            VerticalOptions="Center">
+        <StackLayout Spacing="2" Padding="16,4" x:Name="NewsLayout">
+            <Label FontFamily="MaterialOutlinedFilled"
+                   Text="newspaper"
+                   FontSize="24"
+                   InputTransparent="True"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center"
+                   x:Name="NewsIcon" />
+            <Label Text="新闻" 
+                   FontSize="12"
+                   InputTransparent="True"
+                   x:Name="NewsLabel"/>
+        </StackLayout>
+    </Border>
 
-    <StackLayout Grid.Column="1" 
-             HorizontalOptions="Center"
-             VerticalOptions="Center"
-             Spacing="4"
-             x:Name="CheckInLayout">
-        <Label FontFamily="MaterialOutlinedFilled"
-               Text="luggage"
-               FontSize="24"
-               VerticalOptions="Center"
-               HorizontalOptions="Center"
-               x:Name="CheckInIcon"/>
-        <Label Text="入住" 
-               FontSize="12"
-               x:Name="CheckInLabel"/>
-    </StackLayout>
+    <Border x:Name="CheckInBorder"
+            Grid.Column="1"
+            Stroke="Transparent"
+            StrokeThickness="0"
+            StrokeShape="RoundRectangle 20"
+            BackgroundColor="Transparent"
+            HorizontalOptions="Center"
+            VerticalOptions="Center">
+        <StackLayout Spacing="2" Padding="16,4" x:Name="CheckInLayout">
+            <Label FontFamily="MaterialOutlinedFilled"
+                   Text="luggage"
+                   FontSize="24"
+                   InputTransparent="True"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center"
+                   x:Name="CheckInIcon"/>
+            <Label Text="入住" 
+                   FontSize="12"
+                   InputTransparent="True"
+                   x:Name="CheckInLabel"/>
+        </StackLayout>
+    </Border>
 
-    <StackLayout Grid.Column="2" 
-             HorizontalOptions="Center"
-             VerticalOptions="Center"
-             Spacing="4"
-             x:Name="ProfileLayout">
-        <Label FontFamily="MaterialOutlinedFilled"
-               Text="person"
-               FontSize="24"
-               VerticalOptions="Center"
-               HorizontalOptions="Center"
-               x:Name="ProfileIcon"/>
-        <Label Text="我的" 
-               FontSize="12"
-               x:Name="ProfileLabel"/>
-    </StackLayout>
+    <Border x:Name="ProfileBorder"
+            Grid.Column="2"
+            Stroke="Transparent"
+            StrokeThickness="0"
+            StrokeShape="RoundRectangle 20"
+            BackgroundColor="Transparent"
+            HorizontalOptions="Center"
+            VerticalOptions="Center">
+        <StackLayout Spacing="2" Padding="16,4" x:Name="ProfileLayout">
+            <Label FontFamily="MaterialOutlinedFilled"
+                   Text="person"
+                   FontSize="24"
+                   InputTransparent="True"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center"
+                   x:Name="ProfileIcon"/>
+            <Label Text="我的" 
+                   FontSize="12"
+                   InputTransparent="True"
+                   x:Name="ProfileLabel"/>
+        </StackLayout>
+    </Border>
 </Grid>

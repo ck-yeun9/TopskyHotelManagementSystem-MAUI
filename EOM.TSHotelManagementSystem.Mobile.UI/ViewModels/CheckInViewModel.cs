@@ -13,9 +13,13 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
     {
         private readonly IBookingService _bookingService;
         private readonly IAuthService _authService;
+        private readonly INavigationService _navigationService;
         private bool _hasLoadedRooms;
         private bool _hasLoadedCheckins;
         private bool _hasLoadedHistory;
+        // 结算成功后由 OrderCheckoutViewModel 置位：返回入住页（复用既有 VM 实例）时
+        // 强制刷新在住房间列表，使房间「商品消费/当前消费」总额更新为最新，避免显示脏数据。
+        public static bool NeedsCheckinRefresh { get; set; }
         private string _activeTab = "booking";
         private CurrentCheckinDto? _selectedCheckin;
         private int _historyPage = 1;
@@ -39,14 +43,16 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         private Color _statusMessageColor = Colors.Transparent;
         private CreateReservationOutputDto? _latestReservation;
 
-        public CheckInViewModel(IBookingService bookingService, IAuthService authService)
+        public CheckInViewModel(IBookingService bookingService, IAuthService authService, INavigationService navigationService)
         {
             _bookingService = bookingService;
             _authService = authService;
+            _navigationService = navigationService;
 
             AvailableRooms = new ObservableCollection<AvailableRoomDto>();
             CurrentCheckins = new ObservableCollection<CurrentCheckinDto>();
             ConsumptionHistory = new ObservableCollection<ConsumptionRecordDto>();
+            GroupedConsumptionHistory = new ObservableCollection<ConsumptionDateGroup>();
             GuestCountOptions = new List<int> { 1, 2, 3, 4, 5, 6 };
             RefreshAvailableRoomsCommand = new Command(async () => await LoadRoomDataAsync());
             SubmitReservationCommand = new Command(async () => await SubmitReservationAsync());
@@ -56,12 +62,14 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             ConsumeProductCommand = new Command(async () => await OnConsumeProduct());
             ViewHistoryReviewCommand = new Command(async () => await OnViewHistoryReview());
             LoadMoreHistoryCommand = new Command(async () => await LoadMoreHistoryAsync());
+            ChangeHistoryRangeCommand = new Command<string>(OnChangeHistoryRange);
             RefreshCommand = new Command(async () => await RefreshAsync());
         }
 
         public ObservableCollection<AvailableRoomDto> AvailableRooms { get; }
         public ObservableCollection<CurrentCheckinDto> CurrentCheckins { get; }
         public ObservableCollection<ConsumptionRecordDto> ConsumptionHistory { get; }
+        public ObservableCollection<ConsumptionDateGroup> GroupedConsumptionHistory { get; }
         public IReadOnlyList<int> GuestCountOptions { get; }
 
         public ICommand RefreshAvailableRoomsCommand { get; }
@@ -72,7 +80,25 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         public ICommand ConsumeProductCommand { get; }
         public ICommand ViewHistoryReviewCommand { get; }
         public ICommand LoadMoreHistoryCommand { get; }
+        public ICommand ChangeHistoryRangeCommand { get; }
         public ICommand RefreshCommand { get; }
+
+        private string _historyRange = "1m";
+        /// <summary>
+        /// 消费记录时间范围：all=全部，1m=近一月，3m=近三月，1y=近一年。默认近一月。
+        /// 切换时重新按范围加载，并重建按日期分组。
+        /// </summary>
+        public string HistoryRange
+        {
+            get => _historyRange;
+            set
+            {
+                if (SetField(ref _historyRange, value))
+                {
+                    _ = LoadConsumptionHistoryAsync();
+                }
+            }
+        }
 
         public CurrentCheckinDto? SelectedCheckin
         {
@@ -124,11 +150,11 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         public bool IsCheckinTab => ActiveTab == "checkin";
         public bool IsHistoryTab => ActiveTab == "history";
 
-        public Color BookingTabColor => ActiveTab == "booking" ? Color.FromArgb("#512BD4") : Color.FromArgb("#F3F4F6");
+        public Color BookingTabColor => ActiveTab == "booking" ? Color.FromArgb("#FF5722") : Color.FromArgb("#F3F4F6");
         public Color BookingTabTextColor => ActiveTab == "booking" ? Colors.White : Color.FromArgb("#6B7280");
-        public Color CheckinTabColor => ActiveTab == "checkin" ? Color.FromArgb("#512BD4") : Color.FromArgb("#F3F4F6");
+        public Color CheckinTabColor => ActiveTab == "checkin" ? Color.FromArgb("#FF5722") : Color.FromArgb("#F3F4F6");
         public Color CheckinTabTextColor => ActiveTab == "checkin" ? Colors.White : Color.FromArgb("#6B7280");
-        public Color HistoryTabColor => ActiveTab == "history" ? Color.FromArgb("#512BD4") : Color.FromArgb("#F3F4F6");
+        public Color HistoryTabColor => ActiveTab == "history" ? Color.FromArgb("#FF5722") : Color.FromArgb("#F3F4F6");
         public Color HistoryTabTextColor => ActiveTab == "history" ? Colors.White : Color.FromArgb("#6B7280");
 
         public string CurrentCheckinMessage => CurrentCheckins.Count > 0
@@ -306,6 +332,28 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             {
                 await LoadRoomDataAsync();
             }
+
+            // 仅当刚下过单时才刷新在住房间列表（复用既有 VM 实例不会自动重载）。
+            // 平时返回本页不触发，避免每次返回都重新请求造成卡顿。
+            if (NeedsCheckinRefresh)
+            {
+                NeedsCheckinRefresh = false;
+                _hasLoadedCheckins = false;
+                await LoadCurrentCheckinsAsync();
+
+                // 重新指向同一房间，避免选中项停留在被清空的旧对象上（旧对象消费额是脏数据）
+                if (SelectedCheckin != null)
+                {
+                    var fresh = CurrentCheckins.FirstOrDefault(c => c.RoomNumber == SelectedCheckin.RoomNumber);
+                    if (fresh != null)
+                    {
+                        foreach (var item in CurrentCheckins) item.IsSelected = false;
+                        fresh.IsSelected = true;
+                        SelectedCheckin = fresh;
+                        OnPropertyChanged(nameof(HasSelectedCheckin));
+                    }
+                }
+            }
         }
 
         public void OnViewDisappearing()
@@ -375,7 +423,17 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         private async Task OnViewHistoryReview()
         {
             if (SelectedCheckin == null) return;
-            await Shell.Current.DisplayAlertAsync("历史评价", $"房号: {SelectedCheckin.RoomNumber}\n历史评价功能开发中...", "确定");
+            try
+            {
+                var page = MauiProgram.Services.GetRequiredService<EvaluationStatsView>();
+                page.Initialize(SelectedCheckin.RoomNumber, SelectedCheckin.RoomName, SelectedCheckin.StayId);
+                await Shell.Current.Navigation.PushAsync(page);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"OnViewHistoryReview Exception: {ex}");
+                await Shell.Current.DisplayAlertAsync("错误", ex.Message, "确定");
+            }
         }
 
         private async Task RefreshAsync()
@@ -521,6 +579,33 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             }
         }
 
+        private void OnChangeHistoryRange(string range)
+        {
+            if (!string.IsNullOrWhiteSpace(range) && range != _historyRange)
+            {
+                HistoryRange = range;
+            }
+        }
+
+        /// <summary>
+        /// 将扁平的消费记录按消费日期(天)分组，供 CollectionView 分组显示。
+        /// 组按日期倒序，组内按时间倒序。
+        /// </summary>
+        private void RebuildGroups()
+        {
+            var groups = ConsumptionHistory
+                .GroupBy(i => i.ConsumptionTime.Date)
+                .OrderByDescending(g => g.Key)
+                .Select(g => new ConsumptionDateGroup(g.Key, g.OrderByDescending(i => i.ConsumptionTime)))
+                .ToList();
+
+            GroupedConsumptionHistory.Clear();
+            foreach (var group in groups)
+            {
+                GroupedConsumptionHistory.Add(group);
+            }
+        }
+
         private async Task LoadConsumptionHistoryAsync()
         {
             try
@@ -538,7 +623,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 }
 
                 var httpService = MauiProgram.Services.GetService<IHttpService>();
-                var url = $"MobileBooking/GetProductConsumptionHistory?Page={_historyPage}&PageSize={_historyPageSize}";
+                var url = $"MobileBooking/GetProductConsumptionHistory?Page={_historyPage}&PageSize={_historyPageSize}&Range={_historyRange}";
                 System.Diagnostics.Debug.WriteLine($"LoadConsumptionHistoryAsync: requesting {url}");
                 var response = await httpService.RequestAsync(url);
 
@@ -570,6 +655,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                     {
                         ConsumptionHistory.Add(item);
                     }
+                    RebuildGroups();
                     _hasLoadedHistory = true;
                     HasMoreHistory = ConsumptionHistory.Count < result.Data.TotalCount;
                     OnPropertyChanged(nameof(HasNoConsumptionHistory));
@@ -603,7 +689,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 }
 
                 var httpService = MauiProgram.Services.GetService<IHttpService>();
-                var response = await httpService.RequestAsync($"MobileBooking/GetProductConsumptionHistory?Page={_historyPage}&PageSize={_historyPageSize}");
+                var response = await httpService.RequestAsync($"MobileBooking/GetProductConsumptionHistory?Page={_historyPage}&PageSize={_historyPageSize}&Range={_historyRange}");
 
                 if (string.IsNullOrWhiteSpace(response?.Message))
                     return;
@@ -616,6 +702,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                     {
                         ConsumptionHistory.Add(item);
                     }
+                    RebuildGroups();
                     HasMoreHistory = ConsumptionHistory.Count < result.Data.TotalCount;
                 }
             }
@@ -638,7 +725,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 {
                     StatusMessage = "请先登录后再进行预约。";
                     StatusMessageColor = Colors.OrangeRed;
-                    await Shell.Current.GoToAsync(nameof(LoginPage));
+                    await _navigationService.NavigateToAsync($"//{nameof(LoginPage)}");
                     return;
                 }
 
@@ -745,6 +832,11 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         public decimal TotalAmount { get; set; }
         public string Status { get; set; }
 
+        /// <summary>
+        /// 本次入住唯一标识 (Stay ID)，由服务端在办理入住/换房时生成；提交评价时回传用于校验
+        /// </summary>
+        public string StayId { get; set; } = string.Empty;
+
         public string DiscountDisplay => Discount > 0 && Discount < 100
             ? $"{Discount / 10:F0}折"
             : "无折扣";
@@ -783,5 +875,34 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         public string StatusDisplay => SettlementStatus == "UnSettle" ? "未结算" : "已结算";
         public string StatusColor => SettlementStatus == "UnSettle" ? "#F59E0B" : "#10B981";
         public string Summary => $"房号 {RoomNumber} × {Quantity}  ¥{UnitPrice:F0}/件";
+    }
+
+    /// <summary>
+    /// 消费记录按「消费日期(天)」分组的组容器，供 CollectionView 分组显示。
+    /// 组本身是可枚举集合（承载当日明细），并额外暴露日期标题与小计。
+    /// </summary>
+    public class ConsumptionDateGroup : ObservableCollection<ConsumptionRecordDto>
+    {
+        public ConsumptionDateGroup(DateTime date, IEnumerable<ConsumptionRecordDto> items) : base(items)
+        {
+            Date = date;
+        }
+
+        public DateTime Date { get; }
+
+        public string DateLabel
+        {
+            get
+            {
+                var today = DateTime.Today;
+                if (Date.Date == today)
+                    return $"今天 · {Date:yyyy年M月d日}";
+                if (Date.Date == today.AddDays(-1))
+                    return $"昨天 · {Date:yyyy年M月d日}";
+                return $"{Date:yyyy年M月d日}";
+            }
+        }
+
+        public decimal DayTotal => this.Sum(i => i.Amount);
     }
 }

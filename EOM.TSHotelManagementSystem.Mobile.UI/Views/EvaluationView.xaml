@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:EOM.TSHotelManagementSystem.Mobile.UI.Controls"
+             x:Class="EOM.TSHotelManagementSystem.Mobile.UI.EvaluationView"
+             x:Name="EvalPage"
+             Title="写评价"
+             Shell.NavBarIsVisible="False">
+    <Grid RowDefinitions="Auto,*">
+        <controls:PageHeader Grid.Row="0" Title="写评价" ShowBack="True" />
+        <ScrollView Grid.Row="1">
+        <VerticalStackLayout Padding="16" Spacing="16">
+
+            <Label>
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="{Binding RoomName}" FontSize="18" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=#E8E8E8}" />
+                        <Span Text="{Binding RoomNumber, StringFormat='   房号：{0}'}" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
+            <!-- 维度评分 -->
+            <Border Stroke="#E5E7EB" StrokeShape="RoundRectangle 16" BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource CardSurfaceDark}}" Padding="16">
+                <VerticalStackLayout Spacing="14">
+                    <Label Text="请为本次入住体验打分" FontSize="15" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=#E8E8E8}" />
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12">
+                        <Label Grid.Row="0" Grid.Column="0" Text="卫生状况" FontSize="14" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=#E8E8E8}" VerticalOptions="Center" />
+                        <controls:StarRatingControl Grid.Row="0" Grid.Column="1" Score="{Binding CleanlinessScore}" />
+
+                        <Label Grid.Row="1" Grid.Column="0" Text="服务态度" FontSize="14" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=#E8E8E8}" VerticalOptions="Center" />
+                        <controls:StarRatingControl Grid.Row="1" Grid.Column="1" Score="{Binding ServiceScore}" />
+
+                        <Label Grid.Row="2" Grid.Column="0" Text="舒适度" FontSize="14" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=#E8E8E8}" VerticalOptions="Center" />
+                        <controls:StarRatingControl Grid.Row="2" Grid.Column="1" Score="{Binding ComfortScore}" />
+
+                        <Label Grid.Row="3" Grid.Column="0" Text="设施与位置" FontSize="14" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=#E8E8E8}" VerticalOptions="Center" />
+                        <controls:StarRatingControl Grid.Row="3" Grid.Column="1" Score="{Binding LocationScore}" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- 匿名开关 -->
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="匿名评价" FontSize="15" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=#E8E8E8}" VerticalOptions="Center" />
+                <Switch Grid.Column="1" IsToggled="{Binding IsAnonymous}" />
+            </Grid>
+
+            <!-- 点评内容 -->
+            <Border Stroke="#E5E7EB" StrokeShape="RoundRectangle 16" BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource CardSurfaceDark}}" Padding="12">
+                <Editor Text="{Binding Comment}" Placeholder="说点什么吧（选填）"
+                        AutoSize="TextChanges" HeightRequest="90" />
+            </Border>
+
+            <!-- 提交 -->
+            <Button Text="提交评价" BackgroundColor="#FF5722" TextColor="White"
+                    FontSize="16" HeightRequest="46" CornerRadius="23"
+                    Command="{Binding SubmitCommand}" IsEnabled="{Binding CanSubmit}" />
+
+            <Label Text="{Binding SubmitMessage}" FontSize="13" TextColor="#10B981"
+                   HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

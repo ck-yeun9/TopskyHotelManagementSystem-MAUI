@@ -3,48 +3,108 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
+             xmlns:controls="clr-namespace:EOM.TSHotelManagementSystem.Mobile.UI.Controls"
              x:Class="EOM.TSHotelManagementSystem.Mobile.UI.RegisterPage"
              Title="注册"
+             Shell.NavBarIsVisible="False"
              BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1C1E}">
-    <ScrollView>
-        <StackLayout Padding="30" Spacing="25">
-            <Image Source="logo.png" HeightRequest="100" HorizontalOptions="Center"/>
+    <Grid RowDefinitions="Auto,*">
+        <controls:PageHeader Grid.Row="0" Title="注册" ShowBack="False" />
 
-            <material:TextField Title="用户名" 
-                   Text="{Binding Username}"
-                   Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Account_circle}}"
-                   BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2E}" />
+        <ScrollView Grid.Row="1">
+            <StackLayout Padding="30" Spacing="18">
+                <Image Source="logo.png" HeightRequest="100" HorizontalOptions="Center"/>
 
-            <material:TextField Title="邮箱" 
-                   Text="{Binding Email}"
-                   Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Mail}}"
-                   BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2E}" />
+                <Border x:Name="UsernameBorder"
+                        Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#3A3A3C}"
+                        StrokeThickness="2"
+                        StrokeShape="RoundRectangle 12"
+                        BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2E}"
+                        Padding="4,0">
+                    <Grid ColumnDefinitions="44,*" HeightRequest="48">
+                        <Label Grid.Column="0" Text="{x:Static m:MaterialOutlined.Account_circle}"
+                               FontFamily="MaterialOutlined" FontSize="22"
+                               TextColor="{AppThemeBinding Light=#757575, Dark=#B0B0B0}"
+                               VerticalOptions="Center" HorizontalOptions="Center" />
+                        <Entry Grid.Column="1" Text="{Binding Username}" Placeholder="用户名"
+                               BackgroundColor="Transparent" FontSize="15"
+                               VerticalOptions="Center"
+                               Focused="OnEntryFocused" Unfocused="OnEntryUnfocused" />
+                    </Grid>
+                </Border>
 
-            <material:TextField Title="密码" 
-                   Text="{Binding Password}"
-                   Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Password}}"
-                   IsPassword="True"
-                   BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2E}" />
+                <Border x:Name="EmailBorder"
+                        Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#3A3A3C}"
+                        StrokeThickness="2"
+                        StrokeShape="RoundRectangle 12"
+                        BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2E}"
+                        Padding="4,0">
+                    <Grid ColumnDefinitions="44,*" HeightRequest="48">
+                        <Label Grid.Column="0" Text="{x:Static m:MaterialOutlined.Mail}"
+                               FontFamily="MaterialOutlined" FontSize="22"
+                               TextColor="{AppThemeBinding Light=#757575, Dark=#B0B0B0}"
+                               VerticalOptions="Center" HorizontalOptions="Center" />
+                        <Entry Grid.Column="1" Text="{Binding Email}" Placeholder="邮箱"
+                               Keyboard="Email"
+                               BackgroundColor="Transparent" FontSize="15"
+                               VerticalOptions="Center"
+                               Focused="OnEntryFocused" Unfocused="OnEntryUnfocused" />
+                    </Grid>
+                </Border>
 
-            <material:TextField Title="确认密码" 
-                   Text="{Binding ConfirmPassword}"
-                   IsPassword="True"
-                   BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2E}" />
+                <Border x:Name="PasswordBorder"
+                        Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#3A3A3C}"
+                        StrokeThickness="2"
+                        StrokeShape="RoundRectangle 12"
+                        BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2E}"
+                        Padding="4,0">
+                    <Grid ColumnDefinitions="44,*" HeightRequest="48">
+                        <Label Grid.Column="0" Text="{x:Static m:MaterialOutlined.Password}"
+                               FontFamily="MaterialOutlined" FontSize="22"
+                               TextColor="{AppThemeBinding Light=#757575, Dark=#B0B0B0}"
+                               VerticalOptions="Center" HorizontalOptions="Center" />
+                        <Entry Grid.Column="1" Text="{Binding Password}" Placeholder="密码"
+                               IsPassword="True"
+                               BackgroundColor="Transparent" FontSize="15"
+                               VerticalOptions="Center"
+                               Focused="OnEntryFocused" Unfocused="OnEntryUnfocused" />
+                    </Grid>
+                </Border>
 
-            <Button Text="注册" 
-                    StyleClass="FilledButton"
-                    Command="{Binding RegisterCommand}"
-                    HeightRequest="50" />
+                <Border x:Name="ConfirmPasswordBorder"
+                        Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#3A3A3C}"
+                        StrokeThickness="2"
+                        StrokeShape="RoundRectangle 12"
+                        BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2E}"
+                        Padding="4,0">
+                    <Grid ColumnDefinitions="44,*" HeightRequest="48">
+                        <Label Grid.Column="0" Text="{x:Static m:MaterialOutlined.Password}"
+                               FontFamily="MaterialOutlined" FontSize="22"
+                               TextColor="{AppThemeBinding Light=#757575, Dark=#B0B0B0}"
+                               VerticalOptions="Center" HorizontalOptions="Center" />
+                        <Entry Grid.Column="1" Text="{Binding ConfirmPassword}" Placeholder="确认密码"
+                               IsPassword="True"
+                               BackgroundColor="Transparent" FontSize="15"
+                               VerticalOptions="Center"
+                               Focused="OnEntryFocused" Unfocused="OnEntryUnfocused" />
+                    </Grid>
+                </Border>
 
-            <Button Text="返回登录" 
-                    StyleClass="TextButton"
-                    Command="{Binding NavigateToLoginCommand}"
-                    HeightRequest="50" />
+                <Button Text="注册" 
+                        StyleClass="FilledButton"
+                        Command="{Binding RegisterCommand}"
+                        HeightRequest="50" />
 
-            <Label Text="{Binding ErrorMessage}" 
-                   TextColor="#FF453A" 
-                   HorizontalOptions="Center" 
-                   IsVisible="{Binding HasErrorMessage}"/>
-        </StackLayout>
-    </ScrollView>
+                <Button Text="返回登录" 
+                        StyleClass="TextButton"
+                        Command="{Binding NavigateToLoginCommand}"
+                        HeightRequest="50" />
+
+                <Label Text="{Binding ErrorMessage}" 
+                       TextColor="#FF453A" 
+                       HorizontalOptions="Center" 
+                       IsVisible="{Binding HasErrorMessage}"/>
+            </StackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>

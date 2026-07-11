@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="Maui.SplashTheme">
+        <item name="android:statusBarColor">#1F1F1F</item>
+    </style>
+
+    <style name="AlertDialogTheme" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorAccent">#FF8A65</item>
+        <item name="android:colorAccent">#FF8A65</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+    </style>
+
+    <style name="PositiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">#FF8A65</item>
+    </style>
+
+    <style name="Maui.MainTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">#1F1F1F</item>
+        <item name="colorPrimaryVariant">#1F1F1F</item>
+        <item name="colorPrimaryDark">#1F1F1F</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorAccent">#FF8A65</item>
+        <item name="colorControlActivated">#FF8A65</item>
+        <item name="colorControlNormal">#B0B0B0</item>
+        <item name="colorControlHighlight">#4D2E1A</item>
+        <item name="android:colorAccent">#FF8A65</item>
+        <item name="android:colorControlActivated">#FF8A65</item>
+        <item name="android:statusBarColor">#1F1F1F</item>
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
+    </style>
+
+    <style name="Maui.SplashTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">#1F1F1F</item>
+        <item name="colorPrimaryVariant">#1F1F1F</item>
+        <item name="colorPrimaryDark">#1F1F1F</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorAccent">#FF8A65</item>
+        <item name="colorControlActivated">#FF8A65</item>
+        <item name="colorControlNormal">#B0B0B0</item>
+        <item name="colorControlHighlight">#4D2E1A</item>
+        <item name="android:colorAccent">#FF8A65</item>
+        <item name="android:colorControlActivated">#FF8A65</item>
+        <item name="android:statusBarColor">#1F1F1F</item>
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
+    </style>
+</resources>

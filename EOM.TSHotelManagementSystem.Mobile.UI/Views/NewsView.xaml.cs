@@ -19,7 +19,8 @@ public partial class NewsView : ContentView
     protected override void OnHandlerChanged()
     {
         base.OnHandlerChanged();
-        if (Handler != null && BindingContext is NewsViewModel vm)
+        // 仅当列表为空时才加载，避免视图被重建（如切 Tab）时重复全量刷新
+        if (Handler != null && BindingContext is NewsViewModel vm && vm.NewsItems.Count == 0)
         {
             _ = vm.LoadNewsAsync();
         }

@@ -172,7 +172,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         {
             try
             {
-                await Shell.Current.GoToAsync(nameof(LoginPage));
+                await _navigationService.NavigateToAsync($"//{nameof(LoginPage)}");
             }
             catch (Exception ex)
             {

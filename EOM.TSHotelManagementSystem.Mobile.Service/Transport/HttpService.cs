@@ -22,7 +22,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
         /// WebApi URL
         /// </summary>
         public static string apiUrl => DeviceInfo.Platform == DevicePlatform.Android
-            ? "http://10.0.2.2:63001/api/"
+            ? "http://192.168.5.153:63001/api/"
             : "http://localhost:63001/api/";
 
 #elif RELEASE

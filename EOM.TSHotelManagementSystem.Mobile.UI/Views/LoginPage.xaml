@@ -3,56 +3,79 @@
              x:Class="EOM.TSHotelManagementSystem.Mobile.UI.LoginPage"
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
+             xmlns:controls="clr-namespace:EOM.TSHotelManagementSystem.Mobile.UI.Controls"
              Title="欢迎使用，请先登录"
-             BackgroundColor="{AppThemeBinding Light=#F5F0FF, Dark=#1C1C1E}">
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1C1E}">
 
-    <Grid>
-        <Grid.Background>
-            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                <GradientStop Color="#F5F0FF" Offset="0.0"/>
-                <GradientStop Color="#E8E0F3" Offset="0.4"/>
-                <GradientStop Color="#DFD8F7" Offset="1.0"/>
-            </LinearGradientBrush>
-        </Grid.Background>
+    <Grid RowDefinitions="Auto,*">
+        <controls:PageHeader Grid.Row="0" Title="欢迎使用，请先登录" ShowBack="False" TransparentBackground="True" />
 
-        <ScrollView>
-            <StackLayout Padding="30" Spacing="25">
+        <ScrollView Grid.Row="1">
+            <StackLayout Padding="30" Spacing="18">
                 <Image Source="logo.png" HeightRequest="100" HorizontalOptions="Center"/>
 
-            <material:TextField Title="用户名/电子邮箱"
-                   Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Account_circle}}"
-                   Text="{Binding Username}" BackgroundColor="White" />
+                <Border x:Name="UsernameBorder"
+                        Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#3A3A3C}"
+                        StrokeThickness="2"
+                        StrokeShape="RoundRectangle 12"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark=#242424}"
+                        Padding="4,0">
+                    <Grid ColumnDefinitions="44,*" HeightRequest="48">
+                        <Label Grid.Column="0" Text="{x:Static m:MaterialOutlined.Account_circle}"
+                               FontFamily="MaterialOutlined" FontSize="22"
+                               TextColor="{AppThemeBinding Light=#757575, Dark=#B0B0B0}"
+                               VerticalOptions="Center" HorizontalOptions="Center" />
+                        <Entry Grid.Column="1" Text="{Binding Username}" Placeholder="用户名/电子邮箱"
+                               BackgroundColor="Transparent" FontSize="15"
+                               VerticalOptions="Center"
+                               Focused="OnEntryFocused" Unfocused="OnEntryUnfocused" />
+                    </Grid>
+                </Border>
 
-            <material:TextField Title="密码"
-                   Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Password}}"
-                   Text="{Binding Password}"
-                   IsPassword="True"
-                   BackgroundColor="White" />
+                <Border x:Name="PasswordBorder"
+                        Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#3A3A3C}"
+                        StrokeThickness="2"
+                        StrokeShape="RoundRectangle 12"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark=#242424}"
+                        Padding="4,0">
+                    <Grid ColumnDefinitions="44,*" HeightRequest="48">
+                        <Label Grid.Column="0" Text="{x:Static m:MaterialOutlined.Password}"
+                               FontFamily="MaterialOutlined" FontSize="22"
+                               TextColor="{AppThemeBinding Light=#757575, Dark=#B0B0B0}"
+                               VerticalOptions="Center" HorizontalOptions="Center" />
+                        <Entry Grid.Column="1" Text="{Binding Password}" Placeholder="密码"
+                               IsPassword="True"
+                               BackgroundColor="Transparent" FontSize="15"
+                               VerticalOptions="Center"
+                               Focused="OnEntryFocused" Unfocused="OnEntryUnfocused" />
+                    </Grid>
+                </Border>
 
-            <Button Text="登录" StyleClass="FilledButton"
-                    Command="{Binding LoginCommand}"
-                    TextColor="White"
-                    HeightRequest="50" />
+                <Button Text="登录" StyleClass="FilledButton"
+                        Command="{Binding LoginCommand}"
+                        TextColor="White"
+                        HeightRequest="50" />
 
-            <Button Text="{Binding BiometricButtonText}" StyleClass="OutlinedButton"
-                    Command="{Binding BiometricLoginCommand}"
-                    IsVisible="{Binding IsBiometricAvailable}"
-                    HeightRequest="50" />
+                <Button Text="{Binding BiometricButtonText}" StyleClass="OutlinedButton"
+                        Command="{Binding BiometricLoginCommand}"
+                        IsVisible="{Binding IsBiometricAvailable}"
+                        HeightRequest="50" />
 
-            <Button Text="注册" StyleClass="FilledButton" 
-                    Command="{Binding NavigateToRegisterCommand}"
-                    TextColor="White"
-                    HeightRequest="50" />
+                <Button Text="注册" StyleClass="FilledButton" 
+                        Command="{Binding NavigateToRegisterCommand}"
+                        TextColor="White"
+                        HeightRequest="50" />
 
-            <Button Text="先逛逛，稍后登录" StyleClass="TextButton"
-                    Command="{Binding SkipLoginCommand}"
-                    HeightRequest="44" />
+                <Button Text="先逛逛，稍后登录" StyleClass="TextButton"
+                        Command="{Binding SkipLoginCommand}"
+                        HeightRequest="44" />
 
-            <Label Text="{Binding ErrorMessage}" 
-                   TextColor="#FF453A" 
-                   HorizontalOptions="Center" 
-                   IsVisible="{Binding HasErrorMessage}"/>
-        </StackLayout>
+                <Label Text="{Binding ErrorMessage}" 
+                       TextColor="#FF453A" 
+                       HorizontalOptions="Center" 
+                       IsVisible="{Binding HasErrorMessage}"/>
+            </StackLayout>
         </ScrollView>
     </Grid>
 </ContentPage>

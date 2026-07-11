@@ -22,9 +22,9 @@
 
 1. ##### UraniumUI——Uranium is a Free & Open-Source UI Kit for MAUI.[UraniumUI,Apache-2.0 开源协议](https://github.com/enisn/UraniumUI)
 
-1. **Plugin.Fingerprint——Xamarin and MvvMCross plugin for authenticate a user via fingerprint sensor.[Plugin.Fingerprint,MS-PL 开源协议](https://github.com/smstuebe/xamarin-fingerprint)**
+1. ##### Plugin.Fingerprint——Xamarin and MvvMCross plugin for authenticate a user via fingerprint sensor.[Plugin.Fingerprint,MS-PL 开源协议](https://github.com/smstuebe/xamarin-fingerprint)
 
-1. **RestSharp——Simple REST and HTTP API Client for .NET。[RestSharp,Apache-2.0开源协议](https://github.com/restsharp/RestSharp)**
+1. ##### RestSharp——Simple REST and HTTP API Client for .NET。[RestSharp,Apache-2.0开源协议](https://github.com/restsharp/RestSharp)
 
 
 #  :exclamation: 本项目说明：
@@ -55,6 +55,8 @@
 
 开发技术：.NET 10 MAUI
 
+调试环境：Xiaomi 17 (Android 16)
+
 #  :open_file_folder: 系统结构：
 
 ```tree
@@ -84,8 +86,8 @@ EOM.TSHotelManagementSystem.Mobile
 | 功能汇总 |              |              |          |          |      |      |
 | -------- | ------------ | ------------ | -------- | -------- | ---- | ---- |
 | 新闻     | 新闻列表     | 新闻跳转查看 |          |          |      |      |
-| 入住     | 预约房间     | 消费账单     | 入住评价 |          |      |      |
-| 我的     | 个人信息设置 | 系统设置     | 退出登录 | 注销账号 |      |      |
+| 入住     | 预约房间     | 房间入住     | 商品消费 | 历史评价 |      |      |
+| 我的     | 个人信息设置 | 系统设置     | 退出登录 |          |      |      |
 
 
 #  :family: 项目作者：

@@ -61,12 +61,12 @@ public partial class BottomNavigationBar : Grid, INotifyPropertyChanged
 
     public void UpdateActiveTab(string tabName)
     {
-        SetTabActiveState(NewsIcon, NewsLabel, tabName == "news");
-        SetTabActiveState(CheckInIcon, CheckInLabel, tabName == "checkin");
-        SetTabActiveState(ProfileIcon, ProfileLabel, tabName == "profile");
+        SetTabActiveState(NewsIcon, NewsLabel, tabName == "news", NewsBorder);
+        SetTabActiveState(CheckInIcon, CheckInLabel, tabName == "checkin", CheckInBorder);
+        SetTabActiveState(ProfileIcon, ProfileLabel, tabName == "profile", ProfileBorder);
     }
 
-    private void SetTabActiveState(Label icon, Label label, bool isActive)
+    private void SetTabActiveState(Label icon, Label label, bool isActive, Border border = null)
     {
         var activeColor = Color.FromArgb("#FF5722");
         var inactiveColor = Colors.Gray;
@@ -79,6 +79,17 @@ public partial class BottomNavigationBar : Grid, INotifyPropertyChanged
             if (icon != null)
             {
                 icon.TextColor = isActive ? activeColor : inactiveColor;
+                var targetScale = isActive ? 1.2 : 1.0;
+                var targetTranslate = isActive ? -2 : 0;
+                icon.ScaleTo(targetScale, 200, Easing.CubicOut);
+                icon.TranslateTo(0, targetTranslate, 200, Easing.CubicOut);
+            }
+
+            if (border != null)
+            {
+                border.BackgroundColor = isActive
+                    ? Color.FromArgb("#FFF3E0")
+                    : Colors.Transparent;
             }
         });
     }

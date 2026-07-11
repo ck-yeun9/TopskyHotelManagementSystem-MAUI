@@ -1,5 +1,6 @@
 using EOM.TSHotelManagementSystem.Mobile.Service;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Handlers;
 using UraniumUI;
 
 namespace EOM.TSHotelManagementSystem.Mobile.UI
@@ -23,6 +24,36 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                     fonts.AddMaterialSymbolsFonts();
                 });
 
+            // 去掉 Android Entry 的默认下划线，避免与自定义 Border 外框重叠
+            EntryHandler.Mapper.AppendToMapping("RemoveUnderline", (handler, _) =>
+            {
+#if ANDROID
+                handler.PlatformView.Background = null;
+#endif
+            });
+
+            // 原生 DatePicker 替换为自带橙色主题的日历弹窗
+            DatePickerHandler.Mapper.AppendToMapping("OrangeDatePicker", (handler, view) =>
+            {
+#if ANDROID
+                handler.PlatformView.SetOnClickListener(null);
+                handler.PlatformView.Click += (s, e) =>
+                {
+                    var dlg = new Android.App.DatePickerDialog(handler.PlatformView.Context!);
+                    dlg.DatePicker!.DateTime = (DateTime)view.Date;
+                    dlg.SetButton(-1, "确定", (_, _) =>
+                    {
+                        var dp = dlg.DatePicker!;
+                        view.Date = new DateTime(dp.DateTime.Year, dp.DateTime.Month, dp.DateTime.Day);
+                    });
+                    dlg.SetButton(-2, "取消", (_, _) => { });
+                    dlg.Show();
+                    dlg.GetButton(-1)?.SetTextColor(Android.Graphics.Color.ParseColor("#FF5722"));
+                    dlg.GetButton(-2)?.SetTextColor(Android.Graphics.Color.ParseColor("#FF5722"));
+                };
+#endif
+            });
+
 #if DEBUG
     		builder.Logging.AddDebug();
 #endif
@@ -45,6 +76,8 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             Routing.RegisterRoute(nameof(NewsDetailView), typeof(NewsDetailView));
             Routing.RegisterRoute(nameof(PersonalInfoView), typeof(PersonalInfoView));
             Routing.RegisterRoute(nameof(SettingsView), typeof(SettingsView));
+            Routing.RegisterRoute(nameof(EvaluationStatsView), typeof(EvaluationStatsView));
+            Routing.RegisterRoute(nameof(EvaluationView), typeof(EvaluationView));
         }
 
         private static void RegisterServices(IServiceCollection services)
@@ -58,6 +91,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             services.AddSingleton<IReservationService, ReservationService>();
             services.AddSingleton<IThemeService, ThemeService>();
             services.AddSingleton<IShopService, ShopService>();
+            services.AddSingleton<IEvaluationService, EvaluationService>();
 
             services.AddTransient<MainPageViewModel>();
             services.AddTransient<CheckInViewModel>();
@@ -69,8 +103,10 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             services.AddTransient<ReservationListViewModel>();
             services.AddTransient<PersonalInfoViewModel>();
             services.AddTransient<SettingsViewModel>();
-            services.AddTransient<ProductShopViewModel>();
+            services.AddSingleton<ProductShopViewModel>();
             services.AddTransient<OrderCheckoutViewModel>();
+            services.AddSingleton<EvaluationStatsViewModel>();
+            services.AddTransient<EvaluationViewModel>();
 
             services.AddTransient<CheckInView>();
             services.AddTransient<NewsView>();
@@ -85,6 +121,8 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             services.AddTransient<SettingsView>();
             services.AddTransient<ProductShopView>();
             services.AddTransient<OrderCheckoutView>();
+            services.AddTransient<EvaluationStatsView>();
+            services.AddTransient<EvaluationView>();
 
             services.AddSingleton<AppShell>(sp => new AppShell(
                 sp.GetRequiredService<IAuthService>(),

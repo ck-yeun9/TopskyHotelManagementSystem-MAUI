@@ -1,9 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Maui.MainTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+    <style name="AppTheme" parent="Maui.SplashTheme">
+        <item name="android:statusBarColor">#FFFFFF</item>
     </style>
+
+    <style name="AlertDialogTheme" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorAccent">#FF5722</item>
+        <item name="android:colorAccent">#FF5722</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+    </style>
+
+    <style name="PositiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">#FF5722</item>
+    </style>
+
+    <style name="Maui.MainTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">#FFFFFF</item>
+        <item name="colorPrimaryVariant">#FFFFFF</item>
+        <item name="colorPrimaryDark">#FFFFFF</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorAccent">#FF5722</item>
+        <item name="colorControlActivated">#FF5722</item>
+        <item name="colorControlNormal">#757575</item>
+        <item name="colorControlHighlight">#FFE0B2</item>
+        <item name="android:colorAccent">#FF5722</item>
+        <item name="android:colorControlActivated">#FF5722</item>
+        <item name="android:statusBarColor">#FFFFFF</item>
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
+    </style>
+
     <style name="Maui.SplashTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">#FFFFFF</item>
+        <item name="colorPrimaryVariant">#FFFFFF</item>
+        <item name="colorPrimaryDark">#FFFFFF</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorAccent">#FF5722</item>
+        <item name="colorControlActivated">#FF5722</item>
+        <item name="colorControlNormal">#757575</item>
+        <item name="colorControlHighlight">#FFE0B2</item>
+        <item name="android:colorAccent">#FF5722</item>
+        <item name="android:colorControlActivated">#FF5722</item>
+        <item name="android:statusBarColor">#FFFFFF</item>
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
     </style>
 </resources>

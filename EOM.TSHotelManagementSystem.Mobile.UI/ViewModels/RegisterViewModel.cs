@@ -143,7 +143,17 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 
         private async void NavigateToLogin()
         {
-            await Shell.Current.GoToAsync(nameof(LoginPage));
+            try
+            {
+                // 与「登录页→注册页」对称：用绝对路由 //LoginPage 重置导航栈回到登录页，
+                // 避免相对路由 GoToAsync("LoginPage") 在当前 Shell 上下文解析失败（点击无反应）
+                // 以及 async void 未捕获异常导致 app 闪退。
+                await _navigationService.NavigateToAsync($"//{nameof(LoginPage)}");
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"无法返回登录页面: {ex.Message}";
+            }
         }
     }
 }

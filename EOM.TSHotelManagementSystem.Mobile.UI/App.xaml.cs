@@ -12,6 +12,8 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 
             var serviceProvider = MauiProgram.Services;
 
+            serviceProvider.GetRequiredService<IThemeService>().ApplyTheme();
+
             MainPage = serviceProvider.GetRequiredService<AppShell>();
 
             _ = ValidateTokenOnStartupAsync(serviceProvider);

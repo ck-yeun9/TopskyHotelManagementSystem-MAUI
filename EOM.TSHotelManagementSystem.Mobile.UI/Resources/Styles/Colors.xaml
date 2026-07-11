@@ -6,20 +6,35 @@
 
     <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
 
-    <Color x:Key="Primary">#512BD4</Color>
-    <Color x:Key="PrimaryDark">#ac99ea</Color>
+    <Color x:Key="Primary">#FF5722</Color>
+    <Color x:Key="PrimaryDark">#E64A19</Color>
     <Color x:Key="PrimaryDarkText">#242424</Color>
-    <Color x:Key="Secondary">#DFD8F7</Color>
-    <Color x:Key="SecondaryDarkText">#9880e5</Color>
-    <Color x:Key="Tertiary">#2B0B98</Color>
+    <Color x:Key="Secondary">#FFCCBC</Color>
+    <Color x:Key="SecondaryDarkText">#FF8A65</Color>
+    <Color x:Key="Tertiary">#BF360C</Color>
+
+    <!-- 危险/破坏性操作色（退出登录、删除等）；浅色沿用项目既有红 #E4393C，深色用更亮的 #FF6E6E 保证暗底可读 -->
+    <Color x:Key="Danger">#E4393C</Color>
+    <Color x:Key="DangerDark">#FF6E6E</Color>
+
+    <!-- 按钮视觉状态（悬停/按下）用的中间色层次 -->
+    <Color x:Key="PrimaryDeepDark">#7A2A0E</Color>
+    <!-- 透明底按钮（Outlined/Text/Danger）悬停/按下时的浅色底色；浅模式用暖色调，深模式用暗色调，保证两主题都可见 -->
+    <Color x:Key="PrimaryHover">#FFE0B2</Color>
+    <Color x:Key="PrimaryHoverDark">#4D2E1A</Color>
+    <Color x:Key="DangerHover">#FFCDD2</Color>
+    <Color x:Key="DangerHoverDark">#4D1F1F</Color>
 
     <Color x:Key="White">White</Color>
     <Color x:Key="Black">Black</Color>
-    <Color x:Key="Magenta">#D600AA</Color>
+    <Color x:Key="Accent">#FF5722</Color>
     <Color x:Key="MidnightBlue">#190649</Color>
     <Color x:Key="OffBlack">#1f1f1f</Color>
 
     <Color x:Key="Gray100">#E1E1E1</Color>
+    <Color x:Key="CardSurfaceDark">#242424</Color>
+    <Color x:Key="TextPrimary">#212121</Color>
+    <Color x:Key="TextSecondary">#6B7280</Color>
     <Color x:Key="Gray200">#C8C8C8</Color>
     <Color x:Key="Gray300">#ACACAC</Color>
     <Color x:Key="Gray400">#919191</Color>

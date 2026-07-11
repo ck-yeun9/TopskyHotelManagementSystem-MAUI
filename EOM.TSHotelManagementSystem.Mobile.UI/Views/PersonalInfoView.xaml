@@ -2,9 +2,13 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+             xmlns:controls="clr-namespace:EOM.TSHotelManagementSystem.Mobile.UI.Controls"
              x:Class="EOM.TSHotelManagementSystem.Mobile.UI.PersonalInfoView"
-             Title="个人信息">
-    <ScrollView>
+             Title="个人信息"
+             Shell.NavBarIsVisible="False">
+    <Grid RowDefinitions="Auto,*">
+        <controls:PageHeader Grid.Row="0" Title="个人信息" ShowBack="True" />
+        <ScrollView Grid.Row="1">
         <VerticalStackLayout Padding="20" Spacing="20">
             <Frame Padding="15" CornerRadius="10" BorderColor="LightGray">
                 <VerticalStackLayout Spacing="10">
@@ -22,7 +26,7 @@
                                IsVisible="{Binding HasPhoto}"/>
                     </Grid>
                     <Label Text="{Binding DisplayName}" FontSize="20" HorizontalOptions="Center"/>
-                    <Label Text="{Binding Account}" FontSize="14" HorizontalOptions="Center" TextColor="Gray"/>
+                    <Label Text="{Binding Account}" FontSize="14" HorizontalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}"/>
                 </VerticalStackLayout>
             </Frame>
 
@@ -30,9 +34,9 @@
             <Frame Padding="15" CornerRadius="10" BorderColor="LightGray">
                 <VerticalStackLayout Spacing="12">
                     <Grid ColumnDefinitions="80,*" RowDefinitions="auto,auto">
-                        <Label Text="昵称" VerticalOptions="Center" TextColor="Gray"/>
+                        <Label Text="昵称" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}"/>
                         <Label Grid.Column="1" Text="{Binding DisplayName}" VerticalOptions="Center"/>
-                        <Label Grid.Row="1" Text="账号" VerticalOptions="Center" TextColor="Gray"/>
+                        <Label Grid.Row="1" Text="账号" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}"/>
                         <Label Grid.Row="1" Grid.Column="1" Text="{Binding Account}" VerticalOptions="Center"/>
                     </Grid>
                 </VerticalStackLayout>
@@ -45,22 +49,22 @@
                     <material:TextField Title="邮箱" Text="{Binding EditEmail}" Keyboard="Email" />
                     <material:TextField Title="手机号" Text="{Binding EditPhone}" Keyboard="Telephone" />
                     <material:TextField Title="地址" Text="{Binding EditAddress}" />
-                    <Label Text="生日" FontSize="12" TextColor="Gray" />
+                    <Label Text="生日" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}" />
                     <DatePicker Date="{Binding EditBirthDate}" MinimumDate="1900-01-01" />
-                    <Label Text="性别" FontSize="12" TextColor="Gray" />
+                    <Label Text="性别" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}" />
                     <Picker ItemsSource="{Binding GenderOptions}"
                             SelectedIndex="{Binding SelectedGenderIndex}"
                             Title="请选择性别" />
-                    <Label Text="民族" FontSize="12" TextColor="Gray" />
+                    <Label Text="民族" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}" />
                     <Picker ItemsSource="{Binding NationNames}"
                             SelectedIndex="{Binding SelectedNationIndex}"
                             Title="请选择民族" />
-                    <Label Text="学历" FontSize="12" TextColor="Gray" />
+                    <Label Text="学历" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}" />
                     <Picker ItemsSource="{Binding EducationNames}"
                             SelectedIndex="{Binding SelectedEducationIndex}"
                             Title="请选择学历" />
                     <Grid ColumnDefinitions="80,*">
-                        <Label Text="客户类型" VerticalOptions="Center" TextColor="Gray"/>
+                        <Label Text="客户类型" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}"/>
                         <Label Grid.Column="1" Text="{Binding CustomerTypeDisplay}" VerticalOptions="Center"/>
                     </Grid>
                     <Button Text="保存信息"
@@ -95,5 +99,6 @@
             <Label Text="{Binding StatusMessage}" TextColor="{Binding StatusMessageColor}"
                    IsVisible="True" LineBreakMode="WordWrap"/>
         </VerticalStackLayout>
-    </ScrollView>
+        </ScrollView>
+    </Grid>
 </ContentPage>

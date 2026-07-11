@@ -25,5 +25,27 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 await vm.CheckBiometricAvailabilityAsync();
             }
         }
+
+        private void OnEntryFocused(object sender, FocusEventArgs e)
+        {
+            var border = sender is Entry entry
+                && entry.Parent is Grid grid
+                && grid.Parent is Border b
+                ? b : null;
+            if (border != null)
+                border.Stroke = new SolidColorBrush(Color.FromArgb("#FF5722"));
+        }
+
+        private void OnEntryUnfocused(object sender, FocusEventArgs e)
+        {
+            var border = sender is Entry entry
+                && entry.Parent is Grid grid
+                && grid.Parent is Border b
+                ? b : null;
+            if (border != null)
+                border.Stroke = Application.Current.RequestedTheme == AppTheme.Dark
+                    ? new SolidColorBrush(Color.FromArgb("#3A3A3C"))
+                    : new SolidColorBrush(Color.FromArgb("#E0E0E0"));
+        }
     }
 }

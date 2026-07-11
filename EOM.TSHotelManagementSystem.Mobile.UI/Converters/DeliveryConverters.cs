@@ -1,4 +1,5 @@
 using System.Globalization;
+using Microsoft.Maui.ApplicationModel;
 
 namespace EOM.TSHotelManagementSystem.Mobile.UI
 {
@@ -6,7 +7,10 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value is true ? Color.FromArgb("#F0EBFF") : Colors.White;
+            var isDark = Application.Current?.RequestedTheme == AppTheme.Dark;
+            return value is true
+                ? (isDark ? Color.FromArgb("#33240F") : Color.FromArgb("#F0EBFF"))
+                : (isDark ? Color.FromArgb("#333333") : Colors.White);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -17,7 +21,10 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value is true ? Color.FromArgb("#512BD4") : Color.FromArgb("#374151");
+            var isDark = Application.Current?.RequestedTheme == AppTheme.Dark;
+            return value is true
+                ? (isDark ? Color.FromArgb("#FF8A65") : Color.FromArgb("#FF5722"))
+                : Color.FromArgb("#B0B0B0");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

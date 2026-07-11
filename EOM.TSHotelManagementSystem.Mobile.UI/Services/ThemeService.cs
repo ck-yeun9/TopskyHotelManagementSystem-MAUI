@@ -9,6 +9,17 @@ public class ThemeService : IThemeService
     public void SetDarkMode(bool isDark)
     {
         Preferences.Default.Set(DarkModeKey, isDark);
-        Application.Current.UserAppTheme = isDark ? AppTheme.Dark : AppTheme.Light;
+        if (Application.Current is not null)
+        {
+            Application.Current.UserAppTheme = isDark ? AppTheme.Dark : AppTheme.Light;
+        }
+    }
+
+    public void ApplyTheme()
+    {
+        if (Application.Current is not null)
+        {
+            Application.Current.UserAppTheme = IsDarkMode ? AppTheme.Dark : AppTheme.Light;
+        }
     }
 }

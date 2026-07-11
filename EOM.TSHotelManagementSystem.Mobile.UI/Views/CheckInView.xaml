@@ -2,10 +2,17 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+             xmlns:local="clr-namespace:EOM.TSHotelManagementSystem.Mobile.UI"
              x:Class="EOM.TSHotelManagementSystem.Mobile.UI.CheckInView"
              x:Name="CheckInViewPage">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <local:RangeBgConverter x:Key="RangeBgConverter" />
+            <local:RangeTextConverter x:Key="RangeTextConverter" />
+        </ResourceDictionary>
+    </ContentView.Resources>
     <Grid RowDefinitions="Auto,*" x:Name="RootGrid">
-        <Grid Grid.Row="0" ColumnDefinitions="*,*,*" BackgroundColor="White" Padding="8,0">
+        <Grid Grid.Row="0" ColumnDefinitions="*,*,*" BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource CardSurfaceDark}}" Padding="8,0">
             <Button Grid.Column="0"
                     Text="房间预订"
                     BackgroundColor="{Binding BookingTabColor}"
@@ -45,16 +52,16 @@
                         <Border Padding="16"
                                 Stroke="#E5E7EB"
                                 StrokeShape="RoundRectangle 18"
-                                BackgroundColor="White">
+                                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource CardSurfaceDark}}">
                             <VerticalStackLayout Spacing="14">
-                                <Label Text="搜索房间" FontSize="18" FontAttributes="Bold" TextColor="#111827" />
+                                <Label Text="搜索房间" FontSize="18" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=#E8E8E8}" />
                                 <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
                                     <VerticalStackLayout Spacing="6">
-                                        <Label Text="入住日期" FontSize="13" TextColor="#6B7280" />
+                                        <Label Text="入住日期" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}" />
                                         <DatePicker Date="{Binding CheckInDate}" MinimumDate="{Binding Today}" />
                                     </VerticalStackLayout>
                                     <VerticalStackLayout Grid.Column="1" Spacing="6">
-                                        <Label Text="离店日期" FontSize="13" TextColor="#6B7280" />
+                                        <Label Text="离店日期" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}" />
                                         <DatePicker Date="{Binding CheckOutDate}" MinimumDate="{Binding MinCheckOutDate}" />
                                     </VerticalStackLayout>
                                 </Grid>
@@ -63,14 +70,14 @@
                             </VerticalStackLayout>
                         </Border>
 
-                        <Label Text="可选房间" FontSize="16" FontAttributes="Bold" TextColor="#111827" />
+                        <Label Text="可选房间" FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=#E8E8E8}" />
                         <CollectionView ItemsSource="{Binding AvailableRooms}" EmptyView="暂无可选房间">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
                                     <Border Margin="0,0,0,12" Padding="0" 
                                             Stroke="#E5E7EB" 
                                             StrokeShape="RoundRectangle 18" 
-                                            BackgroundColor="White">
+                                            BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource CardSurfaceDark}}">
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Tapped="OnRoomTapped" />
                                         </Border.GestureRecognizers>
@@ -92,10 +99,10 @@
 
                                             <VerticalStackLayout Grid.Column="1" Padding="15,12" Spacing="6">
                                                 <Grid ColumnDefinitions="*,Auto">
-                                                    <Label Text="{Binding RoomName}" FontSize="16" FontAttributes="Bold" TextColor="#111827" />
+                                                    <Label Text="{Binding RoomName}" FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=#E8E8E8}" />
                                                     <Label Grid.Column="1" Text="{Binding PricePerNight, StringFormat='¥{0:F0}/天'}" FontSize="16" FontAttributes="Bold" TextColor="#EA580C" />
                                                 </Grid>
-                                                <Label Text="{Binding Description}" FontSize="12" TextColor="#6B7280" />
+                                                <Label Text="{Binding Description}" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}" />
                                                 <Label Text="{Binding RemainingRooms, StringFormat='剩余 {0} 间'}" FontSize="13" FontAttributes="Bold" TextColor="#15803D" />
                                             </VerticalStackLayout>
                                         </Grid>
@@ -106,16 +113,16 @@
 
                         <Border Padding="16" Stroke="#E5E7EB" StrokeShape="RoundRectangle 18" BackgroundColor="#F9FAFB">
                             <VerticalStackLayout Spacing="8">
-                                <Label Text="预估摘要" FontSize="16" FontAttributes="Bold" TextColor="#111827" />
-                                <Label Text="{Binding SelectedRoomSummary}" FontSize="13" TextColor="#374151" />
-                                <Label Text="{Binding StaySummary}" FontSize="12" TextColor="#6B7280" />
+                                <Label Text="预估摘要" FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=#E8E8E8}" />
+                                <Label Text="{Binding SelectedRoomSummary}" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=#E8E8E8}" />
+                                <Label Text="{Binding StaySummary}" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}" />
                                 <Label Text="{Binding PriceSummary}" FontSize="15" FontAttributes="Bold" TextColor="#0F766E" />
                             </VerticalStackLayout>
                         </Border>
 
-                        <Border Padding="16" Stroke="#E5E7EB" StrokeShape="RoundRectangle 18" BackgroundColor="White">
+                        <Border Padding="16" Stroke="#E5E7EB" StrokeShape="RoundRectangle 18" BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource CardSurfaceDark}}">
                             <VerticalStackLayout Spacing="12">
-                                <Label Text="入住人信息" FontSize="16" FontAttributes="Bold" TextColor="#111827" />
+                                <Label Text="入住人信息" FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=#E8E8E8}" />
                                 <material:TextField Title="联系人姓名" Text="{Binding ContactName}" />
                                 <material:TextField Title="手机号码" Keyboard="Telephone" Text="{Binding PhoneNumber}" />
                                 <Button Text="提交预订" StyleClass="FilledButton" Command="{Binding SubmitReservationCommand}" HeightRequest="44" />
@@ -141,25 +148,25 @@
                         <CollectionView ItemsSource="{Binding CurrentCheckins}" EmptyView="您当前没有正在入住的房间">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Margin="0,0,0,12" Padding="16" Stroke="#DBEAFE" StrokeShape="RoundRectangle 18" BackgroundColor="White">
+                                    <Border Margin="0,0,0,12" Padding="16" Stroke="#DBEAFE" StrokeShape="RoundRectangle 18" BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource CardSurfaceDark}}">
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding Source={x:Reference CheckInViewPage}, Path=BindingContext.SelectCheckinCommand}" CommandParameter="{Binding .}" />
                                         </Border.GestureRecognizers>
                                         <VerticalStackLayout Spacing="8">
                                             <Grid ColumnDefinitions="*,Auto">
-                                                <Label Text="{Binding RoomName}" FontSize="16" FontAttributes="Bold" TextColor="#111827" />
+                                                <Label Text="{Binding RoomName}" FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=#E8E8E8}" />
                                                 <Label Grid.Column="1" Text="{Binding Status}" FontSize="12" TextColor="#3B82F6" />
                                             </Grid>
                                             <VerticalStackLayout Spacing="2">
-                                                <Label Text="{Binding RoomNumber, StringFormat='房号: {0}'}" FontSize="13" TextColor="#6B7280" />
-                                                <Label Text="{Binding RoomArea, StringFormat='区域: {0}'}" FontSize="12" TextColor="#6B7280" />
-                                                <Label Text="{Binding RoomFloor, StringFormat='楼层: {0}F'}" FontSize="12" TextColor="#6B7280" />
+                                                <Label Text="{Binding RoomNumber, StringFormat='房号: {0}'}" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}" />
+                                                <Label Text="{Binding RoomArea, StringFormat='区域: {0}'}" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}" />
+                                                <Label Text="{Binding RoomFloor, StringFormat='楼层: {0}F'}" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}" />
                                             </VerticalStackLayout>
-                                            <Label Text="{Binding CheckInTime, StringFormat='入住时间: {0:yyyy-MM-dd HH:mm}'}" FontSize="13" TextColor="#6B7280" />
+                                            <Label Text="{Binding CheckInTime, StringFormat='入住时间: {0:yyyy-MM-dd HH:mm}'}" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}" />
                                             <Label Text="{Binding TotalAmount, StringFormat='当前消费: ¥{0:F0}'}" FontSize="15" FontAttributes="Bold" TextColor="#EA580C" />
                                             <Label Text="{Binding ProductConsumption, StringFormat='商品消费: ¥{0:F0}'}" FontSize="13" TextColor="#D97706"
                                                    IsVisible="{Binding HasProductConsumption}" />
-                                            <Label Text="{Binding DiscountSummary}" FontSize="12" TextColor="#6B7280" />
+                                            <Label Text="{Binding DiscountSummary}" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}" />
                                             <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8" 
                                                   IsVisible="{Binding IsSelected}">
                                                 <Button Text="房间详情" FontSize="12" Padding="8,6" CornerRadius="8"
@@ -190,24 +197,56 @@
                                 <Label Text="暂无消费记录" FontSize="13" TextColor="#059669" />
                             </VerticalStackLayout>
                         </Border>
+
+                        <!-- 时间范围切换：近一月 / 近三月 / 近一年 / 全部 -->
+                        <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="6">
+                            <Button Text="近一月" FontSize="12" CornerRadius="8" Padding="0,8"
+                                    Command="{Binding ChangeHistoryRangeCommand}" CommandParameter="1m"
+                                    BackgroundColor="{Binding HistoryRange, Converter={StaticResource RangeBgConverter}, ConverterParameter=1m}"
+                                    TextColor="{Binding HistoryRange, Converter={StaticResource RangeTextConverter}, ConverterParameter=1m}" />
+                            <Button Grid.Column="1" Text="近三月" FontSize="12" CornerRadius="8" Padding="0,8"
+                                    Command="{Binding ChangeHistoryRangeCommand}" CommandParameter="3m"
+                                    BackgroundColor="{Binding HistoryRange, Converter={StaticResource RangeBgConverter}, ConverterParameter=3m}"
+                                    TextColor="{Binding HistoryRange, Converter={StaticResource RangeTextConverter}, ConverterParameter=3m}" />
+                            <Button Grid.Column="2" Text="近一年" FontSize="12" CornerRadius="8" Padding="0,8"
+                                    Command="{Binding ChangeHistoryRangeCommand}" CommandParameter="1y"
+                                    BackgroundColor="{Binding HistoryRange, Converter={StaticResource RangeBgConverter}, ConverterParameter=1y}"
+                                    TextColor="{Binding HistoryRange, Converter={StaticResource RangeTextConverter}, ConverterParameter=1y}" />
+                            <Button Grid.Column="3" Text="全部" FontSize="12" CornerRadius="8" Padding="0,8"
+                                    Command="{Binding ChangeHistoryRangeCommand}" CommandParameter="all"
+                                    BackgroundColor="{Binding HistoryRange, Converter={StaticResource RangeBgConverter}, ConverterParameter=all}"
+                                    TextColor="{Binding HistoryRange, Converter={StaticResource RangeTextConverter}, ConverterParameter=all}" />
+                        </Grid>
+
                         <ActivityIndicator IsRunning="{Binding IsLoadingHistory}" IsVisible="{Binding IsLoadingHistory}" Color="#FF5722" />
                         <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}"
                                      RefreshColor="#FF5722">
-                        <CollectionView ItemsSource="{Binding ConsumptionHistory}" 
+                        <CollectionView ItemsSource="{Binding GroupedConsumptionHistory}"
+                                        IsGrouped="True"
                                         EmptyView="暂无消费记录"
                                         RemainingItemsThreshold="5"
                                         RemainingItemsThresholdReachedCommand="{Binding LoadMoreHistoryCommand}">
+                            <CollectionView.GroupHeaderTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="*,Auto" Padding="4,12,4,2">
+                                        <Label Text="{Binding DateLabel}" FontSize="14" FontAttributes="Bold"
+                                               TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=#E8E8E8}" />
+                                        <Label Grid.Column="1" Text="{Binding DayTotal, StringFormat='¥{0:F0}'}"
+                                               FontSize="14" FontAttributes="Bold" TextColor="#EA580C" />
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.GroupHeaderTemplate>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Margin="0,0,0,12" Padding="16" Stroke="#E5E7EB" StrokeShape="RoundRectangle 18" BackgroundColor="White">
+                                    <Border Margin="0,0,0,12" Padding="16" Stroke="#E5E7EB" StrokeShape="RoundRectangle 18" BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource CardSurfaceDark}}">
                                         <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
-                                            <Label Text="{Binding ProductName}" FontSize="15" FontAttributes="Bold" TextColor="#111827" />
+                                            <Label Text="{Binding ProductName}" FontSize="15" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=#E8E8E8}" />
                                             <Label Grid.Column="1" Grid.RowSpan="3" VerticalOptions="Center"
                                                    Text="{Binding Amount, StringFormat='¥{0:F0}'}"
                                                    FontSize="16" FontAttributes="Bold" TextColor="#EA580C" />
-                                            <Label Grid.Row="1" Text="{Binding Summary}" FontSize="12" TextColor="#6B7280" />
+                                            <Label Grid.Row="1" Text="{Binding Summary}" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}" />
                                             <Grid Grid.Row="2" ColumnDefinitions="Auto,Auto" ColumnSpacing="8">
-                                                <Label Text="{Binding ConsumptionTime, StringFormat='{0:yyyy-MM-dd HH:mm}'}" FontSize="12" TextColor="#9CA3AF" />
+                                                <Label Text="{Binding ConsumptionTime, StringFormat='{0:yyyy-MM-dd HH:mm}'}" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}" />
                                                 <Label Grid.Column="1" Text="{Binding StatusDisplay}" FontSize="12" TextColor="{Binding StatusColor}" />
                                             </Grid>
                                         </Grid>
@@ -227,9 +266,9 @@
               IsVisible="{Binding IsNavigatingToShop}"
               BackgroundColor="#80FFFFFF"
               VerticalOptions="Fill" HorizontalOptions="Fill">
-            <ActivityIndicator IsRunning="True" Color="#512BD4"
+            <ActivityIndicator IsRunning="True" Color="#FF5722"
                                HorizontalOptions="Center" VerticalOptions="Center" />
-            <Label Text="正在加载..." FontSize="14" TextColor="#6B7280"
+            <Label Text="正在加载..." FontSize="14" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark=#B0B0B0}"
                    HorizontalOptions="Center" VerticalOptions="Center"
                    Margin="0,50,0,0" />
         </Grid>

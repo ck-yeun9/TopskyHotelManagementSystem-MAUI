@@ -10,6 +10,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
     {
         private readonly IProfileService _profileService;
         private readonly IAuthService _authService;
+        private readonly INavigationService _navigationService;
 
         private string _displayName;
         private string _account;
@@ -39,10 +40,11 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         private int _selectedEducationIndex = -1;
         private int _selectedCustomerTypeIndex = -1;
 
-        public PersonalInfoViewModel(IProfileService profileService, IAuthService authService)
+        public PersonalInfoViewModel(IProfileService profileService, IAuthService authService, INavigationService navigationService)
         {
             _profileService = profileService;
             _authService = authService;
+            _navigationService = navigationService;
             LoadProfileCommand = new Command(async () => await LoadProfileAsync());
             ChangePasswordCommand = new Command(async () => await ChangePasswordAsync());
             TogglePasswordSectionCommand = new Command(() => IsChangingPassword = !IsChangingPassword);
@@ -353,7 +355,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 {
                     await _authService.ClearTokenAsync();
                     await _authService.ClearBiometricCredentialsAsync();
-                    await Shell.Current.GoToAsync(nameof(LoginPage));
+                    await _navigationService.NavigateToAsync($"//{nameof(LoginPage)}");
                 }
                 else
                 {

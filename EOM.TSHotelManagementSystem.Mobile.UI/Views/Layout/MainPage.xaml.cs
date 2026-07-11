@@ -7,6 +7,7 @@ public partial class MainPage : ContentPage
 {
     private readonly MainPageViewModel _viewModel;
     private readonly IServiceProvider _serviceProvider;
+    private string? _currentTabName;
 
     public MainPage(
         MainPageViewModel viewModel,
@@ -64,6 +65,13 @@ public partial class MainPage : ContentPage
     {
         try
         {
+            if (tabName == _currentTabName && ContentHost.Content != null)
+            {
+                if (ContentHost.Content.BindingContext is ILoadableViewModel loadable)
+                    loadable.OnViewAppearing();
+                return;
+            }
+
             if (ContentHost.Content?.BindingContext is ILoadableViewModel currentLoadable)
             {
                 currentLoadable.OnViewDisappearing();
@@ -99,6 +107,7 @@ public partial class MainPage : ContentPage
             {
                 contentView.BindingContext = bindingContext;
                 ContentHost.Content = contentView;
+                _currentTabName = tabName;
 
                 if (bindingContext is ILoadableViewModel loadable)
                 {

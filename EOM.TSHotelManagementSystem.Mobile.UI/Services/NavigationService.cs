@@ -81,53 +81,31 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         {
             try
             {
-                var pageType = ResolveRouteToPage(route);
-                if (pageType == null)
+                // 全局路由（Login/Register）一律走 Shell 导航，绝不把 MainPage 整体换成
+                // NavigationPage —— 否则 Shell.Current 会变 null，导致后续 Shell.Current.GoToAsync(...)
+                // （登录成功、生物识别弹窗等）抛 NullReferenceException 并卡死主线程。
+                var shell = Application.Current?.MainPage as Shell;
+                if (shell == null)
                 {
-                    throw new InvalidOperationException($"无法解析路由: {route}");
+                    // 极少数情况下 Shell 已被替换（例如早期代码曾把 MainPage 换成 NavigationPage），
+                    // 这里重建 Shell 作为导航根，恢复 Shell.Current。
+                    shell = _serviceProvider.GetRequiredService<AppShell>();
+                    Application.Current!.MainPage = shell;
                 }
 
-                if (IsPageCurrentlyDisplayed(pageType))
-                {
-                    return;
-                }
-
-                var page = _serviceProvider.GetService(pageType) as Page;
-
-                if (Application.Current?.MainPage is NavigationPage navPage)
-                {
-                    await navPage.Navigation.PushAsync(page);
-                }
-                else if (Application.Current?.MainPage != null)
-                {
-                    Application.Current.MainPage = new NavigationPage(page);
-                }
-                else
-                {
-                    Application.Current!.MainPage = page;
-                }
+                // Login/Register 是用 Routing.RegisterRoute 注册的页面，必须用「相对路由」推入 Shell
+                // （即 "LoginPage"/"RegisterPage"），不能用 "//LoginPage" 这种绝对路由——绝对路由对
+                // 单纯注册的页面在 MAUI 里并不可靠，会出现「点了没反应」（既不导航也不抛异常）。
+                var relativeRoute = route.StartsWith("//", StringComparison.Ordinal)
+                    ? route.Substring(2)
+                    : route;
+                await shell.GoToAsync(relativeRoute);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"全局路由导航错误: {ex.Message}");
                 throw;
             }
-        }
-
-        private bool IsPageCurrentlyDisplayed(Type pageType)
-        {
-            if (Application.Current?.MainPage is Page currentPage)
-            {
-                if (currentPage.GetType() == pageType)
-                    return true;
-
-                if (Application.Current.MainPage is NavigationPage navPage)
-                {
-                    return navPage.CurrentPage?.GetType() == pageType ||
-                           navPage.Navigation.NavigationStack.LastOrDefault()?.GetType() == pageType;
-                }
-            }
-            return false;
         }
 
         private async Task InitializeShellAndNavigateAsync(string route)
@@ -139,47 +117,6 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             await Task.Delay(250);
 
             await appShell.GoToAsync(route);
-        }
-
-        private Type ResolveRouteToPage(string route)
-        {
-            var routeMap = new Dictionary<string, Type>
-            {
-                { "//" + nameof(MainPage), typeof(MainPage) },
-                { nameof(MainPage), typeof(MainPage) },
-                { "//" + nameof(LoginPage), typeof(LoginPage) },
-                { nameof(LoginPage), typeof(LoginPage) },
-                { "//" + nameof(RegisterPage), typeof(RegisterPage) },
-                { nameof(RegisterPage), typeof(RegisterPage) },
-                { "//" + nameof(NewsView), typeof(NewsView) },
-                { nameof(NewsView), typeof(NewsView) },
-                { "//" + nameof(ProfileView), typeof(ProfileView) },
-                { nameof(ProfileView), typeof(ProfileView) },
-                { "//" + nameof(CheckInView), typeof(CheckInView) },
-                { nameof(CheckInView), typeof(CheckInView) },
-                { "//" + nameof(ReservationListView), typeof(ReservationListView) },
-                { nameof(ReservationListView), typeof(ReservationListView) },
-                { "//" + nameof(NewsDetailView), typeof(NewsDetailView) },
-                { nameof(NewsDetailView), typeof(NewsDetailView) }
-            };
-
-            foreach (var mapping in routeMap)
-            {
-                if (route.StartsWith(mapping.Key, StringComparison.OrdinalIgnoreCase) ||
-                    route.EndsWith(mapping.Key, StringComparison.OrdinalIgnoreCase))
-                {
-                    return mapping.Value;
-                }
-            }
-
-            var routeName = route.Split('/').LastOrDefault();
-            if (!string.IsNullOrEmpty(routeName))
-            {
-                return routeMap.FirstOrDefault(k =>
-                    k.Value.Name.Equals(routeName, StringComparison.OrdinalIgnoreCase)).Value;
-            }
-
-            return null;
         }
 
     }
