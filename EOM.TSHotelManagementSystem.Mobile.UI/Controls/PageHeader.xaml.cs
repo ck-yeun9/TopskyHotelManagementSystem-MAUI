@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
 
@@ -66,7 +67,8 @@ public partial class PageHeader : ContentView
                 return;
             }
 
-            var nav = Application.Current?.MainPage?.Navigation;
+            var mainPage = Application.Current?.Windows.FirstOrDefault()?.Page;
+            var nav = mainPage?.Navigation;
             if (nav is not null && nav.NavigationStack.Count > 1)
                 await nav.PopAsync();
         }

@@ -12,6 +12,15 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
     {
         private readonly IServiceProvider _serviceProvider;
 
+        private static Page? RootPage =>
+            Application.Current?.Windows.FirstOrDefault()?.Page;
+
+        private static void SetRootPage(Page page)
+        {
+            if (Application.Current?.Windows.Count > 0)
+                Application.Current.Windows[0].Page = page;
+        }
+
         public NavigationService(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
@@ -25,7 +34,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 {
                     await HandleGlobalRouteNavigation(route);
                 }
-                else if (Application.Current?.MainPage is Shell shell)
+                else if (RootPage is Shell shell)
                 {
                     await shell.GoToAsync(route);
                 }
@@ -44,13 +53,13 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         {
             try
             {
-                if (Application.Current?.MainPage is Shell shell)
+                if (RootPage is Shell shell)
                 {
                     return shell.GoToAsync("..");
                 }
                 else
                 {
-                    if (Application.Current?.MainPage is Page page)
+                    if (RootPage is Page page)
                     {
                         return page.Navigation.PopAsync();
                     }
@@ -81,16 +90,15 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         {
             try
             {
-                // 全局路由（Login/Register）一律走 Shell 导航，绝不把 MainPage 整体换成
+                // 全局路由（Login/Register）一律走 Shell 导航，绝不把 RootPage 整体换成
                 // NavigationPage —— 否则 Shell.Current 会变 null，导致后续 Shell.Current.GoToAsync(...)
-                // （登录成功、生物识别弹窗等）抛 NullReferenceException 并卡死主线程。
-                var shell = Application.Current?.MainPage as Shell;
+                var shell = RootPage as Shell;
                 if (shell == null)
                 {
-                    // 极少数情况下 Shell 已被替换（例如早期代码曾把 MainPage 换成 NavigationPage），
+                    // 极少数情况下 Shell 已被替换（例如早期代码曾把 RootPage 换成 NavigationPage），
                     // 这里重建 Shell 作为导航根，恢复 Shell.Current。
                     shell = _serviceProvider.GetRequiredService<AppShell>();
-                    Application.Current!.MainPage = shell;
+                    SetRootPage(shell);
                 }
 
                 // Login/Register 是用 Routing.RegisterRoute 注册的页面，必须用「相对路由」推入 Shell
@@ -112,7 +120,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         {
             var appShell = _serviceProvider.GetRequiredService<AppShell>();
 
-            Application.Current!.MainPage = appShell;
+            SetRootPage(appShell);
 
             await Task.Delay(250);
 

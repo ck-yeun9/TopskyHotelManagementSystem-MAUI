@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EOM.TSHotelManagementSystem.Mobile.UI.StartupUnavailablePage"
+             Title="无法连接服务"
+             BackgroundColor="{StaticResource Primary}"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="*,Auto,Auto,Auto,*,Auto"
+          ColumnDefinitions="*"
+          Padding="32"
+          RowSpacing="12">
+
+        <!-- 顶部留白 (Row 0: *) -->
+
+        <!-- 标题 -->
+        <Label Grid.Row="1"
+               x:Name="TitleLabel"
+               Text="应用服务不可用"
+               FontSize="26"
+               FontAttributes="Bold"
+               TextColor="White"
+               HorizontalOptions="Center"
+               HorizontalTextAlignment="Center" />
+
+        <!-- 详细说明 -->
+        <Label Grid.Row="2"
+               x:Name="MessageLabel"
+               Text="请稍后重试。"
+               FontSize="15"
+               LineBreakMode="WordWrap"
+               TextColor="White"
+               Opacity="0.9"
+               HorizontalOptions="Center"
+               HorizontalTextAlignment="Center"
+               Margin="0,8,0,0" />
+
+        <!-- 重试中状态文字（默认隐藏；点重试时显示） -->
+        <Label Grid.Row="3"
+               x:Name="RetryingLabel"
+               Text="正在重试…"
+               FontSize="13"
+               TextColor="White"
+               Opacity="0"
+               HorizontalOptions="Center"
+               Margin="0,12,0,0" />
+
+        <!-- 中部留白 (Row 4: *) -->
+
+        <!-- 重试按钮 -->
+        <Button Grid.Row="5"
+                x:Name="RetryButton"
+                Text="重试"
+                StyleClass="FilledButton"
+                BackgroundColor="White"
+                TextColor="{StaticResource Primary}"
+                CornerRadius="24"
+                HeightRequest="48"
+                WidthRequest="200"
+                HorizontalOptions="Center"
+                Margin="0,0,0,16"
+                Clicked="OnRetryClicked" />
+
+    </Grid>
+</ContentPage>

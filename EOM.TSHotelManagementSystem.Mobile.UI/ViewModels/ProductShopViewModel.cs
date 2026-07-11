@@ -315,7 +315,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 
             var checkoutVm = MauiProgram.Services.GetService<OrderCheckoutViewModel>();
             checkoutVm.Initialize(_roomNumber, new List<CartItemDto>(CartItems));
-            await Application.Current.MainPage.Navigation.PushAsync(new OrderCheckoutView(checkoutVm));
+            await Application.Current.Windows[0].Page.Navigation.PushAsync(new OrderCheckoutView(checkoutVm));
         }
     }
 }

@@ -407,7 +407,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 var vm = MauiProgram.Services.GetService<ProductShopViewModel>();
                 vm.Initialize(SelectedCheckin.RoomNumber);
                 var page = new ProductShopView(vm);
-                await Application.Current.MainPage.Navigation.PushAsync(page);
+                await Application.Current.Windows[0].Page.Navigation.PushAsync(page);
             }
             catch (Exception ex)
             {

@@ -57,7 +57,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                 _ => AppName
             };
 
-            var appShell = Application.Current?.MainPage as AppShell;
+            var appShell = Application.Current?.Windows.FirstOrDefault()?.Page as AppShell;
             appShell?.Title = CurrentTitle;
         }
     }

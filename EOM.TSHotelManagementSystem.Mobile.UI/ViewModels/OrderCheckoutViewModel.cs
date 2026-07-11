@@ -114,7 +114,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
                     // 返回入住页时强制刷新在住房间列表，使房间消费额更新为最新
                     CheckInViewModel.NeedsCheckinRefresh = true;
                     await Shell.Current.DisplayAlertAsync("成功", "下单成功！", "确定");
-                    await Application.Current.MainPage.Navigation.PopAsync();
+                    await Application.Current.Windows[0].Page.Navigation.PopAsync();
                 }
                 else
                 {
