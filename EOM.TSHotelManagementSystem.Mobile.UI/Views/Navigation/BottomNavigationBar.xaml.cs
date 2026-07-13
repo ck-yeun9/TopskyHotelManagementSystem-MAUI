@@ -49,6 +49,7 @@ public partial class BottomNavigationBar : Grid, INotifyPropertyChanged
     {
         AddTabGesture(NewsLayout, "news");
         AddTabGesture(CheckInLayout, "checkin");
+        AddTabGesture(StaffLayout, "staff");
         AddTabGesture(ProfileLayout, "profile");
     }
 
@@ -63,6 +64,7 @@ public partial class BottomNavigationBar : Grid, INotifyPropertyChanged
     {
         SetTabActiveState(NewsIcon, NewsLabel, tabName == "news");
         SetTabActiveState(CheckInIcon, CheckInLabel, tabName == "checkin");
+        SetTabActiveState(StaffIcon, StaffLabel, tabName == "staff");
         SetTabActiveState(ProfileIcon, ProfileLabel, tabName == "profile");
     }
 

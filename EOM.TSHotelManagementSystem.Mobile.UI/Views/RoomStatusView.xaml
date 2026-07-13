@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:conv="clr-namespace:EOM.TSHotelManagementSystem.Mobile.UI"
+             x:Class="EOM.TSHotelManagementSystem.Mobile.UI.RoomStatusView"
+             Title="房间状态管理">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <conv:NotNullOrEmptyToBoolConverter x:Key="NotNullOrEmptyConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid RowDefinitions="Auto,*">
+        <StackLayout Grid.Row="0" Padding="16,12" Spacing="8">
+            <Label Text="房间状态管理" FontSize="20" FontAttributes="Bold"/>
+            <Label Text="{Binding ErrorMessage}" TextColor="Red" FontSize="13"
+                   IsVisible="{Binding ErrorMessage, Converter={StaticResource NotNullOrEmptyConverter}}"/>
+        </StackLayout>
+
+        <RefreshView Grid.Row="1" Command="{Binding RefreshCommand}">
+            <CollectionView ItemsSource="{Binding RoomStatusList}"
+                            SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Margin="12,6" Padding="16" CornerRadius="8" BackgroundColor="White">
+                            <StackLayout Spacing="6">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="{Binding RoomNo}" FontSize="18" FontAttributes="Bold"/>
+                                    <Label Grid.Column="1" Text="{Binding RoomStateName}"
+                                           FontSize="14" TextColor="White"
+                                           BackgroundColor="#FF5722"
+                                           Padding="8,2"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"/>
+                                </Grid>
+                                <Label Text="{Binding FloorName}" FontSize="13" TextColor="Gray"/>
+                                <Label Text="{Binding RoomTypeName}" FontSize="13" TextColor="Gray"/>
+                                <Label Text="{Binding RoomDesc}" FontSize="13" TextColor="Gray"
+                                       IsVisible="{Binding RoomDesc, Converter={StaticResource NotNullOrEmptyConverter}}"/>
+                                <Button Text="更新状态"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.UpdateRoomStatusCommand}"
+                                        CommandParameter="{Binding}"
+                                        BackgroundColor="#1976D2"
+                                        TextColor="White"
+                                        CornerRadius="6"
+                                        HeightRequest="36"
+                                        FontSize="13"
+                                        HorizontalOptions="End"/>
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <StackLayout Padding="40" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Text="暂无房间数据" FontSize="16" TextColor="Gray" HorizontalOptions="Center"/>
+                    </StackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </RefreshView>
+
+        <ActivityIndicator Grid.RowSpan="2"
+                           IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"/>
+    </Grid>
+</ContentPage>

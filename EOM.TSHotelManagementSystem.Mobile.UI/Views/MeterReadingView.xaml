@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:conv="clr-namespace:EOM.TSHotelManagementSystem.Mobile.UI"
+             x:Class="EOM.TSHotelManagementSystem.Mobile.UI.MeterReadingView"
+             Title="水电抄表记录">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <conv:NotNullOrEmptyToBoolConverter x:Key="NotNullOrEmptyConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid RowDefinitions="Auto,*">
+        <ScrollView Grid.Row="0">
+            <StackLayout Padding="16,12" Spacing="12">
+                <Label Text="水电抄表记录" FontSize="20" FontAttributes="Bold"/>
+
+                <Label Text="{Binding ErrorMessage}" TextColor="Red" FontSize="13"
+                       IsVisible="{Binding ErrorMessage, Converter={StaticResource NotNullOrEmptyConverter}}"/>
+                <Label Text="{Binding SuccessMessage}" TextColor="Green" FontSize="13"
+                       IsVisible="{Binding SuccessMessage, Converter={StaticResource NotNullOrEmptyConverter}}"/>
+
+                <Frame BackgroundColor="#F5F5F5" CornerRadius="8" Padding="16">
+                    <StackLayout Spacing="10">
+                        <Label Text="录入抄表数据" FontSize="16" FontAttributes="Bold"/>
+
+                        <Label Text="楼层选择" FontSize="14" TextColor="Gray"/>
+                        <Entry Text="{Binding SelectedFloorId}"
+                               Keyboard="Numeric"
+                               Placeholder="楼层ID"/>
+
+                        <Label Text="房间ID" FontSize="14" TextColor="Gray"/>
+                        <Entry Text="{Binding SelectedRoomId}"
+                               Keyboard="Numeric"
+                               Placeholder="房间ID"/>
+
+                        <Grid ColumnDefinitions="*,*">
+                            <StackLayout Grid.Column="0" Spacing="4">
+                                <Label Text="水表读数" FontSize="14" TextColor="Gray"/>
+                                <Entry Text="{Binding WaterReading}"
+                                       Keyboard="Numeric"
+                                       Placeholder="0.00"/>
+                            </StackLayout>
+                            <StackLayout Grid.Column="1" Spacing="4">
+                                <Label Text="电表读数" FontSize="14" TextColor="Gray"/>
+                                <Entry Text="{Binding ElectricReading}"
+                                       Keyboard="Numeric"
+                                       Placeholder="0.00"/>
+                            </StackLayout>
+                        </Grid>
+
+                        <Label Text="备注" FontSize="14" TextColor="Gray"/>
+                        <Editor Text="{Binding ReadingNote}"
+                                Placeholder="可选备注"
+                                HeightRequest="60"/>
+
+                        <Button Text="提交记录"
+                                Command="{Binding SubmitReadingCommand}"
+                                BackgroundColor="#388E3C"
+                                TextColor="White"
+                                CornerRadius="6"
+                                HeightRequest="40"/>
+                    </StackLayout>
+                </Frame>
+            </StackLayout>
+        </ScrollView>
+
+        <RefreshView Grid.Row="1" Command="{Binding RefreshCommand}">
+            <CollectionView ItemsSource="{Binding ReadingList}">
+                <CollectionView.Header>
+                    <Label Text="历史记录" FontSize="16" FontAttributes="Bold"
+                           Padding="16,12,16,6"/>
+                </CollectionView.Header>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Margin="12,4" Padding="12" CornerRadius="8" BackgroundColor="White">
+                            <Grid ColumnDefinitions="*,*,Auto">
+                                <StackLayout Grid.Column="0" Spacing="2">
+                                    <Label Text="{Binding RoomNo}" FontSize="15" FontAttributes="Bold"/>
+                                    <Label Text="{Binding FloorName}" FontSize="12" TextColor="Gray"/>
+                                </StackLayout>
+                                <StackLayout Grid.Column="1" Spacing="2">
+                                    <Label FontSize="13" TextColor="#1565C0">
+                                        <Label.Text>
+                                            <Binding Path="WaterReading" StringFormat="水: {0}"/>
+                                        </Label.Text>
+                                    </Label>
+                                    <Label FontSize="13" TextColor="#E65100">
+                                        <Label.Text>
+                                            <Binding Path="ElectricReading" StringFormat="电: {0}"/>
+                                        </Label.Text>
+                                    </Label>
+                                </StackLayout>
+                                <Label Grid.Column="2" Text="{Binding ReadingDate, StringFormat='{0:MM-dd HH:mm}'}"
+                                       FontSize="12" TextColor="Gray" VerticalOptions="Center"/>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <StackLayout Padding="40" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Text="暂无抄表记录" FontSize="16" TextColor="Gray" HorizontalOptions="Center"/>
+                    </StackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </RefreshView>
+
+        <ActivityIndicator Grid.RowSpan="2"
+                           IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"/>
+    </Grid>
+</ContentPage>

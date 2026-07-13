@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EOM.TSHotelManagementSystem.Mobile.UI.StaffLoginPage"
+             Title="员工登录">
+    <ScrollView>
+        <StackLayout Padding="30" Spacing="16">
+            <Label Text="员工登录"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   Margin="0,40,0,20"/>
+
+            <Label Text="用户名" FontSize="14" TextColor="Gray"/>
+            <Entry Text="{Binding Username}"
+                   Placeholder="请输入员工账号"
+                   ClearButtonVisibility="WhileEditing"
+                   ReturnType="Next"/>
+
+            <Label Text="密码" FontSize="14" TextColor="Gray"/>
+            <Entry Text="{Binding Password}"
+                   Placeholder="请输入密码"
+                   IsPassword="True"
+                   ClearButtonVisibility="WhileEditing"
+                   ReturnType="Go"/>
+
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="Red"
+                   FontSize="13"
+                   IsVisible="{Binding HasErrorMessage}"/>
+
+            <Button Text="登  录"
+                    Command="{Binding LoginCommand}"
+                    BackgroundColor="#FF5722"
+                    TextColor="White"
+                    CornerRadius="8"
+                    HeightRequest="48"
+                    Margin="0,10,0,0"/>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               HorizontalOptions="Center"
+                               Margin="0,10,0,0"/>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

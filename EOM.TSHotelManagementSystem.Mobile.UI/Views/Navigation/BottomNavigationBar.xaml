@@ -5,7 +5,7 @@
       x:Class="EOM.TSHotelManagementSystem.Mobile.UI.BottomNavigationBar"
       BackgroundColor="#f8f8f8"
       HeightRequest="60"
-      ColumnDefinitions="*,*,*">
+      ColumnDefinitions="*,*,*,*">
 
     <StackLayout Grid.Column="0" 
              HorizontalOptions="Center"
@@ -40,6 +40,22 @@
     </StackLayout>
 
     <StackLayout Grid.Column="2" 
+             HorizontalOptions="Center"
+             VerticalOptions="Center"
+             Spacing="4"
+             x:Name="StaffLayout">
+        <Label FontFamily="MaterialOutlinedFilled"
+               Text="badge"
+               FontSize="24"
+               VerticalOptions="Center"
+               HorizontalOptions="Center"
+               x:Name="StaffIcon"/>
+        <Label Text="员工" 
+               FontSize="12"
+               x:Name="StaffLabel"/>
+    </StackLayout>
+
+    <StackLayout Grid.Column="3" 
              HorizontalOptions="Center"
              VerticalOptions="Center"
              Spacing="4"

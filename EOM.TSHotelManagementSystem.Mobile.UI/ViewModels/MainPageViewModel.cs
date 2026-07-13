@@ -65,11 +65,11 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             {
                 "news" => "最新资讯",
                 "checkin" => "入住管理",
+                "staff" => "员工管理",
                 "profile" => "个人中心",
                 _ => AppName
             };
 
-            // 更新AppShell标题
             var appShell = Application.Current?.MainPage as AppShell;
             appShell?.UpdateTitle(CurrentTitle);
         }

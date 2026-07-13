@@ -55,7 +55,6 @@ public partial class MainPage : ContentPage
         }
         else
         {
-            // Ë¢ÐÂµ±Ç°±êÇ©Ò³
             LoadTabContent(tabName);
         }
     }
@@ -73,16 +72,19 @@ public partial class MainPage : ContentPage
                     contentView = _serviceProvider.GetRequiredService<NewsView>();
                     bindingContext = _serviceProvider.GetRequiredService<NewsViewModel>();
 
-                    // ÉèÖÃÒ³Ãæ±êÌâ
                     if (bindingContext is NewsViewModel newsViewModel)
                     {
-                        newsViewModel.PageTitle = "ÐÂÎÅ×ÊÑ¶";
+                        newsViewModel.PageTitle = "æœ€æ–°èµ„è®¯";
                     }
                     break;
 
                 case "checkin":
                     contentView = _serviceProvider.GetRequiredService<CheckInView>();
-                    bindingContext = _viewModel; // Ê¹ÓÃMainPageViewModel×ÔÉí
+                    bindingContext = _viewModel;
+                    break;
+
+                case "staff":
+                    contentView = _serviceProvider.GetRequiredService<StaffDashboardView>();
                     break;
 
                 case "profile":
@@ -104,8 +106,7 @@ public partial class MainPage : ContentPage
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"¼ÓÔØ±êÇ©Ò³´íÎó: {ex.Message}");
-            // Ìí¼ÓUI´íÎó´¦ÀíÂß¼­
+            Debug.WriteLine($"åŠ è½½æ ‡ç­¾é¡µé”™è¯¯: {ex.Message}");
         }
     }
 }

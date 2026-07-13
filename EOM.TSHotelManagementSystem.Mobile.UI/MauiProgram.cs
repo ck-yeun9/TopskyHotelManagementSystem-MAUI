@@ -42,6 +42,10 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             Routing.RegisterRoute(nameof(ProfileView), typeof(ProfileView));
             Routing.RegisterRoute(nameof(CheckInView), typeof(CheckInView));
             Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
+            Routing.RegisterRoute(nameof(StaffLoginPage), typeof(StaffLoginPage));
+            Routing.RegisterRoute(nameof(RoomStatusView), typeof(RoomStatusView));
+            Routing.RegisterRoute(nameof(MeterReadingView), typeof(MeterReadingView));
+            Routing.RegisterRoute(nameof(MaterialManagementView), typeof(MaterialManagementView));
         }
 
         private static void RegisterServices(IServiceCollection services)
@@ -49,18 +53,28 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
             services.AddSingleton<IAuthService, AuthService>();
             services.AddSingleton<IHttpService, HttpService>();
             services.AddSingleton<INavigationService, NavigationService>();
+            services.AddSingleton<IStaffService, StaffService>();
 
             services.AddTransient<MainPageViewModel>();
             services.AddTransient<NewsViewModel>();
             services.AddTransient<ProfileViewModel>();
             services.AddTransient<LoginViewModel>();
             services.AddTransient<RegisterViewModel>();
+            services.AddTransient<StaffLoginViewModel>();
+            services.AddTransient<RoomStatusViewModel>();
+            services.AddTransient<MeterReadingViewModel>();
+            services.AddTransient<MaterialManagementViewModel>();
 
             services.AddTransient<CheckInView>();
             services.AddTransient<NewsView>();
             services.AddTransient<ProfileView>();
             services.AddTransient<LoginPage>();
             services.AddTransient<RegisterPage>();
+            services.AddTransient<StaffDashboardView>();
+            services.AddTransient<StaffLoginPage>();
+            services.AddTransient<RoomStatusView>();
+            services.AddTransient<MeterReadingView>();
+            services.AddTransient<MaterialManagementView>();
             services.AddTransient<BottomNavigationBar>();
 
             services.AddSingleton<AppShell>(sp => new AppShell(

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:conv="clr-namespace:EOM.TSHotelManagementSystem.Mobile.UI"
+             x:Class="EOM.TSHotelManagementSystem.Mobile.UI.MaterialManagementView"
+             Title="物资管理">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <conv:NotNullOrEmptyToBoolConverter x:Key="NotNullOrEmptyConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid RowDefinitions="Auto,*">
+        <ScrollView Grid.Row="0">
+            <StackLayout Padding="16,12" Spacing="12">
+                <Label Text="物资管理" FontSize="20" FontAttributes="Bold"/>
+                <Label Text="入库 / 出库 / 报损" FontSize="14" TextColor="Gray"/>
+
+                <Label Text="{Binding ErrorMessage}" TextColor="Red" FontSize="13"
+                       IsVisible="{Binding ErrorMessage, Converter={StaticResource NotNullOrEmptyConverter}}"/>
+                <Label Text="{Binding SuccessMessage}" TextColor="Green" FontSize="13"
+                       IsVisible="{Binding SuccessMessage, Converter={StaticResource NotNullOrEmptyConverter}}"/>
+
+                <Frame BackgroundColor="#F5F5F5" CornerRadius="8" Padding="16">
+                    <StackLayout Spacing="10">
+                        <Label Text="操作参数" FontSize="16" FontAttributes="Bold"/>
+
+                        <Grid ColumnDefinitions="*,*">
+                            <StackLayout Grid.Column="0" Spacing="4">
+                                <Label Text="操作数量" FontSize="14" TextColor="Gray"/>
+                                <Entry Text="{Binding OperationQuantity}"
+                                       Keyboard="Numeric"
+                                       Placeholder="1"/>
+                            </StackLayout>
+                            <StackLayout Grid.Column="1" Spacing="4">
+                                <Label Text="备注" FontSize="14" TextColor="Gray"/>
+                                <Entry Text="{Binding OperationNote}"
+                                       Placeholder="可选备注"/>
+                            </StackLayout>
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+            </StackLayout>
+        </ScrollView>
+
+        <RefreshView Grid.Row="1" Command="{Binding RefreshCommand}">
+            <CollectionView ItemsSource="{Binding MaterialList}">
+                <CollectionView.Header>
+                    <Label Text="物资列表" FontSize="16" FontAttributes="Bold"
+                           Padding="16,12,16,6"/>
+                </CollectionView.Header>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Margin="12,4" Padding="12" CornerRadius="8" BackgroundColor="White">
+                            <StackLayout Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="{Binding MaterialName}" FontSize="16" FontAttributes="Bold"/>
+                                    <Label Grid.Column="1"
+                                           FontSize="14"
+                                           TextColor="#FF5722"
+                                           VerticalOptions="Center">
+                                        <Label.Text>
+                                            <Binding Path="StockQuantity" StringFormat="库存: {0}"/>
+                                        </Label.Text>
+                                    </Label>
+                                </Grid>
+                                <Label Text="{Binding MaterialTypeName}" FontSize="13" TextColor="Gray"/>
+                                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                                    <Button Grid.Column="0"
+                                            Text="入库"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.StockInCommand}"
+                                            CommandParameter="{Binding}"
+                                            BackgroundColor="#1976D2"
+                                            TextColor="White"
+                                            CornerRadius="6"
+                                            HeightRequest="32"
+                                            FontSize="13"/>
+                                    <Button Grid.Column="1"
+                                            Text="出库"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.StockOutCommand}"
+                                            CommandParameter="{Binding}"
+                                            BackgroundColor="#F57C00"
+                                            TextColor="White"
+                                            CornerRadius="6"
+                                            HeightRequest="32"
+                                            FontSize="13"/>
+                                    <Button Grid.Column="2"
+                                            Text="报损"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DamageCommand}"
+                                            CommandParameter="{Binding}"
+                                            BackgroundColor="#D32F2F"
+                                            TextColor="White"
+                                            CornerRadius="6"
+                                            HeightRequest="32"
+                                            FontSize="13"/>
+                                </Grid>
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <StackLayout Padding="40" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Text="暂无物资数据" FontSize="16" TextColor="Gray" HorizontalOptions="Center"/>
+                    </StackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </RefreshView>
+
+        <ActivityIndicator Grid.RowSpan="2"
+                           IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"/>
+    </Grid>
+</ContentPage>
