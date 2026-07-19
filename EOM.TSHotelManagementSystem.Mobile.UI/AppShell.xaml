@@ -6,7 +6,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:EOM.TSHotelManagementSystem.Mobile.UI"
     Shell.FlyoutBehavior="Disabled"
-    Shell.StatusBarColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}"
     Title="TopSky酒店">
 
     <Shell.TitleView>

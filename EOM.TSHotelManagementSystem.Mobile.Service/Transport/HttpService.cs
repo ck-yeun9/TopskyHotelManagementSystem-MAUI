@@ -1,5 +1,6 @@
 using EOM.TSHotelManagementSystem.Mobile.Common.Utility;
 using RestSharp;
+using System;
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
@@ -8,7 +9,6 @@ using System.Text.RegularExpressions;
 using System.Web;
 using Microsoft.Maui.Networking;
 using Microsoft.Maui.Storage;
-using Microsoft.Maui.Devices;
 
 namespace EOM.TSHotelManagementSystem.Mobile.Service
 {
@@ -17,20 +17,20 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
     /// </summary>
     public class HttpService:IHttpService
     {
-#if DEBUG
-        /// <summary>
-        /// WebApi URL
-        /// </summary>
-        public static string apiUrl => DeviceInfo.Platform == DevicePlatform.Android
-            ? "http://192.168.5.153:63001/api/"
-            : "http://localhost:63001/api/";
+        private readonly HttpOptions _httpOptions;
 
-#elif RELEASE
         /// <summary>
-        /// WebApi URL
+        /// WebApi 基地址（来自 appsettings.json，由 DI 注入，不再写死）。
+        /// 始终以 "/" 结尾，便于与后续路径直接拼接。
         /// </summary>
-        //public const string apiUrl = "https://tshotel-api.oscode.top/api/";
-#endif
+        private string BaseUrl => _httpOptions.BaseUrl.EndsWith("/")
+            ? _httpOptions.BaseUrl
+            : _httpOptions.BaseUrl + "/";
+
+        public HttpService(HttpOptions httpOptions)
+        {
+            _httpOptions = httpOptions;
+        }
 
         public class IgnoreNullValuesConverter : JsonConverter<object>
         {
@@ -121,14 +121,15 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
         {
             var sourceStr = url.Replace("​", string.Empty);
 
-            var requestUrl = apiUrl + sourceStr;
+            var requestUrl = BaseUrl + sourceStr;
 
             var client = new RestClient(requestUrl);
             var request = new RestRequest();
 
 
             request.AddHeader("Content-Type", "multipart/form-data");
-            request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36");
+            request.AddHeader("User-Agent", _httpOptions.UserAgent);
+            request.Timeout = TimeSpan.FromSeconds(_httpOptions.TimeoutSeconds);
 
             var token = await GetTokenAsync();
             if (!string.IsNullOrEmpty(token))
@@ -158,7 +159,11 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                 contentType: GetMimeType(filePath)
             );
 
+            HttpLogger.LogRequest("POST(multipart)", requestUrl, body: $"file={filePath}", hasToken: !string.IsNullOrEmpty(token));
+
             var response = client.ExecutePost(request);
+
+            HttpLogger.LogResponse((int)response.StatusCode, response.Content);
 
             return new ResponseMsg
             {
@@ -174,7 +179,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
             //处理url
             var sourceStr = url.Replace("​", string.Empty);
 
-            var requestUrl = apiUrl + sourceStr;
+            var requestUrl = BaseUrl + sourceStr;
 
             if (!CheckNetworkStatus())
             {
@@ -193,7 +198,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
             //处理url
             var sourceStr = url.Replace("​", string.Empty);
 
-            var requestUrl = apiUrl + sourceStr;
+            var requestUrl = BaseUrl + sourceStr;
 
             if (!CheckNetworkStatus())
             {
@@ -220,7 +225,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
             //处理url
             var sourceStr = url.Replace("​", string.Empty);
 
-            var requestUrl = apiUrl + sourceStr;
+            var requestUrl = BaseUrl + sourceStr;
 
             if (!CheckNetworkStatus())
             {
@@ -272,7 +277,8 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                     request.AddHeader("Cookie", cookie);
                 }
 
-                request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36");
+                request.AddHeader("User-Agent", _httpOptions.UserAgent);
+                request.Timeout = TimeSpan.FromSeconds(_httpOptions.TimeoutSeconds);
 
                 if (dicHeaders != null)
                 {
@@ -288,12 +294,17 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                     request.AddHeader("Authorization", string.Format("Bearer {0}", token));
                 }
 
+                HttpLogger.LogRequest("GET", url, body: null, hasToken: !string.IsNullOrEmpty(token));
+
                 rsp = client.ExecuteGet(request);
+
+                HttpLogger.LogResponse((int)rsp.StatusCode, rsp.Content);
 
                 resultContent = rsp.Content;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                HttpLogger.LogException("GET " + url, ex);
                 throw;
             }
 
@@ -332,7 +343,10 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                 }
             }
 
-            request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36");
+            request.AddHeader("Idempotency-Key", Guid.NewGuid().ToString());
+
+            request.AddHeader("User-Agent", _httpOptions.UserAgent);
+            request.Timeout = TimeSpan.FromSeconds(_httpOptions.TimeoutSeconds);
 
             request.AddBody(jsonParam!);
 
@@ -342,7 +356,19 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                 request.AddHeader("Authorization", $"Bearer {token}");
             }
 
-            reponse = client.ExecutePost(request);
+            HttpLogger.LogRequest("POST", url, body: jsonParam, hasToken: !string.IsNullOrEmpty(token));
+
+            try
+            {
+                reponse = client.ExecutePost(request);
+            }
+            catch (Exception ex)
+            {
+                HttpLogger.LogException("POST " + url, ex);
+                throw;
+            }
+
+            HttpLogger.LogResponse((int)reponse.StatusCode, reponse.Content);
 
             var responseString = reponse.Content;
 

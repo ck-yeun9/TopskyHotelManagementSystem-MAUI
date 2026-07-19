@@ -361,3 +361,7 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /docs/compose/plans/2026-06-20-maui-feature-improvements.md
+
+# Android signing keystore (secret, never commit)
+*.keystore
+*.jks

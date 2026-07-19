@@ -1,4 +1,6 @@
+using System.Reflection;
 using EOM.TSHotelManagementSystem.Mobile.Service;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Handlers;
 using UraniumUI;
@@ -57,6 +59,28 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 #if DEBUG
     		builder.Logging.AddDebug();
 #endif
+
+            // 加载 UI 层 appsettings.json（内嵌资源）作为统一配置源
+            var configuration = BuildConfiguration();
+            builder.Services.AddSingleton<IConfiguration>(configuration);
+
+            // 将 Http 相关配置绑定为强类型选项并注册，Service 层不再写死 BaseUrl 等
+            var baseUrl = configuration["Http:BaseUrl"]?.Trim();
+            var timeoutRaw = configuration["Http:TimeoutSeconds"];
+            var userAgent = configuration["Http:UserAgent"];
+
+            var httpOptions = new HttpOptions
+            {
+                BaseUrl = string.IsNullOrEmpty(baseUrl)
+                          ? "https://tshotel-debug.oscode.top/api/"
+                          : baseUrl,
+                TimeoutSeconds = int.TryParse(timeoutRaw, out var t) && t > 0 ? t : 30,
+                UserAgent = string.IsNullOrEmpty(userAgent)
+                          ? "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+                          : userAgent
+            };
+            builder.Services.AddSingleton(httpOptions);
+
             RegisterServices(builder.Services);
             RegisterRoutes();
 
@@ -65,6 +89,38 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 
             return app;
         }
+
+        /// <summary>
+        /// 从内嵌的配置资源构建 IConfiguration：
+        /// 先加载基础 appsettings.json，再按当前构建环境叠加 appsettings.{Environment}.json
+        /// （Debug -> tshotel-debug，Release -> tshotel），环境文件中的配置优先级更高。
+        /// 若资源缺失则回退到空配置（此时由强类型默认值兜底）。
+        /// </summary>
+        private static IConfiguration BuildConfiguration()
+        {
+            var assembly = typeof(MauiProgram).Assembly;
+            var configBuilder = new ConfigurationBuilder();
+
+            using (var baseStream = assembly.GetManifestResourceStream("appsettings.json"))
+            {
+                if (baseStream is not null) configBuilder.AddJsonStream(baseStream);
+            }
+
+            // 按构建环境选择对应的环境配置文件
+            var env = IsDebug ? "Debug" : "Release";
+            using (var envStream = assembly.GetManifestResourceStream($"appsettings.{env}.json"))
+            {
+                if (envStream is not null) configBuilder.AddJsonStream(envStream);
+            }
+
+            return configBuilder.Build();
+        }
+
+#if DEBUG
+        private const bool IsDebug = true;
+#else
+        private const bool IsDebug = false;
+#endif
 
         private static void RegisterRoutes()
         {

@@ -78,10 +78,10 @@
                 <Border Padding="16" Stroke="#E5E7EB" StrokeShape="RoundRectangle 18" BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource CardSurfaceDark}}">
                     <VerticalStackLayout Spacing="12">
                         <Label Text="支付方式" FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=#E8E8E8}" />
-                        <RadioButton Content="退房时结算" GroupName="Payment" IsChecked="True"
+                        <controls:CommandRadioButton Content="退房时结算" GroupName="Payment" IsChecked="True"
                                      Command="{Binding SelectPaymentCommand}" CommandParameter="CheckoutSettle"
                                      FontSize="14" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=#E8E8E8}" />
-                        <RadioButton Content="立即支付" GroupName="Payment"
+                        <controls:CommandRadioButton Content="立即支付" GroupName="Payment"
                                      Command="{Binding SelectPaymentCommand}" CommandParameter="Immediate"
                                      FontSize="14" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=#E8E8E8}" />
                     </VerticalStackLayout>
@@ -89,16 +89,27 @@
             </VerticalStackLayout>
         </ScrollView>
 
-        <!-- 底部支付栏 -->
-        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Padding="20,12"
-              BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource CardSurfaceDark}}" Stroke="#E5E7EB" StrokeShape="RoundRectangle 0,0,0,0">
-            <Label VerticalOptions="Center" Text="{Binding TotalAmount, StringFormat='合计: ¥{0:F0}'}"
-                   FontSize="18" FontAttributes="Bold" TextColor="#EA580C" />
-            <Button Grid.Column="1" Text="💳 支付"
-                    BackgroundColor="#FF5722" TextColor="White"
-                    Command="{Binding PlaceOrderCommand}" HeightRequest="44"
-                    CornerRadius="10" Padding="24,0" />
-        </Grid>
+            <!-- 底部支付栏 -->
+            <Border Grid.Row="1"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource CardSurfaceDark}}"
+                    Stroke="#E5E7EB"
+                    StrokeShape="RoundRectangle 0,0,0,0">
+                    <Grid ColumnDefinitions="*,Auto" Padding="20,12">
+                    <Label VerticalOptions="Center"
+                            Text="{Binding TotalAmount, StringFormat='合计: ¥{0:F0}'}"
+                            FontSize="18"
+                            FontAttributes="Bold"
+                            TextColor="#EA580C" />
+                    <Button Grid.Column="1"
+                            Text="💳 支付"
+                            BackgroundColor="#FF5722"
+                            TextColor="White"
+                            Command="{Binding PlaceOrderCommand}"
+                            HeightRequest="44"
+                            CornerRadius="10"
+                            Padding="24,0" />
+                </Grid>
+            </Border>
         </Grid>
     </Grid>
 </ContentPage>
