@@ -1,28 +1,42 @@
-using Microsoft.Maui.Storage;
 using System.Text;
+using Microsoft.Maui.Storage;
 
 namespace EOM.TSHotelManagementSystem.Mobile.Service;
 
 /// <summary>
-/// HTTP 请求文件日志：把每次请求的完整 URL、方法、请求体、响应状态码、响应体、异常
-/// 写入 app 私有文件目录（FileSystem.AppDataDirectory，免权限），同时输出到 Console.Error
-/// （Android 上进 logcat，tag: mono-rt/mono-stdout），便于 adb 抓取。
-/// 文件位置（Android）：/data/data/com.eom.topsy.mobile/files/http-logs.txt
+/// HTTP 请求文件日志：记录每次请求的完整信息，写入外部存储 files 目录，
+/// 用文件管理器即可查看：内部存储 → Android → data → &lt;包名&gt; → files → http-logs/
 /// </summary>
 public static class HttpLogger
 {
     private static readonly object _lock = new();
-    private const string LogFileName = "http-logs.txt";
-    private const int MaxBodyLogLength = 200_000; // 单条 body 最多记录 20 万字符，防内存爆
+    private const int MaxBodyLogLength = 200_000;
 
-    /// <summary>日志文件完整路径</summary>
-    public static string LogFilePath => Path.Combine(FileSystem.AppDataDirectory, LogFileName);
+    /// <summary>日志目录（外部存储 files/http-logs，文件管理器可直接访问）</summary>
+    public static string LogDirectory
+    {
+        get
+        {
+            var httpDir = Path.Combine(LogDirectoryProvider.LogDirectory, "http-logs");
+            try
+            {
+                Directory.CreateDirectory(httpDir);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[HttpLogger] 创建日志目录失败: {ex.Message}");
+            }
+            return httpDir;
+        }
+    }
 
-    /// <summary>写一条原始日志（带时间戳，落盘 + logcat）</summary>
+    /// <summary>当天日志文件路径</summary>
+    private static string LogFilePath => Path.Combine(LogDirectory, $"{DateTime.Now:yyyy-MM-dd}.log");
+
+    /// <summary>写一条日志</summary>
     public static void Log(string message)
     {
         var line = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {message}";
-        // 同时输出到 logcat（Release 也能看到）
         Console.Error.WriteLine(line);
         try
         {
@@ -31,33 +45,49 @@ public static class HttpLogger
                 File.AppendAllText(LogFilePath, line + Environment.NewLine);
             }
         }
-        catch
+        catch (Exception ex)
         {
-            // 日志写入失败不得影响业务
+            System.Diagnostics.Debug.WriteLine($"[HttpLogger] 写入日志失败: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"[HttpLogger] 日志路径: {LogFilePath}");
         }
     }
 
-    /// <summary>记录请求：方法、完整 URL、请求体、是否带 Token</summary>
-    public static void LogRequest(string method, string url, string? body, bool hasToken = false)
+    /// <summary>记录完整请求信息</summary>
+    public static void LogRequest(string method, string url, string? body,
+        IDictionary<string, string>? headers = null, bool hasToken = false)
     {
         var sb = new StringBuilder();
-        sb.Append($"===> {method} {url}");
+        sb.AppendLine($">>> REQUEST >>>");
+        sb.AppendLine($"  Method:  {method}");
+        sb.AppendLine($"  URL:     {url}");
+
         if (hasToken)
+            sb.AppendLine($"  Auth:    Bearer ***");
+
+        if (headers is not null && headers.Count > 0)
         {
-            sb.Append("  [Auth: Bearer ***]");
+            sb.AppendLine($"  Headers:");
+            foreach (var kv in headers)
+                sb.AppendLine($"    {kv.Key}: {kv.Value}");
         }
+
         if (!string.IsNullOrEmpty(body))
-        {
-            sb.AppendLine();
-            sb.Append($"    Body: {Truncate(body)}");
-        }
+            sb.AppendLine($"  Body:    {Truncate(body)}");
+
         Log(sb.ToString());
     }
 
-    /// <summary>记录响应：状态码、完整响应体</summary>
-    public static void LogResponse(int statusCode, string? content)
+    /// <summary>记录完整响应信息</summary>
+    public static void LogResponse(int statusCode, string? content, string? url = null)
     {
-        Log($"<=== HTTP {statusCode}{Environment.NewLine}    Response: {Truncate(content) ?? "(null)"}");
+        var sb = new StringBuilder();
+        sb.AppendLine($"<<< RESPONSE <<<");
+        if (url is not null)
+            sb.AppendLine($"  URL:      {url}");
+        sb.AppendLine($"  Status:   {statusCode}");
+        sb.AppendLine($"  Response: {Truncate(content) ?? "(null)"}");
+
+        Log(sb.ToString());
     }
 
     /// <summary>记录异常</summary>
@@ -68,10 +98,7 @@ public static class HttpLogger
 
     private static string? Truncate(string? s)
     {
-        if (string.IsNullOrEmpty(s))
-        {
-            return s;
-        }
+        if (string.IsNullOrEmpty(s)) return s;
         return s.Length > MaxBodyLogLength
             ? s[..MaxBodyLogLength] + $"...(truncated, total {s.Length} chars)"
             : s;

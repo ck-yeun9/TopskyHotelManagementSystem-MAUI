@@ -159,11 +159,19 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                 contentType: GetMimeType(filePath)
             );
 
-            HttpLogger.LogRequest("POST(multipart)", requestUrl, body: $"file={filePath}", hasToken: !string.IsNullOrEmpty(token));
+            var logHeaders = new Dictionary<string, string> { ["User-Agent"] = _httpOptions.UserAgent, ["Content-Type"] = "multipart/form-data" };
+            if (!string.IsNullOrEmpty(token)) logHeaders["Authorization"] = "Bearer ***";
+            if (dicHeaders is not null) foreach (var kv in dicHeaders) logHeaders[kv.Key] = kv.Value;
 
+            HttpLogger.LogRequest("POST(multipart)", requestUrl, body: $"file={filePath}", logHeaders);
+
+            var sw = Stopwatch.StartNew();
             var response = client.ExecutePost(request);
+            sw.Stop();
 
-            HttpLogger.LogResponse((int)response.StatusCode, response.Content);
+            HttpLogger.LogResponse((int)response.StatusCode, response.Content, requestUrl);
+            RequestLogger.LogRequestResponse("POST(multipart)", requestUrl, (int)response.StatusCode, sw.ElapsedMilliseconds,
+                requestBody: $"file={filePath}", responseBody: response.Content, requestHeaders: logHeaders);
 
             return new ResponseMsg
             {
@@ -294,17 +302,28 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                     request.AddHeader("Authorization", string.Format("Bearer {0}", token));
                 }
 
-                HttpLogger.LogRequest("GET", url, body: null, hasToken: !string.IsNullOrEmpty(token));
+                var logHeaders = new Dictionary<string, string> { ["User-Agent"] = _httpOptions.UserAgent };
+                if (!string.IsNullOrEmpty(referer)) logHeaders["Referer"] = referer;
+                if (!string.IsNullOrEmpty(cookie)) logHeaders["Cookie"] = cookie;
+                if (dicHeaders is not null) foreach (var kv in dicHeaders) logHeaders[kv.Key] = kv.Value;
+                if (!string.IsNullOrEmpty(token)) logHeaders["Authorization"] = "Bearer ***";
 
+                HttpLogger.LogRequest("GET", url, body: null, logHeaders);
+
+                var sw = Stopwatch.StartNew();
                 rsp = client.ExecuteGet(request);
+                sw.Stop();
 
-                HttpLogger.LogResponse((int)rsp.StatusCode, rsp.Content);
+                HttpLogger.LogResponse((int)rsp.StatusCode, rsp.Content, url);
+                RequestLogger.LogRequestResponse("GET", url, (int)rsp.StatusCode, sw.ElapsedMilliseconds,
+                    responseBody: rsp.Content, requestHeaders: logHeaders);
 
                 resultContent = rsp.Content;
             }
             catch (Exception ex)
             {
                 HttpLogger.LogException("GET " + url, ex);
+                RequestLogger.LogException("GET", url, 0, ex);
                 throw;
             }
 
@@ -356,19 +375,31 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                 request.AddHeader("Authorization", $"Bearer {token}");
             }
 
-            HttpLogger.LogRequest("POST", url, body: jsonParam, hasToken: !string.IsNullOrEmpty(token));
+            var logHeaders = new Dictionary<string, string> { ["User-Agent"] = _httpOptions.UserAgent, ["Content-Type"] = "application/json" };
+            if (!string.IsNullOrEmpty(referer)) logHeaders["Referer"] = referer;
+            if (!string.IsNullOrEmpty(cookie)) logHeaders["Cookie"] = cookie;
+            if (dicHeaders is not null) foreach (var kv in dicHeaders) logHeaders[kv.Key] = kv.Value;
+            if (!string.IsNullOrEmpty(token)) logHeaders["Authorization"] = "Bearer ***";
 
+            HttpLogger.LogRequest("POST", url, body: jsonParam, logHeaders);
+
+            var sw = Stopwatch.StartNew();
             try
             {
                 reponse = client.ExecutePost(request);
             }
             catch (Exception ex)
             {
+                sw.Stop();
                 HttpLogger.LogException("POST " + url, ex);
+                RequestLogger.LogException("POST", url, sw.ElapsedMilliseconds, ex);
                 throw;
             }
+            sw.Stop();
 
-            HttpLogger.LogResponse((int)reponse.StatusCode, reponse.Content);
+            HttpLogger.LogResponse((int)reponse.StatusCode, reponse.Content, url);
+            RequestLogger.LogRequestResponse("POST", url, (int)reponse.StatusCode, sw.ElapsedMilliseconds,
+                requestBody: jsonParam, responseBody: reponse.Content, requestHeaders: logHeaders);
 
             var responseString = reponse.Content;
 

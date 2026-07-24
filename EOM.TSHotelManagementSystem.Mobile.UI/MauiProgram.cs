@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Diagnostics;
 using EOM.TSHotelManagementSystem.Mobile.Service;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -12,8 +13,44 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
         private static IServiceProvider _serviceProvider;
         public static IServiceProvider Services => _serviceProvider;
 
+        /// <summary>
+        /// 临时调试用：将异常写入手机 Download 目录，闪退后用文件管理器找到 crash.log 发给我。
+        /// 调试完毕后删除此方法和相关调用。
+        /// </summary>
+        private static void SetupCrashLogger()
+        {
+            AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+            {
+                var ex = e.ExceptionObject as Exception;
+                WriteCrashLog($"[AppDomain.UnhandledException] {ex}");
+            };
+            TaskScheduler.UnobservedTaskException += (s, e) =>
+            {
+                WriteCrashLog($"[UnobservedTaskException] {e.Exception}");
+            };
+        }
+
+        private static void WriteCrashLog(string message)
+        {
+            try
+            {
+#if ANDROID
+                var dir = Android.App.Application.Context.GetExternalFilesDir(null)!.AbsolutePath;
+#else
+                var dir = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
+#endif
+                var logPath = Path.Combine(dir, "crash.log");
+                var text = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}\n\n";
+                File.AppendAllText(logPath, text);
+                Debug.WriteLine($"[CRASH LOG] {logPath}");
+            }
+            catch { }
+        }
+
         public static MauiApp CreateMauiApp()
         {
+            SetupCrashLogger();
+            WriteCrashLog("=== CreateMauiApp started ===");
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
@@ -86,6 +123,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 
             var app = builder.Build();
             _serviceProvider = app.Services;
+            WriteCrashLog("=== CreateMauiApp completed ===");
 
             return app;
         }
@@ -103,14 +141,26 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
 
             using (var baseStream = assembly.GetManifestResourceStream("appsettings.json"))
             {
-                if (baseStream is not null) configBuilder.AddJsonStream(baseStream);
+                if (baseStream is not null)
+                {
+                    var ms = new MemoryStream();
+                    baseStream.CopyTo(ms);
+                    ms.Position = 0;
+                    configBuilder.AddJsonStream(ms);
+                }
             }
 
             // 按构建环境选择对应的环境配置文件
             var env = IsDebug ? "Debug" : "Release";
             using (var envStream = assembly.GetManifestResourceStream($"appsettings.{env}.json"))
             {
-                if (envStream is not null) configBuilder.AddJsonStream(envStream);
+                if (envStream is not null)
+                {
+                    var ms = new MemoryStream();
+                    envStream.CopyTo(ms);
+                    ms.Position = 0;
+                    configBuilder.AddJsonStream(ms);
+                }
             }
 
             return configBuilder.Build();

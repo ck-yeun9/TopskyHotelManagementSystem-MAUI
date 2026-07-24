@@ -6,46 +6,62 @@ namespace EOM.TSHotelManagementSystem.Mobile.UI
     public partial class App : Application
     {
 
+        private static void Log(string msg) =>
+            System.Diagnostics.Debug.WriteLine($"[TOPSY] {msg}");
+
         public App()
         {
+            Log("App() constructor START");
             InitializeComponent();
+            Log("App() InitializeComponent done");
 
             var serviceProvider = MauiProgram.Services;
             serviceProvider.GetRequiredService<IThemeService>().ApplyTheme();
+            Log("App() constructor END");
         }
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
+            Log("CreateWindow START");
             var window = new Window(BuildStartupSplashPage());
+            Log("CreateWindow splash page created");
             _ = RunStartupAsync(MauiProgram.Services);
+            Log("CreateWindow END");
             return window;
         }
 
         private async Task RunStartupAsync(IServiceProvider serviceProvider)
         {
+            Log("RunStartupAsync START");
             try
             {
                 var httpService = serviceProvider.GetRequiredService<IHttpService>();
+                Log("RunStartupAsync calling /version");
                 var response = await httpService.RequestAsync("version");
+                Log($"RunStartupAsync /version response: {response?.StatusCode}");
 
                 if (response?.StatusCode == 200)
                 {
+                    Log("RunStartupAsync 200 OK, setting AppShell");
                     SetRootPage(serviceProvider.GetRequiredService<AppShell>());
                     _ = ValidateTokenOnStartupAsync(serviceProvider);
                     return;
                 }
+                Log($"RunStartupAsync non-200: {response?.StatusCode}");
             }
-            catch
+            catch (Exception ex)
             {
-                // RequestAsync 内部 CheckNetworkStatus 也可能抛异常，一并走到这里。
+                Log($"RunStartupAsync EXCEPTION: {ex}");
             }
 
+            Log("RunStartupAsync showing StartupUnavailablePage");
             SetRootPage(new StartupUnavailablePage(async () =>
                 await RunStartupAsync(serviceProvider)));
         }
 
         private void SetRootPage(Page page)
         {
+            Log($"SetRootPage: Windows.Count={Windows.Count}, page={page.GetType().Name}");
             if (Windows.Count > 0)
                 Windows[0].Page = page;
         }

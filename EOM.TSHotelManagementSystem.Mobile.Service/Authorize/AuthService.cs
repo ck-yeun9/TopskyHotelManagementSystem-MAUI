@@ -5,8 +5,11 @@ using Plugin.Fingerprint.Abstractions;
 using RestSharp;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using Microsoft.Maui.Storage;
 
@@ -155,33 +158,27 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                 var accessToken = await GetAccessToken();
                 if (string.IsNullOrEmpty(accessToken))
                 {
-                    Debug.WriteLine("RefreshTokenAsync: 无AccessToken，跳过刷新");
                     return;
                 }
 
                 var expiration = await GetTokenExpiration();
                 if (expiration > DateTime.Now)
                 {
-                    Debug.WriteLine("RefreshTokenAsync: 令牌尚未过期，无需刷新");
                     return;
                 }
 
-                Debug.WriteLine("RefreshTokenAsync: 令牌已过期，启动生物识别验证");
                 var authResult = await AuthenticateWithBiometricsAsync();
 
                 if (!authResult)
                 {
-                    Debug.WriteLine("RefreshTokenAsync: 生物识别验证失败");
                     await ClearTokenAsync();
                     return;
                 }
 
-                Debug.WriteLine("RefreshTokenAsync: 生物识别验证通过，开始刷新令牌");
                 var refreshToken = await GetRefreshToken();
 
                 if (string.IsNullOrWhiteSpace(refreshToken))
                 {
-                    Debug.WriteLine("RefreshTokenAsync: 无RefreshToken，需要重新登录");
                     await ClearTokenAsync();
                     return;
                 }
@@ -191,7 +188,6 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
 
                 if (string.IsNullOrWhiteSpace(response?.Message))
                 {
-                    Debug.WriteLine("RefreshTokenAsync: 服务器无响应");
                     await ClearTokenAsync();
                     return;
                 }
@@ -203,24 +199,20 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                     if (!string.IsNullOrEmpty(result.Data.AccessToken))
                     {
                         await SaveAccessTokenAsync(result.Data.AccessToken, DateTime.Now.AddDays(7));
-                        Debug.WriteLine("RefreshTokenAsync: AccessToken刷新成功");
                     }
 
                     if (!string.IsNullOrEmpty(result.Data.RefreshToken))
                     {
                         await SaveRefreshTokenAsync(result.Data.RefreshToken);
-                        Debug.WriteLine("RefreshTokenAsync: RefreshToken更新成功");
                     }
                 }
                 else
                 {
-                    Debug.WriteLine($"RefreshTokenAsync: 刷新失败 - {result?.Message}");
                     await ClearTokenAsync();
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"RefreshTokenAsync Exception: {ex.Message}");
                 await ClearTokenAsync();
             }
         }
@@ -237,45 +229,38 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
 
         public async Task<string> GetCustomerNumberAsync()
         {
+            var token = await GetAccessToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new InvalidOperationException("无法获取客户信息：Token 为空，请重新登录");
+            }
+
             try
             {
-                var token = await GetAccessToken();
-                if (string.IsNullOrEmpty(token))
-                    return string.Empty;
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
 
-                var parts = token.Split('.');
-                if (parts.Length < 2)
-                    return string.Empty;
+                // 与后端保持一致：优先 ClaimTypes.SerialNumber，备用 serialnumber
+                var serialClaim = jwtToken.Claims
+                    .FirstOrDefault(c => c.Type == ClaimTypes.SerialNumber)
+                    ?? jwtToken.Claims.FirstOrDefault(c => c.Type == "serialnumber");
 
-                var payload = parts[1];
-                // 补齐 base64 padding
-                payload = payload.Replace('-', '+').Replace('_', '/');
-                switch (payload.Length % 4)
+                if (serialClaim != null && !string.IsNullOrEmpty(serialClaim.Value))
                 {
-                    case 2: payload += "=="; break;
-                    case 3: payload += "="; break;
+                    return serialClaim.Value;
                 }
 
-                var jsonBytes = Convert.FromBase64String(payload);
-                var json = Encoding.UTF8.GetString(jsonBytes);
-                using var doc = JsonDocument.Parse(json);
-                var root = doc.RootElement;
-
-                // 后端使用 ClaimTypes.SerialNumber = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/serialnumber"
-                var claimKey = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/serialnumber";
-                if (root.TryGetProperty(claimKey, out var claimElement))
-                    return claimElement.GetString() ?? string.Empty;
-
-                // 备用：小写 key
-                if (root.TryGetProperty("serialnumber", out var snElement))
-                    return snElement.GetString() ?? string.Empty;
-
-                return string.Empty;
+                // 兜底：列出所有 claim 帮助调试
+                var allClaims = string.Join(", ", jwtToken.Claims.Select(c => $"{c.Type}={c.Value}"));
+                throw new InvalidOperationException($"Token 中未找到客户编号(SerialNumber)。可用 Claims: {allClaims}");
+            }
+            catch (InvalidOperationException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"GetCustomerNumberAsync Exception: {ex.Message}");
-                return string.Empty;
+                throw new InvalidOperationException($"Token 解析失败: {ex.Message}", ex);
             }
         }
 
@@ -284,12 +269,24 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
             try
             {
                 var token = await SecureStorage.GetAsync(Constant.AccessTokenKey);
-                if (!string.IsNullOrEmpty(token)) return token;
+                if (!string.IsNullOrEmpty(token))
+                {
+                    return token;
+                }
 
                 token = Preferences.Get(Constant.AccessTokenKey, string.Empty);
-                return Deobfuscate(token);
+                if (string.IsNullOrEmpty(token))
+                {
+                    return string.Empty;
+                }
+
+                var result = Deobfuscate(token);
+                return result;
             }
-            catch { return string.Empty; }
+            catch (Exception ex)
+            {
+                return string.Empty;
+            }
         }
 
         public async Task<string> GetRefreshToken()
@@ -478,3 +475,8 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
         }
     }
 }
+
+
+
+
+

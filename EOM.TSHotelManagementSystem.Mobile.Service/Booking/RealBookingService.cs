@@ -152,8 +152,33 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"CreateReservationAsync Exception: {ex.Message}");
+                WriteLog($"CreateReservationAsync Exception: {ex.Message}");
                 throw;
+            }
+        }
+
+        private static void WriteLog(string message)
+        {
+            try
+            {
+#if ANDROID
+                var dir = Android.App.Application.Context.GetExternalFilesDir(null)!.AbsolutePath;
+#else
+                var dir = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
+#endif
+                var logPath = Path.Combine(dir, "crash.log");
+                File.AppendAllText(logPath, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}\n");
+            }
+            catch
+            {
+                // 备用路径
+                try
+                {
+                    var fallback = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
+                    var logPath = Path.Combine(fallback, "crash.log");
+                    File.AppendAllText(logPath, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}\n");
+                }
+                catch { }
             }
         }
     }

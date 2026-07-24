@@ -127,23 +127,11 @@
   </MauiXaml>
 </ItemGroup>
 
-	<!-- ================= 签名配置（仅 Release） ================= -->
+	<!-- ================= 构建配置（仅 Release） ================= -->
 	<PropertyGroup Condition="'$(Configuration)' == 'Release' AND '$(TargetFramework)' == 'net10.0-android'">
 
 		<!-- 生成 APK（而不是 AAB，方便直接安装） -->
 		<AndroidPackageFormat>apk</AndroidPackageFormat>
-
-		<!-- 启用签名 -->
-		<AndroidKeyStore>True</AndroidKeyStore>
-
-		<!-- keystore 路径（相对项目根目录） -->
-		<AndroidSigningKeyStore>topsy.keystore</AndroidSigningKeyStore>
-
-		<!-- 别名 -->
-		<AndroidSigningKeyAlias>topsy</AndroidSigningKeyAlias>
-
-		<AndroidSigningKeyPass>env:ANDROID_KEY_PASS</AndroidSigningKeyPass>
-		<AndroidSigningStorePass>env:ANDROID_STORE_PASS</AndroidSigningStorePass>
 
 		<!-- 关闭托管链接器 + AOT/ReadyToRun：
 		     .NET 10 Mono 在 Release 默认开启 AOT/R2R 时会触发 class-init.c:2474
