@@ -240,19 +240,20 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                 var handler = new JwtSecurityTokenHandler();
                 var jwtToken = handler.ReadJwtToken(token);
 
-                // 与后端保持一致：优先 ClaimTypes.SerialNumber，备用 serialnumber
-                var serialClaim = jwtToken.Claims
-                    .FirstOrDefault(c => c.Type == ClaimTypes.SerialNumber)
-                    ?? jwtToken.Claims.FirstOrDefault(c => c.Type == "serialnumber");
+                var serialClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "nameid");
+
+                if (serialClaim == null)
+                {
+                    serialClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                }
 
                 if (serialClaim != null && !string.IsNullOrEmpty(serialClaim.Value))
                 {
                     return serialClaim.Value;
                 }
 
-                // 兜底：列出所有 claim 帮助调试
                 var allClaims = string.Join(", ", jwtToken.Claims.Select(c => $"{c.Type}={c.Value}"));
-                throw new InvalidOperationException($"Token 中未找到客户编号(SerialNumber)。可用 Claims: {allClaims}");
+                throw new InvalidOperationException($"Token 中未找到客户编号(NameIdentifier)。可用 Claims: {allClaims}");
             }
             catch (InvalidOperationException)
             {
@@ -475,6 +476,8 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
         }
     }
 }
+
+
 
 
 

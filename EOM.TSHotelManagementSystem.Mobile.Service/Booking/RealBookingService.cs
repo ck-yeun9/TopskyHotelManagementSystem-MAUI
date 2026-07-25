@@ -93,15 +93,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
 
                 var reservationId = $"RSE-{DateTime.Now:yyyyMMddHHmmss}";
 
-                // 获取客户编号存入 Remarks，以便 GetMyReservations 按编号查询
-                var customerNumber = await _authService.GetCustomerNumberAsync();
-                if (string.IsNullOrEmpty(customerNumber))
-                    throw new InvalidOperationException("无法获取客户信息，请重新登录");
-
-                var remarks = string.IsNullOrWhiteSpace(input.SpecialRequest)
-                    ? customerNumber
-                    : $"{customerNumber}|{input.SpecialRequest}";
-
+                // 客户编号由 WebAPI 端自动写入 Remarks，MAUI 端只传入特殊需求
                 var reserInput = new CreateReserInputDto
                 {
                     ReservationId = reservationId,
@@ -113,7 +105,7 @@ namespace EOM.TSHotelManagementSystem.Mobile.Service
                     ReservationStartDate = input.CheckInDate,
                     ReservationEndDate = input.CheckOutDate,
                     ReservationStatus = 0,
-                    Remarks = remarks
+                    Remarks = input.SpecialRequest ?? string.Empty
                 };
 
                 var json = HttpHelper.ModelToJson(reserInput);
